@@ -29,12 +29,31 @@ const Home: NextPage = () => {
 
   // ペンを動かしてる時
   const onMove = (e: React.MouseEvent<HTMLCanvasElement> | any) => {
-    if (e.buttons !== 1) { return; }
+    console.log(e.buttons);
+    if (e.buttons === 0) { return; }
     const canvas: any = canvasRef.current;
     const rect: IRect = canvas.getBoundingClientRect();
-    const x = ~~(e.clientX - rect.left);
-    const y = ~~(e.clientY - rect.top);
+    
+    let x = 0;
+    let y = 0;
+
+    switch (e.type) {
+      // PCのマウスなら
+      case "mousemove":
+        x = ~~(e.clientX - rect.left);
+        y = ~~(e.clientY - rect.top);
+        break;
+      // タッチ操作なら
+      case "touchmove":
+        const touch = e.touches[0] || e.changedTouches[0];
+        x = ~~(touch.clientX - rect.left);
+        y = ~~(touch.clientY - rect.top);
+        break;
+    }
+    
     setPressure(e.pressure);
+    console.log(e.pressure)
+    console.log(e.type);
     if (pressure) {
       draw(x, y, pressure);
     } else {
@@ -44,7 +63,7 @@ const Home: NextPage = () => {
 
   // 描画
   const draw = (x: number, y: number, pressure?: number) => {
-    if (!isDrag) { return; }
+    // if (!isDrag) { return; }
     const ctx = getContext();
     ctx.beginPath();
     ctx.globalAlpha = 1.0;
@@ -53,6 +72,7 @@ const Home: NextPage = () => {
     } else {
       ctx.moveTo(lastXPos, lastYPos);
     }
+    console.log(x, y, pressure)
     ctx.lineTo(x, y);
     ctx.lineCap = "round";
     ctx.lineWidth = 2;
@@ -107,8 +127,10 @@ const Home: NextPage = () => {
             id={styles.canvas_background_note}
             className="mx-auto"
             ref={canvasRef}
-            onMouseMove={onMove}
-            onMouseUp={drawEnd}
+            onMouseMove={onMove} // マウス動いた時
+            onMouseUp={drawEnd} // マウスが離れた時
+            onTouchMove={onMove} // タッチで動かしてる時
+            onTouchEnd={drawEnd} // タッチを離した時
             width={"600px"}
             height={"600px"}
           >
