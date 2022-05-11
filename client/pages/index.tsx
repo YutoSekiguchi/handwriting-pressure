@@ -51,9 +51,9 @@ const Home: NextPage = () => {
         break;
     }
     
-    setPressure(e.touches[0].pressure);
+    setPressure(e.touches[0].force);
     console.log(e);
-    console.log(e.touches[0].pressure);
+    console.log(e.touches[0].force);
     console.log(e.pressure)
     console.log(e.type);
     if (pressure) {
