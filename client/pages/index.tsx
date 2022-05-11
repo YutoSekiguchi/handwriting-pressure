@@ -82,15 +82,18 @@ const Home: NextPage = () => {
     const ctx = getContext();
     ctx.beginPath();
     ctx.globalAlpha = 1.0;
-    if (lastXPos === null || lastYPos=== null) {
-      ctx.moveTo(x, y);
-    } else {
+    // if (lastXPos === null || lastYPos=== null) {
+    //   ctx.moveTo(x, y);
+    // } else {
+    //   ctx.moveTo(lastXPos, lastYPos);
+    // }
+    if (lastXPos !== null && lastYPos !== null) {
       ctx.moveTo(lastXPos, lastYPos);
     }
     console.log(x, y, pressure)
     ctx.lineTo(x, y);
     ctx.lineCap = "round";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
     if (pressure != null) {
       if (pressure > 0.5) {
         setRed(200);
@@ -117,6 +120,7 @@ const Home: NextPage = () => {
     setLastXPos(null);
     setLastYPos(null);
     setPressure(null);
+    setRed
     setIsDrag(false);
   }
 
