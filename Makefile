@@ -10,5 +10,8 @@ down-dev:
 start-prod:
 	sudo chmod -R 777 db && docker-compose -f docker-compose.prod.yml up --build -d --remove-orphans
 
+start-pre-prod:
+	docker-compose -f docker-compose.prod.yml up --build -d --remove-orphans
+
 down-prod:
 	docker-compose -f docker-compose.prod.yml down --rmi all
