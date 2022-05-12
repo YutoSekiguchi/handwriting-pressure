@@ -34,6 +34,7 @@ const Home: NextPage = () => {
   // ペンを動かしてる時
   const onMove = (e: React.MouseEvent<HTMLCanvasElement> | any) => {
     console.log(e.buttons);
+    console.log(e.pointerType);
     // if (!isDrag) { return; }
     const canvas: any = canvasRef.current;
     const rect: IRect = canvas.getBoundingClientRect();
@@ -61,6 +62,11 @@ const Home: NextPage = () => {
         x = ~~(touch.clientX - rect.left);
         y = ~~(touch.clientY - rect.top);
         setPressure(e.touches[0].force);
+        break;
+      case "pointermove":
+        x = ~~(e.clientX - rect.left);
+        y = ~~(e.clientY - rect.top);
+        setPressure(e.pressure);
         break;
     }
     
@@ -120,7 +126,6 @@ const Home: NextPage = () => {
     setLastXPos(null);
     setLastYPos(null);
     setPressure(null);
-    setRed
     setIsDrag(false);
   }
 
@@ -150,9 +155,12 @@ const Home: NextPage = () => {
             // onMouseDown={onStart}
             // onMouseMove={onMove} // マウス動いた時
             // onMouseUp={drawEnd} // マウスが離れた時
-            onTouchStart={onStart}
-            onTouchMove={onMove} // タッチで動かしてる時
-            onTouchEnd={drawEnd} // タッチを離した時
+            onPointerDown={onStart}
+            onPointerMove={onMove}
+            onPointerUp={drawEnd}
+            // onTouchStart={onStart}
+            // onTouchMove={onMove} // タッチで動かしてる時
+            // onTouchEnd={drawEnd} // タッチを離した時
             width={"600px"}
             height={"600px"}
           >
