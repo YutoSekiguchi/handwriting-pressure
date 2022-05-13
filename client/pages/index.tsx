@@ -52,6 +52,8 @@ const Home: NextPage = () => {
     let x = 0;
     let y = 0;
     let touch;
+    const lastX = lastXPos;
+    const lastY = lastYPos;
 
     switch (e.type) {
       // PCのマウスなら
@@ -92,7 +94,9 @@ const Home: NextPage = () => {
     // console.log(e.touches[0].force);
     console.log(e.type);
     if (pressure && tiltX && tiltY) {
-      draw(x, y, pressure, tiltX, tiltY);
+      setLastXPos(x);
+      setLastYPos(y);
+      draw(lastX, lastY, x, y, pressure, tiltX, tiltY);
     } else {
       // draw(x, y, 0.3);
       return
@@ -100,19 +104,18 @@ const Home: NextPage = () => {
   }
 
   // 描画
-  const draw = async(x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
+  const draw = async(lastX: number|null, lastY: number|null, x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
     if (!isDrag) { return; }
     const ctx = getContext();
     const BaseLineWidth = 3;
     ctx.beginPath();
     ctx.globalAlpha = 1.0;
-    if (lastXPos === null || lastYPos=== null) {
+    if (lastX === null || lastY=== null) {
       ctx.moveTo(x, y);
     } else {
-      ctx.moveTo(lastXPos, lastYPos);
+      ctx.moveTo(lastX, lastY);
     }
-    setLastXPos(x);
-    setLastYPos(y);
+    
     // if (lastXPos !== null && lastYPos !== null) {
     //   ctx.moveTo(lastXPos, lastYPos);
     // }
