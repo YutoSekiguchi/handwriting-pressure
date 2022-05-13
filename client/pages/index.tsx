@@ -17,16 +17,26 @@ const Home: NextPage = () => {
   const [lastXPos, setLastXPos] = useState<number | null>(null); // 直前のペンのx座標
   const [lastYPos, setLastYPos] = useState<number | null>(null); // 直前のペンのy座標
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
-  const [red, setRed] = useState<number>(0);
-  const [blue, setBlue] = useState<number>(0);
+  const [tiltX, setTiltX] = useState<number | null | undefined>(null); // ペンの傾きx
+  const [tiltY, setTiltY] = useState<number | null | undefined>(null); // ペンの傾きy
+  const [red, setRed] = useState<number>(0); // 赤
+  const [blue, setBlue] = useState<number>(0); // 青
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const canvasRef = useRef(null);
+
+  const EpenButton = {
+    tip: 0x1,    // left mouse, touch contact, pen contact
+    barrel: 0x2, // right mouse, pen barrel button
+    middle: 0x4, // middle mouse
+    eraser: 0x20 // pen eraser button
+  }
 
   const getContext = (): CanvasRenderingContext2D => {
     const canvas: any = canvasRef.current;
     return canvas.getContext('2d');
   }
 
+  // ペンがノートに触れ始めた時の処理
   const onStart = () => {
     setIsDrag(true);
   }
@@ -67,6 +77,13 @@ const Home: NextPage = () => {
         x = ~~(e.clientX - rect.left);
         y = ~~(e.clientY - rect.top);
         setPressure(e.pressure);
+        if (e.pointerType && e.pointerType === "pen") { // ペンの傾き取得
+          setTiltX(e.tiltX);
+          setTiltY(e.tiltY);
+        } else {
+          setTiltX(1);
+          setTiltY(1);
+        }
         break;
     }
     
@@ -74,8 +91,8 @@ const Home: NextPage = () => {
     console.log(e);
     // console.log(e.touches[0].force);
     console.log(e.type);
-    if (pressure) {
-      draw(x, y, pressure);
+    if (pressure && tiltX && tiltY) {
+      draw(x, y, pressure, tiltX, tiltY);
     } else {
       // draw(x, y, 0.3);
       return
@@ -83,9 +100,10 @@ const Home: NextPage = () => {
   }
 
   // 描画
-  const draw = (x: number, y: number, pressure?: number) => {
+  const draw = (x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
     if (!isDrag) { return; }
     const ctx = getContext();
+    const BaseLineWidth = 3;
     ctx.beginPath();
     ctx.globalAlpha = 1.0;
     // if (lastXPos === null || lastYPos=== null) {
@@ -99,7 +117,8 @@ const Home: NextPage = () => {
     console.log(x, y, pressure)
     ctx.lineTo(x, y);
     ctx.lineCap = "round";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = (pressure && tx)? (pressure * BaseLineWidth * tx): BaseLineWidth;  
+
     if (pressure != null) {
       if (pressure > 0.5) {
         setRed(200);
@@ -143,7 +162,7 @@ const Home: NextPage = () => {
       
       <main>
         <h1 className="text-center text-cyan-600 my-5">
-          筆圧テスト（{pressure}）
+          筆圧テスト（今の筆圧は{pressure}）
         </h1>
 
 
