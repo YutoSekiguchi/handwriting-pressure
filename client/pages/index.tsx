@@ -24,6 +24,9 @@ const Home: NextPage = () => {
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const canvasRef = useRef(null);
 
+  var lastx: any = null;
+  var lasty: any = null;
+
   const EpenButton = {
     tip: 0x1,    // left mouse, touch contact, pen contact
     barrel: 0x2, // right mouse, pen barrel button
@@ -42,7 +45,7 @@ const Home: NextPage = () => {
   }
 
   // ペンを動かしてる時
-  const onMove = (e: React.MouseEvent<HTMLCanvasElement> | any) => {
+  const onMove = async(e: React.MouseEvent<HTMLCanvasElement> | any) => {
     console.log(e.buttons);
     console.log(e.pointerType);
     // if (!isDrag) { return; }
@@ -100,7 +103,7 @@ const Home: NextPage = () => {
   }
 
   // 描画
-  const draw = (x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
+  const draw = async(x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
     if (!isDrag) { return; }
     const ctx = getContext();
     const BaseLineWidth = 3;
@@ -111,8 +114,11 @@ const Home: NextPage = () => {
     // } else {
     //   ctx.moveTo(lastXPos, lastYPos);
     // }
-    if (lastXPos !== null && lastYPos !== null) {
-      ctx.moveTo(lastXPos, lastYPos);
+    // if (lastXPos !== null && lastYPos !== null) {
+    //   ctx.moveTo(lastXPos, lastYPos);
+    // }
+    if (lastx !== null && lasty !== null) {
+      ctx.moveTo(lastx, lasty);
     }
     console.log(x, y, pressure)
     ctx.lineTo(x, y);
@@ -138,6 +144,8 @@ const Home: NextPage = () => {
     ctx.stroke();
     setLastXPos(x);
     setLastYPos(y);
+    lastx = x;
+    lasty = y;
   }
 
   // 描画終了
@@ -146,6 +154,8 @@ const Home: NextPage = () => {
     setLastYPos(null);
     setPressure(null);
     setIsDrag(false);
+    lastx = null;
+    lasty = null;
   }
 
   useEffect(() => {
