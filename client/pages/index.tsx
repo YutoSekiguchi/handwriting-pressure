@@ -117,7 +117,7 @@ const Home: NextPage = () => {
     console.log(x, y, pressure)
     ctx.lineTo(x, y);
     ctx.lineCap = "round";
-    ctx.lineWidth = (pressure && tx)? (pressure * BaseLineWidth * tx): BaseLineWidth;  
+    ctx.lineWidth = (pressure && tx)? (pressure * BaseLineWidth * ((tx+1)/30)): BaseLineWidth;  
 
     if (pressure != null) {
       if (pressure > 0.5) {
