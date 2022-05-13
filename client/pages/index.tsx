@@ -134,7 +134,7 @@ const Home: NextPage = () => {
       setRed(50);
       setBlue(50);
     }
-    ctx.strokeStyle = `rgba(${red}, 50, ${blue}, 0.8)`;
+    ctx.strokeStyle = `rgb(${red}, 50, ${blue})`;
     ctx.stroke();
     setLastXPos(x);
     setLastYPos(y);
