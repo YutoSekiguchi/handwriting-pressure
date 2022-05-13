@@ -111,6 +111,8 @@ const Home: NextPage = () => {
     } else {
       ctx.moveTo(lastXPos, lastYPos);
     }
+    setLastXPos(x);
+    setLastYPos(y);
     // if (lastXPos !== null && lastYPos !== null) {
     //   ctx.moveTo(lastXPos, lastYPos);
     // }
@@ -136,8 +138,6 @@ const Home: NextPage = () => {
     }
     ctx.strokeStyle = `rgb(${red}, 50, ${blue})`;
     ctx.stroke();
-    setLastXPos(x);
-    setLastYPos(y);
   }
 
   // 描画終了
