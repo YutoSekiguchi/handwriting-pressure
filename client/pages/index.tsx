@@ -24,9 +24,6 @@ const Home: NextPage = () => {
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const canvasRef = useRef(null);
 
-  var lastx: any = null;
-  var lasty: any = null;
-
   const EpenButton = {
     tip: 0x1,    // left mouse, touch contact, pen contact
     barrel: 0x2, // right mouse, pen barrel button
@@ -109,20 +106,17 @@ const Home: NextPage = () => {
     const BaseLineWidth = 3;
     ctx.beginPath();
     ctx.globalAlpha = 1.0;
-    // if (lastXPos === null || lastYPos=== null) {
-    //   ctx.moveTo(x, y);
-    // } else {
-    //   ctx.moveTo(lastXPos, lastYPos);
-    // }
+    if (lastXPos === null || lastYPos=== null) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.moveTo(lastXPos, lastYPos);
+    }
     // if (lastXPos !== null && lastYPos !== null) {
     //   ctx.moveTo(lastXPos, lastYPos);
     // }
-    if (lastx !== null && lasty !== null) {
-      ctx.moveTo(lastx, lasty);
-    }
     console.log(x, y, pressure)
     ctx.lineTo(x, y);
-    // ctx.lineCap = "round";
+    ctx.lineCap = "round";
     ctx.lineWidth = BaseLineWidth;  
 
     if (pressure != null) {
@@ -144,8 +138,6 @@ const Home: NextPage = () => {
     ctx.stroke();
     setLastXPos(x);
     setLastYPos(y);
-    lastx = x;
-    lasty = y;
   }
 
   // 描画終了
@@ -154,8 +146,6 @@ const Home: NextPage = () => {
     setLastYPos(null);
     setPressure(null);
     setIsDrag(false);
-    lastx = null;
-    lasty = null;
   }
 
   useEffect(() => {
