@@ -16,6 +16,10 @@ const Home: NextPage = () => {
 
   const [lastXPos, setLastXPos] = useState<number | null>(null); // 直前のペンのx座標
   const [lastYPos, setLastYPos] = useState<number | null>(null); // 直前のペンのy座標
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  const [xPos, setXPos] = useState<number>(0); // 直前のペンのx座標
+  const [yPos, setYPos] = useState<number>(0); // 直前のペンのy座標
+  /////////////////////////////////////////////////////////////////////////////////////////////
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
   const [tiltX, setTiltX] = useState<number | null | undefined>(null); // ペンの傾きx
   const [tiltY, setTiltY] = useState<number | null | undefined>(null); // ペンの傾きy
@@ -43,8 +47,6 @@ const Home: NextPage = () => {
 
   // ペンを動かしてる時
   const onMove = async(e: React.MouseEvent<HTMLCanvasElement> | any) => {
-    console.log(e.buttons);
-    console.log(e.pointerType);
     // if (!isDrag) { return; }
     const canvas: any = canvasRef.current;
     const rect: IRect = canvas.getBoundingClientRect();
@@ -52,8 +54,6 @@ const Home: NextPage = () => {
     let x = 0;
     let y = 0;
     let touch;
-    const lastX = lastXPos;
-    const lastY = lastYPos;
 
     switch (e.type) {
       // PCのマウスなら
@@ -78,6 +78,10 @@ const Home: NextPage = () => {
       case "pointermove":
         x = ~~(e.clientX - rect.left);
         y = ~~(e.clientY - rect.top);
+        //////////////////////////////////////////
+        setXPos(x);
+        setYPos(y);
+        ////////////////////////////////////////
         setPressure(e.pressure);
         if (e.pointerType && e.pointerType === "pen") { // ペンの傾き取得
           setTiltX(e.tiltX);
@@ -94,9 +98,7 @@ const Home: NextPage = () => {
     // console.log(e.touches[0].force);
     console.log(e.type);
     if (pressure && tiltX && tiltY) {
-      setLastXPos(x);
-      setLastYPos(y);
-      draw(lastX, lastY, x, y, pressure, tiltX, tiltY);
+      draw(x, y, pressure, tiltX, tiltY);
     } else {
       // draw(x, y, 0.3);
       return
@@ -104,23 +106,70 @@ const Home: NextPage = () => {
   }
 
   // 描画
-  const draw = async(lastX: number|null, lastY: number|null, x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
+  const draw = async(x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
+    // if (!isDrag) { return; }
+    // const ctx = getContext();
+    // const BaseLineWidth = 3;
+    // ctx.beginPath();
+    // ctx.globalAlpha = 1.0;
+    // if (lastXPos === null || lastYPos=== null) {
+    //   ctx.moveTo(x, y);
+    // } else {
+    //   ctx.moveTo(lastXPos, lastYPos);
+    // }
+    // // if (lastXPos !== null && lastYPos !== null) {
+    // //   ctx.moveTo(lastXPos, lastYPos);
+    // // }
+    // console.log(x, y, pressure)
+    // ctx.lineTo(x, y);
+    // ctx.lineCap = "round";
+    // ctx.lineWidth = BaseLineWidth;  
+
+    // if (pressure != null) {
+    //   if (pressure > 0.5) {
+    //     setRed(200);
+    //     setBlue(50);
+    //   } else if (pressure < 0.15) {
+    //     setRed(50);
+    //     setBlue(200);
+    //   } else {
+    //     setRed(50);
+    //     setBlue(50);
+    //   }
+    // } else {
+    //   setRed(50);
+    //   setBlue(50);
+    // }
+    // ctx.strokeStyle = `rgb(${red}, 50, ${blue})`;
+    // ctx.stroke();
+    // setLastXPos(x);
+    // setLastYPos(y);
+  }
+
+  // 描画終了
+  const drawEnd = () => {
+    setIsDrag(false);
+    setPressure(null);
+    setLastXPos(null);
+    setLastYPos(null);
+    setXPos(0);
+    setYPos(0);
+  }
+
+  useEffect(() => {
     if (!isDrag) { return; }
     const ctx = getContext();
     const BaseLineWidth = 3;
     ctx.beginPath();
     ctx.globalAlpha = 1.0;
-    if (lastX === null || lastY=== null) {
-      ctx.moveTo(x, y);
+    if (lastXPos === null || lastYPos === null) {
+      ctx.moveTo(xPos, yPos);
     } else {
-      ctx.moveTo(lastX, lastY);
+      ctx.moveTo(lastXPos, lastYPos);
     }
-    
-    // if (lastXPos !== null && lastYPos !== null) {
-    //   ctx.moveTo(lastXPos, lastYPos);
-    // }
-    console.log(x, y, pressure)
-    ctx.lineTo(x, y);
+    console.log(xPos, yPos, pressure)
+    console.log(lastXPos, lastYPos)
+    ctx.lineTo(xPos, yPos);
     ctx.lineCap = "round";
     ctx.lineWidth = BaseLineWidth;  
 
@@ -141,18 +190,9 @@ const Home: NextPage = () => {
     }
     ctx.strokeStyle = `rgb(${red}, 50, ${blue})`;
     ctx.stroke();
-  }
-
-  // 描画終了
-  const drawEnd = () => {
-    setLastXPos(null);
-    setLastYPos(null);
-    setPressure(null);
-    setIsDrag(false);
-  }
-
-  useEffect(() => {
-  })
+    setLastXPos(xPos);
+    setLastYPos(yPos);
+  }, [xPos, yPos])
 
   return (
     <div className={styles.container}>
