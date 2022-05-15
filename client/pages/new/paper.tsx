@@ -38,7 +38,7 @@ const NewPaper: NextPage = () => {
         type: 'MATH',
         // protocol: 'WEB_SOCKET',
         server: {
-          scheme: 'http',
+          scheme: 'https',
           host: 'webdemoapi.myscript.com',
           applicationKey: '0cb2ba66-0cf7-4111-a8e6-1de15333fde5',
           hmacKey: 'c24c4d63-0135-4218-a629-efc2ab21bb57'
