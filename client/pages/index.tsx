@@ -27,7 +27,7 @@ const Home: NextPage = () => {
   const [blue, setBlue] = useState<number>(0); // 青
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const canvasRef = useRef(null);
-  const BaseLineWidth = 10; // 線の太さ（基準）
+  const BaseLineWidth = 7; // 線の太さ（基準）
 
   const EpenButton = {
     tip: 0x1,    // left mouse, touch contact, pen contact
@@ -180,7 +180,7 @@ const Home: NextPage = () => {
 
       ctx.lineTo(xPos, yPos);
       ctx.lineCap = "round";
-      ctx.lineWidth = pressure? BaseLineWidth * pressure - (vx+vy)/100: BaseLineWidth;  
+      ctx.lineWidth = pressure? BaseLineWidth - (vx+vy)/80: BaseLineWidth;  
 
       if (pressure != null) {
         if (pressure > 0.5) {
