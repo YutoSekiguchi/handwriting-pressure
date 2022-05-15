@@ -77,6 +77,8 @@ const Home: NextPage = () => {
         setPressure(e.touches[0].force);
         break;
       case "pointermove":
+        console.log(rect.left);
+        console.log(rect.bottom);
         x = ~~(e.clientX - rect.left)*3;
         y = ~~(e.clientY - rect.top)*3;
         //////////////////////////////////////////
@@ -157,6 +159,13 @@ const Home: NextPage = () => {
     setYPos(0);
   }
 
+  const midPointBetween = (lastX: number, lastY: number, posX: number, posY: number) => {
+    return {
+      x: lastX + (posX - lastX)/2,
+      y: lastY + (posY - lastY)/2
+    }
+  }
+
   useEffect(() => {
     // 描画
     const draw = () => {
@@ -171,16 +180,27 @@ const Home: NextPage = () => {
         ctx.moveTo(lastXPos, lastYPos);
       }
       console.log(xPos, yPos, pressure)
-      console.log(lastXPos, lastYPos)
+      console.log('last', lastXPos, lastYPos)
+
+      if (lastXPos && lastYPos) {
+        const midPoint = midPointBetween(lastXPos, lastYPos, xPos, yPos);
+        console.log('mid', midPoint)
+        ctx.quadraticCurveTo(lastXPos, lastYPos, midPoint.x, midPoint.y);
+        
+        // ctx.quadraticCurveTo(midPoint.x, midPoint.y, xPos, yPos);
+      }
       
       const vx: number = lastXPos? ~~(Math.abs(xPos - lastXPos))+1: 1; // ペンxの速度
       const vy: number = lastYPos? ~~(Math.abs(yPos - lastYPos))+1: 1; // ペンyの速度
-      console.log('vx', vx);
-      console.log('vy', vy);
 
+      console.log("aaaaa", (vx+vy)/80);
+      
       ctx.lineTo(xPos, yPos);
+      
       ctx.lineCap = "round";
-      ctx.lineWidth = pressure? BaseLineWidth - (vx+vy)/80: BaseLineWidth;  
+      
+      const minusLineWidth = (vx+vy)/80 < 5 ? (vx+vy)/80: 5;
+      ctx.lineWidth = pressure? BaseLineWidth - minusLineWidth: BaseLineWidth;  
 
       if (pressure != null) {
         if (pressure > 0.5) {
@@ -235,8 +255,8 @@ const Home: NextPage = () => {
             // onTouchStart={onStart}
             // onTouchMove={onMove} // タッチで動かしてる時
             // onTouchEnd={drawEnd} // タッチを離した時
-            width={"1800px"}
-            height={"1800px"}
+            width={"2700px"}
+            height={"2700px"}
           >
             Your browser does not support the canvas element.
           </canvas>

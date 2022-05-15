@@ -19,8 +19,8 @@
   background-size: 100% 2.5em; /* 行の高さ */
   line-height: 2.5em; /* 文字の高さ */
   padding-bottom: 1px; /* 最終行の下にも罫線を引く */
-  width: 600px;
-  height: 600px;
+  width: 900px;
+  height: 900px;
 }
 
 .footer {
