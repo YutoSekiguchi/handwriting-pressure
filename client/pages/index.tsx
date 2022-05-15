@@ -17,8 +17,8 @@ const Home: NextPage = () => {
   const [lastXPos, setLastXPos] = useState<number | null>(null); // 直前のペンのx座標
   const [lastYPos, setLastYPos] = useState<number | null>(null); // 直前のペンのy座標
   //////////////////////////////////////////////////////////////////////////////////////////////////
-  const [xPos, setXPos] = useState<number>(0); // 直前のペンのx座標
-  const [yPos, setYPos] = useState<number>(0); // 直前のペンのy座標
+  const [xPos, setXPos] = useState<number>(0); // ペンのx座標
+  const [yPos, setYPos] = useState<number>(0); // ペンのy座標
   /////////////////////////////////////////////////////////////////////////////////////////////
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
   const [tiltX, setTiltX] = useState<number | null | undefined>(null); // ペンの傾きx
@@ -27,6 +27,7 @@ const Home: NextPage = () => {
   const [blue, setBlue] = useState<number>(0); // 青
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const canvasRef = useRef(null);
+  const BaseLineWidth = 10; // 線の太さ（基準）
 
   const EpenButton = {
     tip: 0x1,    // left mouse, touch contact, pen contact
@@ -76,8 +77,8 @@ const Home: NextPage = () => {
         setPressure(e.touches[0].force);
         break;
       case "pointermove":
-        x = ~~(e.clientX - rect.left);
-        y = ~~(e.clientY - rect.top);
+        x = ~~(e.clientX - rect.left)*3;
+        y = ~~(e.clientY - rect.top)*3;
         //////////////////////////////////////////
         setXPos(x);
         setYPos(y);
@@ -97,54 +98,54 @@ const Home: NextPage = () => {
     console.log(e);
     // console.log(e.touches[0].force);
     console.log(e.type);
-    if (pressure && tiltX && tiltY) {
-      draw(x, y, pressure, tiltX, tiltY);
-    } else {
-      // draw(x, y, 0.3);
-      return
-    }
+    // if (pressure && tiltX && tiltY) {
+    //   // draw(x, y, pressure, tiltX, tiltY);
+    // } else {
+    //   // draw(x, y, 0.3);
+    //   return
+    // }
   }
 
   // 描画
-  const draw = async(x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
-    // if (!isDrag) { return; }
-    // const ctx = getContext();
-    // const BaseLineWidth = 3;
-    // ctx.beginPath();
-    // ctx.globalAlpha = 1.0;
-    // if (lastXPos === null || lastYPos=== null) {
-    //   ctx.moveTo(x, y);
-    // } else {
-    //   ctx.moveTo(lastXPos, lastYPos);
-    // }
-    // // if (lastXPos !== null && lastYPos !== null) {
-    // //   ctx.moveTo(lastXPos, lastYPos);
-    // // }
-    // console.log(x, y, pressure)
-    // ctx.lineTo(x, y);
-    // ctx.lineCap = "round";
-    // ctx.lineWidth = BaseLineWidth;  
+  // const draw = async(x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
+  //   // if (!isDrag) { return; }
+  //   // const ctx = getContext();
+  //   // const BaseLineWidth = 3;
+  //   // ctx.beginPath();
+  //   // ctx.globalAlpha = 1.0;
+  //   // if (lastXPos === null || lastYPos=== null) {
+  //   //   ctx.moveTo(x, y);
+  //   // } else {
+  //   //   ctx.moveTo(lastXPos, lastYPos);
+  //   // }
+  //   // // if (lastXPos !== null && lastYPos !== null) {
+  //   // //   ctx.moveTo(lastXPos, lastYPos);
+  //   // // }
+  //   // console.log(x, y, pressure)
+  //   // ctx.lineTo(x, y);
+  //   // ctx.lineCap = "round";
+  //   // ctx.lineWidth = BaseLineWidth;  
 
-    // if (pressure != null) {
-    //   if (pressure > 0.5) {
-    //     setRed(200);
-    //     setBlue(50);
-    //   } else if (pressure < 0.15) {
-    //     setRed(50);
-    //     setBlue(200);
-    //   } else {
-    //     setRed(50);
-    //     setBlue(50);
-    //   }
-    // } else {
-    //   setRed(50);
-    //   setBlue(50);
-    // }
-    // ctx.strokeStyle = `rgb(${red}, 50, ${blue})`;
-    // ctx.stroke();
-    // setLastXPos(x);
-    // setLastYPos(y);
-  }
+  //   // if (pressure != null) {
+  //   //   if (pressure > 0.5) {
+  //   //     setRed(200);
+  //   //     setBlue(50);
+  //   //   } else if (pressure < 0.15) {
+  //   //     setRed(50);
+  //   //     setBlue(200);
+  //   //   } else {
+  //   //     setRed(50);
+  //   //     setBlue(50);
+  //   //   }
+  //   // } else {
+  //   //   setRed(50);
+  //   //   setBlue(50);
+  //   // }
+  //   // ctx.strokeStyle = `rgb(${red}, 50, ${blue})`;
+  //   // ctx.stroke();
+  //   // setLastXPos(x);
+  //   // setLastYPos(y);
+  // }
 
   // 描画終了
   const drawEnd = () => {
@@ -157,41 +158,52 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
-    if (!isDrag) { return; }
-    const ctx = getContext();
-    const BaseLineWidth = 3;
-    ctx.beginPath();
-    ctx.globalAlpha = 1.0;
-    if (lastXPos === null || lastYPos === null) {
-      ctx.moveTo(xPos, yPos);
-    } else {
-      ctx.moveTo(lastXPos, lastYPos);
-    }
-    console.log(xPos, yPos, pressure)
-    console.log(lastXPos, lastYPos)
-    ctx.lineTo(xPos, yPos);
-    ctx.lineCap = "round";
-    ctx.lineWidth = BaseLineWidth;  
-
-    if (pressure != null) {
-      if (pressure > 0.5) {
-        setRed(200);
-        setBlue(50);
-      } else if (pressure < 0.15) {
-        setRed(50);
-        setBlue(200);
+    // 描画
+    const draw = () => {
+      if (!isDrag) { return; }
+      const ctx = getContext();
+      
+      ctx.beginPath();
+      ctx.globalAlpha = 1.0;
+      if (lastXPos === null || lastYPos === null) {
+        ctx.moveTo(xPos, yPos);
       } else {
-        setRed(50);
-        setBlue(50);
+        ctx.moveTo(lastXPos, lastYPos);
       }
-    } else {
-      setRed(50);
-      setBlue(50);
-    }
-    ctx.strokeStyle = `rgb(${red}, 50, ${blue})`;
-    ctx.stroke();
-    setLastXPos(xPos);
-    setLastYPos(yPos);
+      console.log(xPos, yPos, pressure)
+      console.log(lastXPos, lastYPos)
+      
+      const vx: number = lastXPos? ~~(Math.abs(xPos - lastXPos))+1: 1; // ペンxの速度
+      const vy: number = lastYPos? ~~(Math.abs(yPos - lastYPos))+1: 1; // ペンyの速度
+      console.log('vx', vx);
+      console.log('vy', vy);
+
+      ctx.lineTo(xPos, yPos);
+      ctx.lineCap = "round";
+      ctx.lineWidth = pressure? BaseLineWidth * pressure - (vx+vy)/100: BaseLineWidth;  
+
+      if (pressure != null) {
+        if (pressure > 0.5) {
+          setRed(200);
+          setBlue(0);
+        } else if (pressure < 0.15) {
+          setRed(0);
+          setBlue(200);
+        } else {
+          setRed(0);
+          setBlue(0);
+        }
+      } else {
+        setRed(0);
+        setBlue(0);
+      }
+      ctx.strokeStyle = `rgb(${red}, 0, ${blue})`;
+      ctx.stroke();
+      setLastXPos(xPos);
+      setLastYPos(yPos);
+    };
+
+    draw();
   }, [xPos, yPos])
 
   return (
@@ -204,12 +216,12 @@ const Home: NextPage = () => {
 
       
       <main>
-        <h1 className="text-center text-cyan-600 my-5">
+        <h1 className="my-5 text-center text-cyan-600">
           筆圧テスト（今の筆圧は{pressure}）
         </h1>
 
 
-        <div className="mainCanvasBox my-16">
+        <div className="my-16 mainCanvasBox">
           <canvas 
             id={styles.canvas_background_note}
             className="mx-auto"
@@ -217,14 +229,14 @@ const Home: NextPage = () => {
             // onMouseDown={onStart}
             // onMouseMove={onMove} // マウス動いた時
             // onMouseUp={drawEnd} // マウスが離れた時
-            onPointerDown={onStart}
-            onPointerMove={onMove}
-            onPointerUp={drawEnd}
+            onPointerDown={onStart} // ポインター置くとき
+            onPointerMove={onMove} // ポインター動いた時
+            onPointerUp={drawEnd} // ポインター離した時
             // onTouchStart={onStart}
             // onTouchMove={onMove} // タッチで動かしてる時
             // onTouchEnd={drawEnd} // タッチを離した時
-            width={"600px"}
-            height={"600px"}
+            width={"1800px"}
+            height={"1800px"}
           >
             Your browser does not support the canvas element.
           </canvas>
