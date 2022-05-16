@@ -19,7 +19,7 @@ const NewPaper: NextPage = () => {
 
   const onMove = (e: any) => {
     let editor: any = editorRef.current;
-    console.log(e.target.value)
+    console.log(e.pressure);
     console.log(e);
   }
 
