@@ -508,19 +508,22 @@ const Home: NextPage = () => {
       console.log('avgPressure', avgPressure)
       console.log(e)
       console.log(e.pointerType)
-      switch (e.pointerType) {
-        // PCのマウスなら（マウスはPCで試しやすくするためにランダムに）
-        case "mouse":
-          pressureArray.push(Math.random());
-          break;
-        // タッチ操作なら
-        case "touch":
-          pressureArray.push(avgPressure);
-          break;
-        // ペン操作なら
-        case "pen":
-          pressureArray.push(avgPressure);
-          break;
+      const pressureArrayLength = pressureArray.length;
+      while (pressureArray.length==pressureArrayLength) {
+        switch (e.pointerType) {
+          // PCのマウスなら（マウスはPCで試しやすくするためにランダムに）
+          case "mouse":
+            pressureArray.push(Math.random());
+            break;
+          // タッチ操作なら
+          case "touch":
+            pressureArray.push(avgPressure);
+            break;
+          // ペン操作なら
+          case "pen":
+            pressureArray.push(avgPressure);
+            break;
+        }
       }
     }
     console.log('pressureArray', pressureArray)
@@ -624,7 +627,7 @@ const Home: NextPage = () => {
       <div className="Canvas w-full h-full">
         <canvas 
           ref={canvasRef}
-          style={{ backgroundColor: "#fff", backgroundImage: 'linear-gradient(180deg, #ccc 1px, transparent 1px)', backgroundSize: "100% 2.5em"}}
+          style={{ backgroundColor: "#fff", backgroundImage: 'linear-gradient(180deg, #ccc 1px, transparent 1px)', backgroundSize: "100% 4em"}}
           id="drawingCanvas"
           width="800px" 
           height="1000px"
