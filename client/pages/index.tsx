@@ -577,7 +577,7 @@ const Home: NextPage = () => {
 
   // 筆圧によった削除方法
   const handleDeleteRowPressureStroke = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const boundaryValue: number = Number(e.target.value) / 10000;
+    let boundaryValue: number = Number(e.target.value) / 10000;
     json =  Paper.project.exportJSON({ asString: false })
     let pressureDiff: number = 0;
     for (let i=0; i<pressureArray.length; i++) {
@@ -601,6 +601,22 @@ const Home: NextPage = () => {
     }
     Paper.project.clear()
     Paper.project.importJSON(json)
+    setTimeout(() => {
+      boundaryValue = Number(e.target.value) / 10000;
+      json =  Paper.project.exportJSON({ asString: false })
+      for (let i=0; i<pressureArray.length; i++) {
+        pressureDiff = pressureArray[i] - (1-boundaryValue);
+        if (pressureDiff < 0.2 && pressureDiff > 0) {
+          if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
+            json[0][1]["children"][i][1].strokeColor.push(1)
+          } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
+            json[0][1]["children"][i][1].strokeColor[3] = 1
+          }
+        }
+      }
+      Paper.project.clear()
+      Paper.project.importJSON(json)
+    }, 3000)
   }
 
 	useEffect(() =>{
