@@ -1,6 +1,6 @@
 FROM node:15.8
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 EXPOSE 3000
 
