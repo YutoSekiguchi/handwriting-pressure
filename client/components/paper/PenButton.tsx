@@ -30,7 +30,7 @@ const PenButton: NextPage<Props> = (props) => {
 
 	return (
 		<>
-      <button id="dropdownButton" data-dropdown-toggle="dropdown" className="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none font-medium rounded-full text-sm px-2 py-2 text-center inline-flex items-center dark:bg-gray-300 dark:hover:bg-gray-400" type="button" onClick={() => setDropdownOpen(!dropdownOpen)}>
+      <button id="dropdownButton" data-dropdown-toggle="dropdown" className="text-white bg-gray-300 hover:bg-gray-400 focus:outline-none font-medium rounded-full text-sm px-2 py-2 text-center inline-flex items-center dark:bg-gray-300 dark:hover:bg-gray-400" type="button" onClick={() => setDropdownOpen(!dropdownOpen)}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{color: "#444"}}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
         </svg>
