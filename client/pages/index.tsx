@@ -523,6 +523,8 @@ const Home: NextPage = () => {
           case "pen":
             pressureArray.push(avgPressure);
             break;
+          default:
+            pressureArray.push(avgPressure);
         }
       }
     }
