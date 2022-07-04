@@ -642,6 +642,7 @@ const Home: NextPage = () => {
         undoable={undoable} 
         redoable={redoable} 
       />
+      {pressure}
       <div className="Canvas w-full h-full">
         <canvas 
           ref={canvasRef}
