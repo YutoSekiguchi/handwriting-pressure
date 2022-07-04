@@ -642,18 +642,17 @@ const Home: NextPage = () => {
         undoable={undoable} 
         redoable={redoable} 
       />
-      {pressure}
       <div className="Canvas w-full h-full">
         <canvas 
           ref={canvasRef}
-          style={{ backgroundColor: "#fff", backgroundImage: 'linear-gradient(180deg, #ccc 1px, transparent 1px)', backgroundSize: "100% 4em"}}
+          style={{ backgroundColor: "#fff", backgroundImage: 'linear-gradient(180deg, #ccc 1px, transparent 1px)', backgroundSize: "100% 4em", touchAction: "none"}}
           id="drawingCanvas"
           width="800px" 
           height="1000px"
           className="canvas_background_note mx-auto max-w-full max-h-full" 
           onPointerDown={pointerDown}
           onPointerMove={pointerMove}
-          onPointerUp={pointerUp} 
+          onPointerUp={pointerUp}
         />
 
         {/* 書いてる時の筆圧のゲージ */}
