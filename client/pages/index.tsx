@@ -654,9 +654,6 @@ const Home: NextPage = () => {
           onPointerDownCapture={pointerDown}
           onPointerMoveCapture={pointerMove}
           onPointerUpCapture={pointerUp}
-          onTouchStartCapture={pointerDown}
-          onTouchMoveCapture={pointerMove}
-          onTouchEndCapture={pointerUp}
         />
 
         {/* 書いてる時の筆圧のゲージ */}
