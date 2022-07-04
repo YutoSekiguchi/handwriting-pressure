@@ -503,6 +503,7 @@ const Home: NextPage = () => {
   const pointerUp = (e: any) => {
     setIsDrag(false);
     console.log(pressure);
+    alert(pressure)
     if (pressure) {
       let avgPressure = pressure/count;
       console.log('avgPressure', avgPressure)
@@ -528,7 +529,6 @@ const Home: NextPage = () => {
         }
       }
     }
-    alert(pressure)
     console.log('pressureArray', pressureArray)
     setPressure(null);
     setUndoable(true);
