@@ -488,7 +488,6 @@ const Home: NextPage = () => {
 
   const pointerMove = (e: any) => {
     if (!isDrag) { return }
-    alert(e.pressure)
     console.log(e.pressure)
     console.log("これみたい", e);
     if (e.pressure != 0) {
