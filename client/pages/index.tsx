@@ -528,6 +528,7 @@ const Home: NextPage = () => {
         }
       }
     }
+    alert(pressure)
     console.log('pressureArray', pressureArray)
     setPressure(null);
     setUndoable(true);
