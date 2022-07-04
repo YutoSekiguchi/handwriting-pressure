@@ -650,9 +650,9 @@ const Home: NextPage = () => {
           width="800px" 
           height="1000px"
           className="canvas_background_note mx-auto max-w-full max-h-full" 
-          onPointerDown={pointerDown}
-          onPointerMove={pointerMove}
-          onPointerUp={pointerUp}
+          onPointerDownCapture={pointerDown}
+          onPointerMoveCapture={pointerMove}
+          onPointerUpCapture={pointerUp}
         />
 
         {/* 書いてる時の筆圧のゲージ */}
