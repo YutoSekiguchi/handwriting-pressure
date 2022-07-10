@@ -44,6 +44,7 @@ const Home: NextPage = () => {
   const [canvasWidth, setCanvasWidth] = useState<number>(800);
   const [canvasHeight, setCanvasHeight] = useState<number>(800);
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
+  const [boundaryPressureValue, setBoundaryPressureValue] = useState<number>(1);
   const canvasRef = useRef(null);
 
   
@@ -618,7 +619,8 @@ const Home: NextPage = () => {
       }
       Paper.project.clear()
       Paper.project.importJSON(json)
-    }, 3000)
+      setBoundaryPressureValue(boundaryValue);
+    }, 2000)
   }
 
 	useEffect(() =>{
@@ -640,7 +642,7 @@ const Home: NextPage = () => {
         undo={normalUndo} 
         redo={normalRedo} 
         undoable={undoable} 
-        redoable={redoable} 
+        redoable={redoable}
       />
       <div className="Canvas w-full h-full">
         <canvas 
