@@ -34,7 +34,7 @@ const PaperHeader: NextPage<Props> = (props) => {
 	useEffect(() =>{
 	}, []);
 	return (
-		<div className="PaperHeader bg-slate-200 w-full h-12 mb-5 flex">
+		<div className="PaperHeader fixed bg-slate-200 w-full h-12 mb-5 flex">
       <div className='LeftSide flex justify-center ml-3'>
         <BackButton buttonText='戻る' />
       </div>
