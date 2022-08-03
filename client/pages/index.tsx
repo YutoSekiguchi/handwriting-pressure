@@ -41,7 +41,8 @@ const Home: NextPage = () => {
   const [width, setWidth] = useState<number>(1.7); // 線の太さ
   const [undoable, setUndoable] = useState<boolean>(false); // undo可否
   const [redoable, setRedoable] = useState<boolean>(false); // redo可否
-  const [historyList, setHistoryList] = useState<any[]>([]); // 筆跡の履歴管理
+  const [historyList, setHistoryList] = useState<any[]>([]); // 筆跡の履歴管理（undo用）
+  const [redoHistoryList, setRedoHistoryList] = useState<any[]>([]); // undoされたものを管理（redo用）
   const [canvasWidth, setCanvasWidth] = useState<number>(800);
   const [canvasHeight, setCanvasHeight] = useState<number>(800);
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
@@ -410,7 +411,7 @@ const Home: NextPage = () => {
   let tmpGroup: any;
   let mask: any;
 
-	let draw = () => {
+	const draw = () => {
     Paper.view.onMouseDown = () => {
       
       path = new paper.Path();
@@ -438,9 +439,7 @@ const Home: NextPage = () => {
       
       let ctx = canvas.getContext("2d");
       const imageData = ctx.getImageData(0, 0, 1600, 1600);
-      // console.log(imageData)
       
-      // console.log("bbb", raster.getImageData(0, 0, 1600, 1600))
 		};
 		Paper.view.onMouseDrag = (event: any) => {
 			path.add(event.point);
@@ -451,8 +450,7 @@ const Home: NextPage = () => {
 			clearInterval(interval);
       json =  Paper.project.exportJSON({ asString: false })
       console.log("aaa", json)
-      // setHistoryList((prevHistoryList) => ([ ...prevHistoryList, 'baz' ]))
-      // console.log(historyList);
+      setHistoryList((prevHistoryList) => ([ ...prevHistoryList, json ]))
       // json[0][1]['children'][1][1].strokeColor.push(0.3)
       // imageData.position = new paper.Point(100, 100);
 		};
@@ -494,6 +492,10 @@ const Home: NextPage = () => {
 
   const pointerDown = () => {
     setIsDrag(true);
+    if (redoHistoryList.length > 0) {
+      setRedoHistoryList([]);
+      setRedoable(false);
+    }
   }
 
   const pointerMove = (e: any) => {
@@ -513,6 +515,7 @@ const Home: NextPage = () => {
   const pointerUp = (e: any) => {
     setIsDrag(false);
     console.log(pressure);
+    json =  Paper.project.exportJSON({ asString: false })
     if (pressure) {
       let avgPressure = pressure/count;
       console.log('avgPressure', avgPressure)
@@ -539,6 +542,7 @@ const Home: NextPage = () => {
       }
     }
     console.log('pressureArray', pressureArray)
+    
     setPressure(null);
     setUndoable(true);
     setCount(0);
@@ -546,45 +550,60 @@ const Home: NextPage = () => {
 
   // シンプルなundo
   const normalUndo = () => {
-    json =  Paper.project.exportJSON({ asString: false })
-    // const lastStroke = json[0][1]["children"][pressureArray.length-1][1];
-    let lastStroke;
-    for (let i=pressureArray.length-1; i>=0; i--) {
-      lastStroke = json[0][1]["children"][i][1];
-      if (lastStroke.strokeColor.length <= 3) {
-        lastStroke.strokeColor.push(0);
-        break;
-      } else if (lastStroke.strokeColor.length == 4 && lastStroke.strokeColor[3]!=0) {
-        lastStroke.strokeColor[3] = 0;
-        break;
+    if (undoable) {
+      const undoStrokes = historyList[historyList.length-2]; // undo後のストローク状態
+      Paper.project.clear()
+      Paper.project.importJSON(undoStrokes)
+
+      // 履歴が最後の1つだったらundo不可能状態に
+      if(historyList.length <= 1) {
+        setUndoable(false);
       }
+      // undo前の状態をredo用のListに追加
+      const lastPressure = pressureArray[pressureArray.length-1];
+      setRedoHistoryList(
+        (prevRedoHistoryList) => (
+          [
+            ...prevRedoHistoryList, 
+            {'stroke': historyList[historyList.length-1], 'pressure': lastPressure}
+          ]
+        )
+      );
+      // undo前の状態を削除
+      setHistoryList(
+        (prevHistoryList) => prevHistoryList.filter((_, index) => index < prevHistoryList.length-1)
+      );
+      // undo前の状態の筆圧を削除
+      pressureArray.pop();
+      // redo可能状態に
+      setRedoable(true);
     }
-    Paper.project.clear()
-    Paper.project.importJSON(json)
-    setRedoable(true);
   }
 
   // シンプルなredo
   const normalRedo = () => {
-    json = Paper.project.exportJSON({ asString: false });
-    console.log('redo', json)
-    // let lastStroke = json[0][1]["children"][pressureArray.length-1][1];
-    let lastStroke;
-    let count: number = 0;
-    for (let i=0; i<pressureArray.length; i++) {
-      lastStroke = json[0][1]["children"][i][1];
-      count+=1;
-      if (lastStroke.strokeColor.length == 4 && lastStroke.strokeColor[3]==0) {
-        lastStroke.strokeColor[3] = 1;
-        break;
+    if(redoable) {
+      const redoStrokes = redoHistoryList[redoHistoryList.length-1]['stroke'];
+
+      // redoできるものが最後の一つだった場合redo不可能状態に
+      if (redoHistoryList.length === 1) {
+        setRedoable(false);
       }
+
+      // redo後undoできる状態に復活
+      setHistoryList(
+        (prevHistoryList) => ([...prevHistoryList, redoStrokes])
+      );
+      // redo後筆圧を復活
+      pressureArray.push(redoHistoryList[redoHistoryList.length-1]['pressure']);
+      // redo前の状態をredo用のListから削除
+      setRedoHistoryList(
+        (prevRedoHistoryList) => prevRedoHistoryList.filter((_, index) => index < prevRedoHistoryList.length-1)
+      );
+      Paper.project.clear();
+      Paper.project.importJSON(redoStrokes);
+      setUndoable(true);
     }
-    
-    if (count == pressureArray.length) {
-      setRedoable(false);
-    }
-    Paper.project.clear();
-    Paper.project.importJSON(json);
   }
 
   // 筆圧によった削除方法
