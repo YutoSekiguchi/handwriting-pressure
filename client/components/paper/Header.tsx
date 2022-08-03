@@ -25,7 +25,7 @@ const PaperHeader: NextPage<Props> = (props) => {
 
   const colorList: string[] = ['#000000', '#808080', '#D9D9D9', '#1C8CFF', '#FF1A40', '#2BD965', '#FFDD33'];
 
-  const  [clickList, setClickList] = useState<number[] | any>([1].concat([...Array(colorList.length -1)].map(x => 0)));
+  const  [clickList, setClickList] = useState<number[]>([1].concat([...Array(colorList.length -1)].map(x => 0)));
 
 
   const buttonClick = (label: string, index: number) => {

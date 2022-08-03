@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, MutableRefObject, MouseEventHandler } from 'react';
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
@@ -397,19 +397,17 @@ const Home: NextPage = () => {
   // )
 
   let jsons: any;
-	let path: any;
-	let start: any;
-	let duration;
+	let path: paper.Path;
+	let start: number;
+	let duration: number;
 	let lastCut = 0;
-	let interval: any;
+	let interval: number;
 	let textItem: any;
 	let segmentsToSend: any;
 	let toSend: any;
   let json: any;
 	let penColor: string;
 	let penWidth: number;
-  let tmpGroup: any;
-  let mask: any;
 
 	const draw = () => {
     Paper.view.onMouseDown = () => {
@@ -423,7 +421,7 @@ const Home: NextPage = () => {
         path.strokeCap = 'round';
         path.strokeWidth = penWidth;
       } else if (mode === 'erase') {
-        path.strokeColor = 'white';
+        path.strokeColor = new Paper.Color('white');
         path.strokeCap = 'round';
         path.strokeJoin = 'round';
         path.strokeWidth = penWidth;
@@ -431,19 +429,16 @@ const Home: NextPage = () => {
       }
 			start = Date.now();
 
-
       let canvas: any = canvasRef.current;
       // const imageData = Paper.View.context.getImageData(0, 0, width, height);
-      console.log(canvas)
 
       
-      let ctx = canvas.getContext("2d");
+      let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
       const imageData = ctx.getImageData(0, 0, 1600, 1600);
       
 		};
 		Paper.view.onMouseDrag = (event: any) => {
 			path.add(event.point);
-      // console.log(imageData)
 		};
 		Paper.view.onMouseUp = () => {
 			cutPath(true);
@@ -498,13 +493,13 @@ const Home: NextPage = () => {
     }
   }
 
-  const pointerMove = (e: any) => {
+  const pointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!isDrag) { return }
     console.log(e.pressure)
     console.log("これみたい", e);
     if (e.pressure != 0) {
       setCount(count+1)
-      if (pressure === null) {
+      if (pressure === null || pressure === undefined) {
         setPressure(e.pressure)
       } else {
         setPressure(pressure+e.pressure);
@@ -512,7 +507,7 @@ const Home: NextPage = () => {
     }
   }
 
-  const pointerUp = (e: any) => {
+  const pointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
     setIsDrag(false);
     console.log(pressure);
     json =  Paper.project.exportJSON({ asString: false })
@@ -613,7 +608,6 @@ const Home: NextPage = () => {
     let pressureDiff: number = 0;
     for (let i=0; i<pressureArray.length; i++) {
       pressureDiff = pressureArray[i] - (1-boundaryValue);
-      // console.log("diff", pressureDiff)
       if ((json[0][1]["children"][i][1].strokeColor.length === 4 && pressureDiff > 0.2)) {
         json[0][1]["children"][i][1].strokeColor[3] = 1;
       }
