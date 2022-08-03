@@ -3,12 +3,14 @@ import { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
 import BackButton from '../common/BackButton';
 import ColorButton from './ColorButton';
 import PenButton from './PenButton';
+import EraserButton from './EraserButton';
 import UndoButton from './UndoButton';
 import RedoButton from './RedoButton';
 
 type Props = {
   setColor: Dispatch<SetStateAction<string>>,
   setWidth: Dispatch<SetStateAction<number>>,
+  setMode: Dispatch<SetStateAction<'pen' | 'erase'>>,
   undo: any,
   redo: any,
   undoable: boolean,
@@ -16,9 +18,16 @@ type Props = {
 }
 
 const PaperHeader: NextPage<Props> = (props) => {
-  const {setColor, setWidth, undo, redo, undoable, redoable} = props;
+
+  const {setColor, setWidth, setMode, undo, redo, undoable, redoable} = props;
+
+  let mode: 'pen'|'erase';
+
   const colorList: string[] = ['#000000', '#808080', '#D9D9D9', '#1C8CFF', '#FF1A40', '#2BD965', '#FFDD33'];
+
   const  [clickList, setClickList] = useState<number[] | any>([1].concat([...Array(colorList.length -1)].map(x => 0)));
+
+
   const buttonClick = (label: string, index: number) => {
     setColor(label)
     let tmp = clickList;
@@ -31,6 +40,19 @@ const PaperHeader: NextPage<Props> = (props) => {
     }
     setClickList(tmp);
   }
+
+  // 消しゴムモードに
+  const eraseMode = () => {
+    mode = 'erase';
+    setMode(mode);
+  }
+
+  // ペンモードに
+  const penMode = () => {
+    mode = 'pen';
+    setMode(mode);
+  }
+
 	useEffect(() =>{
 	}, []);
 	return (
@@ -40,7 +62,10 @@ const PaperHeader: NextPage<Props> = (props) => {
       </div>
       <div className='CenterSide my-auto mx-auto'>
         <div className="ColorChoiceButtons flex">
-          <div className='PenButtons mr-2'>
+          <div className='PenButtons mr-2' onClick={eraseMode}>
+            <EraserButton setWidth={setWidth} />
+          </div>
+          <div className='PenButtons mr-2' onClick={penMode}>
             <PenButton setWidth={setWidth} />
           </div>
           {colorList.map((label, index) => (

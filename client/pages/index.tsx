@@ -41,10 +41,12 @@ const Home: NextPage = () => {
   const [width, setWidth] = useState<number>(1.7); // 線の太さ
   const [undoable, setUndoable] = useState<boolean>(false); // undo可否
   const [redoable, setRedoable] = useState<boolean>(false); // redo可否
+  const [historyList, setHistoryList] = useState<any[]>([]); // 筆跡の履歴管理
   const [canvasWidth, setCanvasWidth] = useState<number>(800);
   const [canvasHeight, setCanvasHeight] = useState<number>(800);
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const [boundaryPressureValue, setBoundaryPressureValue] = useState<number>(1);
+  const [mode, setMode] = useState<'pen'|'erase'>('pen');
   const canvasRef = useRef(null);
 
   
@@ -405,18 +407,27 @@ const Home: NextPage = () => {
   let json: any;
 	let penColor: string;
 	let penWidth: number;
+  let tmpGroup: any;
+  let mask: any;
 
 	let draw = () => {
-    Paper.view.onMouseDown = function() {
+    Paper.view.onMouseDown = () => {
       
       path = new paper.Path();
 			penColor = color;
 			penWidth = width;
 			
-			path.strokeColor = new Paper.Color(color);
-      path.strokeCap = 'round';
-			path.strokeWidth = penWidth;
-      console.log(color)
+      if(mode === 'pen') {
+        path.strokeColor = new Paper.Color(color);
+        path.strokeCap = 'round';
+        path.strokeWidth = penWidth;
+      } else if (mode === 'erase') {
+        path.strokeColor = 'white';
+        path.strokeCap = 'round';
+        path.strokeJoin = 'round';
+        path.strokeWidth = penWidth;
+        path.blendMode = 'destination-out';
+      }
 			start = Date.now();
 
 
@@ -429,26 +440,24 @@ const Home: NextPage = () => {
       const imageData = ctx.getImageData(0, 0, 1600, 1600);
       // console.log(imageData)
       
-      ctx = canvas.getContext("2d");
-      
-      
       // console.log("bbb", raster.getImageData(0, 0, 1600, 1600))
 		};
-		Paper.view.onMouseDrag = function(event: any) {
+		Paper.view.onMouseDrag = (event: any) => {
 			path.add(event.point);
       // console.log(imageData)
 		};
-		Paper.view.onMouseUp = function() {
+		Paper.view.onMouseUp = () => {
 			cutPath(true);
 			clearInterval(interval);
       json =  Paper.project.exportJSON({ asString: false })
       console.log("aaa", json)
+      // setHistoryList((prevHistoryList) => ([ ...prevHistoryList, 'baz' ]))
+      // console.log(historyList);
       // json[0][1]['children'][1][1].strokeColor.push(0.3)
-      
       // imageData.position = new paper.Point(100, 100);
 		};
 
-		let cutPath = function(up: boolean = false) {
+		const cutPath = (up: boolean = false) => {
 			duration = Date.now() - start;
 			if (duration < 100) {
 				duration = 100;
@@ -620,7 +629,7 @@ const Home: NextPage = () => {
       Paper.project.clear()
       Paper.project.importJSON(json)
       setBoundaryPressureValue(boundaryValue);
-    }, 2000)
+    }, 3000)
   }
 
 	useEffect(() =>{
@@ -631,14 +640,15 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     draw();
-  }, [color, width])
+  }, [color, width, mode])
 
 
 	return (
     <>
       <PaperHeader 
         setColor={setColor}
-        setWidth={setWidth} 
+        setWidth={setWidth}
+        setMode={setMode}
         undo={normalUndo} 
         redo={normalRedo} 
         undoable={undoable} 
@@ -658,11 +668,6 @@ const Home: NextPage = () => {
         />
 
         {/* 書いてる時の筆圧のゲージ */}
-        {/* <div className='pressureGauge'>
-          <div className="w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700 mb-3">
-            <div className="h-4 rounded-full" style={{width: `${pressure? (pressure/count)*100: 0}%`, backgroundColor: '#53aeff'}}></div>
-          </div>
-        </div> */}
         <div className='rangebar fixed bottom-2 w-full'>
           <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} />
         </div>
