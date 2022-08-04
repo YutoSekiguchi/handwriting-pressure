@@ -44,8 +44,8 @@ const Home: NextPage = () => {
   const [redoable, setRedoable] = useState<boolean>(false); // redo可否
   const [historyList, setHistoryList] = useState<any[]>([]); // 筆跡の履歴管理（undo用）
   const [redoHistoryList, setRedoHistoryList] = useState<any[]>([]); // undoされたものを管理（redo用）
-  const [canvasWidth, setCanvasWidth] = useState<number>(800);
-  const [canvasHeight, setCanvasHeight] = useState<number>(800);
+  const [canvasWidth, setCanvasWidth] = useState<number>(0);
+  const [canvasHeight, setCanvasHeight] = useState<number>(0);
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const [boundaryPressureValue, setBoundaryPressureValue] = useState<number>(1);
   const [mode, setMode] = useState<'pen'|'erase'>('pen');
@@ -406,6 +406,7 @@ const Home: NextPage = () => {
   let json: any;
 	let penColor: string;
 
+
 	const draw = () => {
     Paper.view.onMouseDown = () => {
       
@@ -426,6 +427,8 @@ const Home: NextPage = () => {
 			start = Date.now();
 
       let canvas: any = canvasRef.current;
+      setCanvasWidth(canvas.width);
+      setCanvasHeight(canvas.height);
       // const imageData = Paper.View.context.getImageData(0, 0, width, height);
 
       
@@ -641,7 +644,7 @@ const Home: NextPage = () => {
     }, 3000)
   }
 
-	useEffect(() =>{
+	useEffect(() => {
 		Paper.setup('drawingCanvas');
 		Paper.install(window);
 		draw();
@@ -664,13 +667,13 @@ const Home: NextPage = () => {
         undoable={undoable} 
         redoable={redoable}
       />
-      <div className="Canvas w-full h-full">
+      <div className="Canvas w-full h-max" id="wrapper">
         <canvas 
           ref={canvasRef}
-          style={{ backgroundColor: "#fff", backgroundImage: 'linear-gradient(180deg, #ccc 1px, transparent 1px)', backgroundSize: "100% 4em", touchAction: "none"}}
+          style={{ backgroundColor: "#fff", backgroundImage: 'url("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685")', touchAction: "none"}}
           id="drawingCanvas"
-          width="800px" 
-          height="1000px"
+          width={"5000px"}
+          height={"5000px"}
           className="canvas_background_note mx-auto max-w-full max-h-full" 
           onPointerDownCapture={pointerDown}
           onPointerMoveCapture={pointerMove}
