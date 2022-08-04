@@ -9,7 +9,8 @@ import RedoButton from './RedoButton';
 
 type Props = {
   setColor: Dispatch<SetStateAction<string>>,
-  setWidth: Dispatch<SetStateAction<number>>,
+  setPenWidth: Dispatch<SetStateAction<number>>,
+  setEraseWidth: Dispatch<SetStateAction<number>>,
   setMode: Dispatch<SetStateAction<'pen' | 'erase'>>,
   undo: any,
   redo: any,
@@ -19,7 +20,7 @@ type Props = {
 
 const PaperHeader: NextPage<Props> = (props) => {
 
-  const {setColor, setWidth, setMode, undo, redo, undoable, redoable} = props;
+  const {setColor, setPenWidth, setEraseWidth, setMode, undo, redo, undoable, redoable} = props;
 
   let mode: 'pen'|'erase';
 
@@ -63,10 +64,10 @@ const PaperHeader: NextPage<Props> = (props) => {
       <div className='CenterSide my-auto mx-auto'>
         <div className="ColorChoiceButtons flex">
           <div className='PenButtons mr-2' onClick={eraseMode}>
-            <EraserButton setWidth={setWidth} />
+            <EraserButton setEraseWidth={setEraseWidth} />
           </div>
           <div className='PenButtons mr-2' onClick={penMode}>
-            <PenButton setWidth={setWidth} />
+            <PenButton setPenWidth={setPenWidth} />
           </div>
           {colorList.map((label, index) => (
             <div onClick={() => buttonClick(label, index)} key={index} className='my-auto'>

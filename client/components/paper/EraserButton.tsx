@@ -4,17 +4,17 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import PenWidthButton from './PenWidthButton';
 
 type Props = {
-  setWidth: Dispatch<SetStateAction<number>>,
+  setEraseWidth: Dispatch<SetStateAction<number>>,
 }
 
 const EraserButton: NextPage<Props> = (props) => {
-  const {setWidth} = props;
+  const {setEraseWidth} = props;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const widthButtonSizeList: number[] = [5, 10, 15, 20, 25];
   const  [clickList, setClickList] = useState<number[] | any>([1].concat([...Array(widthButtonSizeList.length -1)].map(x => 0)));
 
   const buttonClick = (label: number, index: number) => {
-    setWidth(label/5)
+    setEraseWidth(label)
     console.log(label, index)
     let tmp = clickList.concat();
     for (let i=0; i<tmp.length; i++) {

@@ -38,7 +38,8 @@ const Home: NextPage = () => {
   // const [blue, setBlue] = useState<number>(0); // 青
   const [color, setColor] = useState<string>('#000000');
   const [count, setCount] = useState<number>(0); // 何回moveしたか
-  const [width, setWidth] = useState<number>(1.7); // 線の太さ
+  const [penWidth, setPenWidth] = useState<number>(1.7); // 線の太さ
+  const [eraseWidth, setEraseWidth] = useState<number>(1.7); // 消しゴムの太さ
   const [undoable, setUndoable] = useState<boolean>(false); // undo可否
   const [redoable, setRedoable] = useState<boolean>(false); // redo可否
   const [historyList, setHistoryList] = useState<any[]>([]); // 筆跡の履歴管理（undo用）
@@ -396,25 +397,20 @@ const Home: NextPage = () => {
   //   </div>
   // )
 
-  let jsons: any;
 	let path: paper.Path;
 	let start: number;
 	let duration: number;
-	let lastCut = 0;
 	let interval: number;
-	let textItem: any;
 	let segmentsToSend: any;
 	let toSend: any;
   let json: any;
 	let penColor: string;
-	let penWidth: number;
 
 	const draw = () => {
     Paper.view.onMouseDown = () => {
       
       path = new paper.Path();
 			penColor = color;
-			penWidth = width;
 			
       if(mode === 'pen') {
         path.strokeColor = new Paper.Color(color);
@@ -424,7 +420,7 @@ const Home: NextPage = () => {
         path.strokeColor = new Paper.Color('white');
         path.strokeCap = 'round';
         path.strokeJoin = 'round';
-        path.strokeWidth = penWidth;
+        path.strokeWidth = eraseWidth;
         path.blendMode = 'destination-out';
       }
 			start = Date.now();
@@ -653,14 +649,15 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     draw();
-  }, [color, width, mode])
+  }, [color, penWidth, eraseWidth, mode])
 
 
 	return (
     <>
       <PaperHeader 
         setColor={setColor}
-        setWidth={setWidth}
+        setPenWidth={setPenWidth}
+        setEraseWidth={setEraseWidth}
         setMode={setMode}
         undo={normalUndo} 
         redo={normalRedo} 
