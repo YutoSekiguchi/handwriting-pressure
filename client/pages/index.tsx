@@ -509,7 +509,6 @@ const Home: NextPage = () => {
   const pointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
     setIsDrag(false);
     console.log(pressure);
-    json =  Paper.project.exportJSON({ asString: false })
     if (pressure) {
       let avgPressure = pressure/count;
       console.log('avgPressure', avgPressure)
@@ -535,8 +534,12 @@ const Home: NextPage = () => {
         }
       }
     }
-    console.log('pressureArray', pressureArray)
     
+    json =  Paper.project.exportJSON({ asString: false })
+    if (json[0][1]["children"].length != pressureArray.length) {
+      pressureArray.push(0);
+    }
+    console.log('pressureArray', pressureArray)
     setPressure(null);
     setUndoable(true);
     setCount(0);
@@ -667,13 +670,13 @@ const Home: NextPage = () => {
         undoable={undoable} 
         redoable={redoable}
       />
-      <div className="Canvas w-full h-max" id="wrapper">
+      <div className="Canvas w-full h-full" id="wrapper">
         <canvas 
           ref={canvasRef}
           style={{ backgroundColor: "#fff", backgroundImage: 'url("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685")', touchAction: "none"}}
           id="drawingCanvas"
           width={"5000px"}
-          height={"5000px"}
+          height={"10000px"}
           className="canvas_background_note mx-auto max-w-full max-h-full" 
           onPointerDownCapture={pointerDown}
           onPointerMoveCapture={pointerMove}
