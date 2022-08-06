@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import { useState, useEffect, useRef, MutableRefObject, MouseEventHandler } from 'react';
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { removeItems } from '../utils/Helpers'
 import Paper from 'paper'
@@ -405,6 +404,7 @@ const Home: NextPage = () => {
 	let toSend: any;
   let json: any;
 	let penColor: string;
+  let boundaryValue: number;
 
 
 	const draw = () => {
@@ -426,6 +426,9 @@ const Home: NextPage = () => {
       }
 			start = Date.now();
 
+      
+
+
       let canvas: any = canvasRef.current;
       setCanvasWidth(canvas.width);
       setCanvasHeight(canvas.height);
@@ -433,7 +436,9 @@ const Home: NextPage = () => {
 
       
       let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
-      const imageData = ctx.getImageData(0, 0, 1600, 1600);
+      // console.log(canvas.toDataURL("image/png"));
+      
+      // const imageData = ctx.getImageData(0, 0, 1600, 1600);
       
 		};
 		Paper.view.onMouseDrag = (event: any) => {
@@ -605,7 +610,7 @@ const Home: NextPage = () => {
 
   // 筆圧によった削除方法
   const handleDeleteRowPressureStroke = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let boundaryValue: number = Number(e.target.value) / 10000;
+    boundaryValue = Number(e.target.value) / 10000;
     json =  Paper.project.exportJSON({ asString: false })
     let pressureDiff: number = 0;
     for (let i=0; i<pressureArray.length; i++) {
@@ -628,23 +633,24 @@ const Home: NextPage = () => {
     }
     Paper.project.clear()
     Paper.project.importJSON(json)
-    setTimeout(() => {
-      boundaryValue = Number(e.target.value) / 10000;
-      json =  Paper.project.exportJSON({ asString: false })
-      for (let i=0; i<pressureArray.length; i++) {
-        pressureDiff = pressureArray[i] - (1-boundaryValue);
-        if (pressureDiff < 0.2 && pressureDiff > 0) {
-          if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
-            json[0][1]["children"][i][1].strokeColor.push(1)
-          } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
-            json[0][1]["children"][i][1].strokeColor[3] = 1
-          }
+  }
+
+  const rewriteStroke = () => {
+    let pressureDiff: number = 0;
+    json =  Paper.project.exportJSON({ asString: false })
+    for (let i=0; i<pressureArray.length; i++) {
+      pressureDiff = pressureArray[i] - (1-boundaryValue);
+      if (pressureDiff < 0.2 && pressureDiff > 0) {
+        if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
+          json[0][1]["children"][i][1].strokeColor.push(1)
+        } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
+          json[0][1]["children"][i][1].strokeColor[3] = 1
         }
       }
-      Paper.project.clear()
-      Paper.project.importJSON(json)
-      setBoundaryPressureValue(boundaryValue);
-    }, 3000)
+    }
+    Paper.project.clear()
+    Paper.project.importJSON(json)
+    setBoundaryPressureValue(boundaryValue);
   }
 
 	useEffect(() => {
@@ -670,22 +676,26 @@ const Home: NextPage = () => {
         undoable={undoable} 
         redoable={redoable}
       />
-      <div className="Canvas w-full h-full" id="wrapper">
+      <div className="Canvas w-full h-full flex " id="wrapper">
         <canvas 
           ref={canvasRef}
-          style={{ backgroundColor: "#fff", backgroundImage: 'url("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685")', touchAction: "none"}}
+          style={{backgroundImage: 'url("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685")', touchAction: "none"}}
           id="drawingCanvas"
           width={"5000px"}
           height={"10000px"}
-          className="canvas_background_note mx-auto max-w-full max-h-full" 
+          className="canvas_background_note max-w-full w-7/12 max-h-full" 
           onPointerDownCapture={pointerDown}
           onPointerMoveCapture={pointerMove}
           onPointerUpCapture={pointerUp}
         />
+        
+        {/* 操作UI */}
+        <div className='fixed top-12 right-0 w-5/12 bg-gray-800 h-full'>
+        </div>
 
         {/* 書いてる時の筆圧のゲージ */}
         <div className='rangebar fixed bottom-2 w-full'>
-          <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} />
+          <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
         </div>
       </div>
     </>
