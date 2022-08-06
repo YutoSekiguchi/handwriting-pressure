@@ -22,7 +22,8 @@ const PaperHeader: NextPage<Props> = (props) => {
 
   const {setColor, setPenWidth, setEraseWidth, setMode, undo, redo, undoable, redoable} = props;
 
-  let mode: 'pen'|'erase';
+  let mode: 'pen'|'erase' = 'pen';
+  const [nowMode, setNowMode] = useState<'pen'|'erase'>('pen');
 
   const colorList: string[] = ['#000000', '#808080', '#D9D9D9', '#1C8CFF', '#FF1A40', '#2BD965', '#FFDD33'];
 
@@ -47,12 +48,14 @@ const PaperHeader: NextPage<Props> = (props) => {
   const eraseMode = () => {
     mode = 'erase';
     setMode(mode);
+    setNowMode(mode);
   }
 
   // ペンモードに
   const penMode = () => {
     mode = 'pen';
     setMode(mode);
+    setNowMode(mode);
   }
 
 	useEffect(() =>{
@@ -65,10 +68,10 @@ const PaperHeader: NextPage<Props> = (props) => {
       <div className='CenterSide my-auto mx-auto'>
         <div className="ColorChoiceButtons flex">
           <div className='PenButtons mr-2' onClick={eraseMode}>
-            <EraserButton setEraseWidth={setEraseWidth} />
+            <EraserButton setEraseWidth={setEraseWidth} mode={nowMode} />
           </div>
           <div className='PenButtons mr-2' onClick={penMode}>
-            <PenButton setPenWidth={setPenWidth} />
+            <PenButton setPenWidth={setPenWidth} mode={nowMode} />
           </div>
           {colorList.map((label, index) => (
             <div onClick={() => buttonClick(label, index)} key={index} className='my-auto'>

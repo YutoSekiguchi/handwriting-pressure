@@ -38,8 +38,8 @@ const Home: NextPage = () => {
   // const [blue, setBlue] = useState<number>(0); // 青
   const [color, setColor] = useState<string>('#000000');
   const [count, setCount] = useState<number>(0); // 何回moveしたか
-  const [penWidth, setPenWidth] = useState<number>(1.7); // 線の太さ
-  const [eraseWidth, setEraseWidth] = useState<number>(1.7); // 消しゴムの太さ
+  const [penWidth, setPenWidth] = useState<number>(2); // 線の太さ
+  const [eraseWidth, setEraseWidth] = useState<number>(20); // 消しゴムの太さ
   const [undoable, setUndoable] = useState<boolean>(false); // undo可否
   const [redoable, setRedoable] = useState<boolean>(false); // redo可否
   const [historyList, setHistoryList] = useState<any[]>([]); // 筆跡の履歴管理（undo用）
