@@ -690,13 +690,25 @@ const Home: NextPage = () => {
         />
         
         {/* 操作UI */}
-        <div className='fixed top-12 right-0 w-5/12 bg-gray-800 h-full'>
+        <div className='fixed top-12 right-0 w-5/12 bg-gray-900 h-full'>
+          <div className='w-4/5 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2'>
+            <div className='rangebar mx-5 pt-12'>
+              <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
+            </div>
+          </div>
+          <div className='flex w-full h-1/3 mt-2'>
+            <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl'>
+              
+            </div>
+            <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl'>
+            </div>
+          </div>
         </div>
 
         {/* 書いてる時の筆圧のゲージ */}
-        <div className='rangebar fixed bottom-2 w-full'>
+        {/* <div className='rangebar fixed bottom-2 w-full'>
           <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
-        </div>
+        </div> */}
       </div>
     </>
 	);
