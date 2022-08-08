@@ -4,6 +4,33 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { removeItems } from '../utils/Helpers'
 import Paper from 'paper'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+  ArcElement
+} from 'chart.js'
+import { Line, Doughnut } from 'react-chartjs-2'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+  ArcElement
+)
+ChartJS.defaults.scales.linear.min = 0;
+
 
 import PaperHeader from '../components/paper/Header';
 
@@ -21,6 +48,7 @@ import PaperHeader from '../components/paper/Header';
 // var path: any;
 
 let pressureArray: number[] = [];
+let aboutPressureCountArray: number[] = [...Array(11)].map(x=>0);
 
 const Home: NextPage = () => {
 
@@ -31,6 +59,8 @@ const Home: NextPage = () => {
   // const [yPos, setYPos] = useState<number>(0); // ペンのy座標
   // /////////////////////////////////////////////////////////////////////////////////////////////
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
+  const [nowConfirmPressure, setNowConfirmPressure] = useState<number|null>(null); // 1ストロークあたりの筆圧
+  const [avgConfirmPressure, setAvgConfirmPressure] = useState<number|null>(null); //筆圧の平均
   // const [tiltX, setTiltX] = useState<number | null | undefined>(null); // ペンの傾きx
   // const [tiltY, setTiltY] = useState<number | null | undefined>(null); // ペンの傾きy
   // const [red, setRed] = useState<number>(0); // 赤
@@ -48,353 +78,28 @@ const Home: NextPage = () => {
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const [boundaryPressureValue, setBoundaryPressureValue] = useState<number>(1);
   const [mode, setMode] = useState<'pen'|'erase'>('pen');
+  const labels: number[] = [...Array(11)].map((_, i) => ((10-i)/10));
+  const [lineGraphData, setLineGraphData] = useState<any>(null);
+  const [doughnutNowPressureGraphData, setDoughnutNowPressureGraphData] = useState<any>(null);
+  const [doughnutAvgPressureGraphData, setDoughnutAvgPressureGraphData] = useState<any>(null);
   const canvasRef = useRef(null);
 
-  
-  
-  // const BaseLineWidth = 10; // 線の太さ（基準）
-
-  // const EpenButton = {
-  //   tip: 0x1,    // left mouse, touch contact, pen contact
-  //   barrel: 0x2, // right mouse, pen barrel button
-  //   middle: 0x4, // middle mouse
-  //   eraser: 0x20 // pen eraser button
-  // }
-
-  // const getContext = (): CanvasRenderingContext2D => {
-  //   const canvas: any = canvasRef.current;
-
-  //   return canvas.getContext('2d');
-  // }
-
-  // // ペンがノートに触れ始めた時の処理
-  // const onStart = () => {
-  //   setIsDrag(true);
-  //   if (imageData) {
-  //     const ctx = getContext();
-      
-  //   }
-  // }
-
-  // // ペンを動かしてる時
-  // const onMove = async(e: React.MouseEvent<HTMLCanvasElement> | any) => {
-  //   if (!isDrag) { return; }
-  //   const canvas: any = canvasRef.current;
-  //   const rect: IRect = canvas.getBoundingClientRect();
-    
-  //   let x = 0;
-  //   let y = 0;
-  //   let touch;
-
-  //   switch (e.type) {
-  //     // PCのマウスなら
-  //     case "mousemove":
-  //       x = ~~(e.clientX - rect.left);
-  //       y = ~~(e.clientY - rect.top);
-  //       break;
-  //     // タッチ操作なら
-  //     case "touchmove":
-  //       touch = e.touches[0] || e.changedTouches[0];
-  //       x = ~~(touch.clientX - rect.left);
-  //       y = ~~(touch.clientY - rect.top);
-  //       setPressure(e.touches[0].force);
-  //       break;
-  //     // タッチ操作なら
-  //     case "touchstart":
-  //       touch = e.touches[0] || e.changedTouches[0];
-  //       x = ~~(touch.clientX - rect.left);
-  //       y = ~~(touch.clientY - rect.top);
-  //       setPressure(e.touches[0].force);
-  //       break;
-  //     case "pointermove":
-  //       console.log(rect.left);
-  //       console.log(rect.bottom);
-  //       x = ~~(e.clientX - rect.left)*3;
-  //       y = ~~(e.clientY - rect.top)*3;
-  //       //////////////////////////////////////////
-  //       setXPos(x);
-  //       setYPos(y);
-  //       ////////////////////////////////////////
-  //       setPressure(e.pressure);
-  //       if (e.pointerType && e.pointerType === "pen") { // ペンの傾き取得
-  //         setTiltX(e.tiltX);
-  //         setTiltY(e.tiltY);
-  //       } else {
-  //         setTiltX(1);
-  //         setTiltY(1);
-  //       }
-  //       break;
-  //   }
-    
-    
-  //   // console.log(e);
-  //   // console.log(e.touches[0].force);
-  //   // console.log(e.type);
-  //   // if (pressure && tiltX && tiltY) {
-  //   //   // draw(x, y, pressure, tiltX, tiltY);
-  //   // } else {
-  //   //   // draw(x, y, 0.3);
-  //   //   return
-  //   // }
-  // }
-
-  // // 描画
-  // // const draw = async(x: number, y: number, pressure?: number, tx?: number, ty?: number) => {
-  // //   // if (!isDrag) { return; }
-  // //   // const ctx = getContext();
-  // //   // const BaseLineWidth = 3;
-  // //   // ctx.beginPath();
-  // //   // ctx.globalAlpha = 1.0;
-  // //   // if (lastXPos === null || lastYPos=== null) {
-  // //   //   ctx.moveTo(x, y);
-  // //   // } else {
-  // //   //   ctx.moveTo(lastXPos, lastYPos);
-  // //   // }
-  // //   // // if (lastXPos !== null && lastYPos !== null) {
-  // //   // //   ctx.moveTo(lastXPos, lastYPos);
-  // //   // // }
-  // //   // console.log(x, y, pressure)
-  // //   // ctx.lineTo(x, y);
-  // //   // ctx.lineCap = "round";
-  // //   // ctx.lineWidth = BaseLineWidth;  
-
-  // //   // if (pressure != null) {
-  // //   //   if (pressure > 0.5) {
-  // //   //     setRed(200);
-  // //   //     setBlue(50);
-  // //   //   } else if (pressure < 0.15) {
-  // //   //     setRed(50);
-  // //   //     setBlue(200);
-  // //   //   } else {
-  // //   //     setRed(50);
-  // //   //     setBlue(50);
-  // //   //   }
-  // //   // } else {
-  // //   //   setRed(50);
-  // //   //   setBlue(50);
-  // //   // }
-  // //   // ctx.strokeStyle = `rgb(${red}, 50, ${blue})`;
-  // //   // ctx.stroke();
-  // //   // setLastXPos(x);
-  // //   // setLastYPos(y);
-  // // }
-
-  // // 描画終了
-  // const drawEnd = () => {
-  //   console.log("1224242")
-  //   setIsDrag(false);
-  //   setPressure(null);
-  //   setLastXPos(null);
-  //   setLastYPos(null);
-  //   setXPos(0);
-  //   setYPos(0);
-    
-  // }
-
-  // const midPointBetween = (lastX: number, lastY: number, posX: number, posY: number) => {
-  //   return {
-  //     x: lastX + (posX - lastX)/2,
-  //     y: lastY + (posY - lastY)/2
-  //   }
-  //   // return {
-  //   //   x: lastX,
-  //   //   y: posY
-  //   // }
-  // }
-
-  // // useEffect(() => {
-  // //   // 描画
-  // //   const draw = async() => {
-  // //     if (!isDrag) { return; }
-  // //     const ctx = getContext();
-  // //     const canvas: any = canvasRef.current;
-  // //     Paper.setup(canvas);
-  // //     draw1();
-  // //     // ctx.beginPath();
-  // //     // ctx.globalAlpha = 1.0;
-  // //     // ctx.lineCap = "round";
-  // //     // if (lastXPos === null || lastYPos === null) {
-  // //     //   ctx.moveTo(xPos, yPos);
-  // //     // } else {
-  // //     //   ctx.moveTo(lastXPos, lastYPos);
-  // //     // }
-  // //     // console.log(xPos, yPos, pressure)
-  // //     // console.log('last', lastXPos, lastYPos)
-
-  // //     // if (lastXPos && lastYPos) {
-  // //     //   const midPoint = await midPointBetween(lastXPos, lastYPos, xPos, yPos);
-  // //     //   console.log('mid', midPoint)
-  // //     //   // ctx.quadraticCurveTo(lastXPos, lastYPos, midPoint.x, midPoint.y);
-        
-  // //     //   // ctx.quadraticCurveTo(midPoint.x, midPoint.y, xPos, yPos);
-  // //     //   //ctx.arc(midPoint.x, midPoint.y, 10, 0, 2 * Math.PI);
-  // //     // }
-      
-  // //     // const vx: number = lastXPos? ~~(Math.abs(xPos - lastXPos))+1: 1; // ペンxの速度
-  // //     // const vy: number = lastYPos? ~~(Math.abs(yPos - lastYPos))+1: 1; // ペンyの速度
-
-  // //     // console.log("aaaaa", (vx+vy)/80);
-      
-
-
-  // //     // ctx.lineTo(xPos, yPos);
-      
-      
-      
-  // //     // const minusLineWidth = (vx+vy)/80 < 5 ? (vx+vy)/120: 5;
-  // //     // ctx.lineWidth = pressure? BaseLineWidth - minusLineWidth: BaseLineWidth;  
-
-  // //     // if (pressure != null) {
-  // //     //   if (pressure > 0.5) {
-  // //     //     setRed(200);
-  // //     //     setBlue(0);
-  // //     //   } else if (pressure < 0.15) {
-  // //     //     setRed(0);
-  // //     //     setBlue(200);
-  // //     //   } else {
-  // //     //     setRed(0);
-  // //     //     setBlue(0);
-  // //     //   }
-  // //     // } else {
-  // //     //   setRed(0);
-  // //     //   setBlue(0);
-  // //     // }
-  // //     // ctx.strokeStyle = `rgb(${red}, 0, ${blue})`;
-  // //     // ctx.stroke();
-  // //     setLastXPos(xPos);
-  // //     setLastYPos(yPos);
-  // //     setCount(count+1);
-  // //   };
-
-  // //   draw();
-  // // }, [xPos, yPos])
-
-  // const draw1 = () => {
-  //   // let myPath = new Paper.Path();
-  
-  //   // Paper.view.onMouseDown = (event) => {
-  //   //   myPath.strokeColor = "black";
-  //   //   myPath.strokeWidth = 3;
-  //   // };
-  
-  //   // Paper.view.onMouseDrag = (event) => {
-  //   //   myPath.add(event.point);
-  //   // };
-  
-  //   // Paper.view.draw();
-  
-  // Paper.view.onMouseDown = (event) => {
-  //   // If we produced a path before, deselect it:
-  //   if (path) {
-  //     path.selected = false;
-  //   }
-  
-  //   // Create a new path and set its stroke color to black:
-  //   path.segments = [event.point]
-  //   path.strokeColor = 'black'
-  //   path.strokeCap = 'round'
-  //   path.strokeWidth = 2
-  //     // Select the path, so we can see its segment points:
-  //   path.fullySelected = true
-  // }
-  
-  // // While the user drags the mouse, points are added to the path
-  // // at the position of the mouse:
-  // Paper.view.onMouseDrag = (event) => {
-  //   path.add(event.point);
-  
-  //   // Update the content of the text item to show how many
-  //   // segments it has:
-  //   if (path) {
-  //     path.selected = false;
-  //   }
-    
-    
-  // }
-  
-  // // When the mouse is released, we simplify the path:
-  // Paper.view.onMouseUp = (event) => {
-  //   var segmentCount = path.segments.length;
-  
-  //   // When the mouse is released, simplify it:
-  //   path.simplify(20);
-  
-  //   // Select the path, so we can see its segments:
-  //   path.fullySelected = true;
-  
-  //   var newSegmentCount = path.segments.length;
-  //   var difference = segmentCount - newSegmentCount;
-  //   var percentage = 100 - Math.round(newSegmentCount / segmentCount * 100);
-    
-  //   if (path) {
-  //     path.selected = false;
-  //   }
-    
-  //   // const ctx = getContext();
-  //   // imageData = ctx.getImageData(0, 0, 800, 500);
-  //   // console.log('canvas:', imageData);
-  //   // ctx.putImageData(imageData, 0, 0);
-  // }
-  // };
-
-  // useEffect(() => {
-  //   const canvas: any = canvasRef.current;
-  //   Paper.setup(canvas);
-  //   path = new Paper.Path();
-  //   draw1();
-    
-  // }, []);
-
-  // return (
-  //   <div className={styles.container}>
-  //     <Head>
-  //       <title>Pressure Pen</title>
-  //       <meta name="description" content="Generated by create next app" />
-  //       <link rel="icon" href="/favicon.ico" />
-  //     </Head>
-
-      
-  //     <main>
-  //       <h1 className="my-5 text-center text-cyan-600">
-  //         筆圧テスト（今の筆圧は{pressure}）
-  //       </h1>
-
-
-  //       <div className="my-16 mainCanvasBox">
-  //         <canvas 
-  //           id={styles.canvas_background_note}
-  //           className="mx-auto"
-  //           ref={canvasRef}
-  //           width="800px"
-  //           height="500px"
-  //           // onMouseDown={onStart}
-  //           // onMouseMove={onMove} // マウス動いた時
-  //           // onMouseUp={drawEnd} // マウスが離れた時
-  //           onPointerDown={onStart} // ポインター置くとき
-  //           onPointerMove={onMove} // ポインター動いた時
-  //           onPointerUp={drawEnd} // ポインター離した時
-  //           // onTouchStart={onStart}
-  //           // onTouchMove={onMove} // タッチで動かしてる時
-  //           // onTouchEnd={drawEnd} // タッチを離した時
-  //         >
-  //         </canvas>
-  //       </div>
-  //     </main>
-
-  //     {/* <footer className={styles.footer}>
-  //       <a
-  //         href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         Powered by{' '}
-  //         <span className={styles.logo}>
-  //           <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-  //         </span>
-  //       </a>
-  //     </footer> */}
-  //   </div>
-  // )
+  const options: {} = {
+    plugins: {
+      legend:{
+        display:false,
+      },
+    },
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        display: true
+      },
+      y: {
+        display: false
+      },
+    },
+  };
 
 	let path: paper.Path;
 	let start: number;
@@ -519,23 +224,29 @@ const Home: NextPage = () => {
       console.log('avgPressure', avgPressure)
       console.log(e)
       console.log(e.pointerType)
+      const aboutAvgPressure = Math.floor((1-avgPressure)*10)/10;
       const pressureArrayLength = pressureArray.length;
       while (pressureArray.length==pressureArrayLength) {
         switch (e.pointerType) {
           // PCのマウスなら（マウスはPCで試しやすくするためにランダムに）
           case "mouse":
-            pressureArray.push(Math.random());
+            const rand = Math.random();
+            pressureArray.push(rand);
+            aboutPressureCountArray[((Math.floor((1-rand) * 10) / 10))*10] += 1;
             break;
           // タッチ操作なら
           case "touch":
             pressureArray.push(avgPressure);
+            aboutPressureCountArray[(aboutAvgPressure)*10] += 1;
             break;
           // ペン操作なら
           case "pen":
             pressureArray.push(avgPressure);
+            aboutPressureCountArray[(aboutAvgPressure)*10] += 1;
             break;
           default:
             pressureArray.push(avgPressure);
+            aboutPressureCountArray[(aboutAvgPressure)*10] += 1;
         }
       }
     }
@@ -543,8 +254,56 @@ const Home: NextPage = () => {
     json =  Paper.project.exportJSON({ asString: false })
     if (json[0][1]["children"].length != pressureArray.length) {
       pressureArray.push(0);
+      aboutPressureCountArray[0] += 1;
     }
     console.log('pressureArray', pressureArray)
+    console.log(aboutPressureCountArray);
+    setLineGraphData(
+      {
+        labels: labels,
+        datasets: [
+          {
+            label: "筆圧",
+            data: aboutPressureCountArray,
+            borderColor: "rgb(75, 192, 192)",
+            backgroundColor: "rgba(75, 192, 192, 0.1)",
+            fill: true,
+          },
+        ],
+      }
+    );
+    setNowConfirmPressure(pressureArray[pressureArray.length-1]);
+    setDoughnutNowPressureGraphData(
+      {
+        datasets: [
+          {
+            data: [pressureArray[pressureArray.length-1], 1-pressureArray[pressureArray.length-1]],
+            backgroundColor: ["rgba(75, 192, 192, 1)", "rgba(0, 0, 0, 0)"],
+            borderColor: "rgba(75, 192, 192, 0.1)",
+          }
+        ],
+        labels: ['現在の筆圧', 'None'],
+      }
+    );
+    
+    let tmp = 0;
+    for(let i=0;i<pressureArray.length;i++) {
+      tmp += pressureArray[i];
+    }
+    const avgPressureForDoughnut = tmp/pressureArray.length;
+    setAvgConfirmPressure(avgPressureForDoughnut);
+    setDoughnutAvgPressureGraphData(
+      {
+        datasets: [
+          {
+            data: [avgPressureForDoughnut, 1-avgPressureForDoughnut],
+            backgroundColor: ["rgba(192, 75, 192, 1)", "rgba(0, 0, 0, 0)"],
+            borderColor: "rgba(192, 75, 192, 0.1)",
+          }
+        ],
+        labels: ['今までの筆圧の平均', 'None'],
+      }
+    )
     setPressure(null);
     setUndoable(true);
     setCount(0);
@@ -579,6 +338,7 @@ const Home: NextPage = () => {
       pressureArray.pop();
       // redo可能状態に
       setRedoable(true);
+      fixChartData();
     }
   }
 
@@ -605,7 +365,31 @@ const Home: NextPage = () => {
       Paper.project.clear();
       Paper.project.importJSON(redoStrokes);
       setUndoable(true);
+      fixChartData();
     }
+  }
+
+  const fixChartData = () => {
+    let tmp: number[] = [...Array(11)].map(x=>0);
+      for(let i=0;i<pressureArray.length;i++) {
+        const aboutAvgPressure = Math.floor((1-pressureArray[i])*10)/10;
+        tmp[aboutAvgPressure*10] += 1;
+      }
+      aboutPressureCountArray = tmp;
+      setLineGraphData(
+        {
+          labels: labels,
+          datasets: [
+            {
+              label: "筆圧",
+              data: aboutPressureCountArray,
+              borderColor: "rgb(75, 192, 192)",
+              backgroundColor: "rgba(75, 192, 192, 0.1)",
+              fill: true,
+            },
+          ],
+        }
+      );
   }
 
   // 筆圧によった削除方法
@@ -615,10 +399,10 @@ const Home: NextPage = () => {
     let pressureDiff: number = 0;
     for (let i=0; i<pressureArray.length; i++) {
       pressureDiff = pressureArray[i] - (1-boundaryValue);
-      if ((json[0][1]["children"][i][1].strokeColor.length === 4 && pressureDiff > 0.2)) {
+      if ((json[0][1]["children"][i][1].strokeColor.length === 4 && pressureDiff > 0.1)) {
         json[0][1]["children"][i][1].strokeColor[3] = 1;
       }
-      if (pressureDiff < 0.2 && pressureDiff > 0) {
+      if (pressureDiff < 0.1 && pressureDiff > 0) {
         if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
           json[0][1]["children"][i][1].strokeColor.push(1-((1-pressureDiff))+0.1)
         } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
@@ -640,7 +424,7 @@ const Home: NextPage = () => {
     json =  Paper.project.exportJSON({ asString: false })
     for (let i=0; i<pressureArray.length; i++) {
       pressureDiff = pressureArray[i] - (1-boundaryValue);
-      if (pressureDiff < 0.2 && pressureDiff > 0) {
+      if (pressureDiff < 0.1 && pressureDiff > 0) {
         if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
           json[0][1]["children"][i][1].strokeColor.push(1)
         } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
@@ -683,24 +467,90 @@ const Home: NextPage = () => {
           id="drawingCanvas"
           width={"5000px"}
           height={"10000px"}
-          className="canvas_background_note max-w-full w-7/12 max-h-full" 
+          className="canvas_background_note max-w-full w-8/12 max-h-full" 
           onPointerDownCapture={pointerDown}
           onPointerMoveCapture={pointerMove}
           onPointerUpCapture={pointerUp}
         />
         
         {/* 操作UI */}
-        <div className='fixed top-12 right-0 w-5/12 bg-gray-900 h-full'>
-          <div className='w-4/5 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2'>
+        <div className='fixed top-12 right-0 w-4/12 bg-gray-900 h-full'>
+          <div className='w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2'>
             <div className='rangebar mx-5 pt-12'>
               <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
             </div>
+            <div className='chart-bar mx-5 h-2/3'>
+              {lineGraphData?
+                <Line
+                  data={lineGraphData}
+                  options={options}
+                  id="chart-key"
+                />
+                :
+                <Line 
+                  options={options}
+                  data={{
+                    labels: labels,
+                    datasets: [
+                      {
+                        label: '筆圧',
+                        data: aboutPressureCountArray,
+                        borderColor: "rgb(75, 192, 192)",
+                      },
+                    ],
+                  }}
+                />
+              }
+            </div>
           </div>
-          <div className='flex w-full h-1/3 mt-2'>
-            <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl'>
-              
+          <div className='flex w-full h-1/6 mt-2'>
+            <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl justify-center items-center'>
+              <h4 className='text-center text-gray-200'>now</h4>
+              <h3 className='text-center text-gray-200 relative top-12'>
+                {nowConfirmPressure?(Math.round(nowConfirmPressure*1000)/1000):"0.0"}
+              </h3>
+              <div className='chart-doughnut h-4/5 relative bottom-6'>
+                {doughnutNowPressureGraphData&&
+                <Doughnut
+                  data={doughnutNowPressureGraphData}
+                  options={
+                    {
+                      plugins: {
+                        legend:{
+                          display:false,
+                        },
+                      },
+                      cutout: 40,
+                      maintainAspectRatio: false,
+                    }
+                  }
+                />
+                }
+              </div>
             </div>
             <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl'>
+              <h4 className='text-center text-gray-200'>avg</h4>
+              <h3 className='text-center text-gray-200 relative top-12'>
+                {avgConfirmPressure?(Math.round(avgConfirmPressure*1000)/1000):"0.0"}
+              </h3>
+              <div className='chart-doughnut h-4/5 relative bottom-6'>
+                {doughnutAvgPressureGraphData&&
+                <Doughnut
+                  data={doughnutAvgPressureGraphData}
+                  options={
+                    {
+                      plugins: {
+                        legend:{
+                          display:false,
+                        },
+                      },
+                      cutout: 40,
+                      maintainAspectRatio: false,
+                    }
+                  }
+                />
+                }
+              </div>
             </div>
           </div>
         </div>
