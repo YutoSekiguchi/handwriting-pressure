@@ -50,14 +50,19 @@ import PaperHeader from '../components/paper/Header';
 let pressureArray: number[] = [];
 let aboutPressureCountArray: number[] = [...Array(11)].map(x=>0);
 
+type ImageDataObject = {
+  url: string,
+  strokeData: ImageData
+}
+
 const Home: NextPage = () => {
 
   // const [lastXPos, setLastXPos] = useState<number | null>(null); // 直前のペンのx座標
   // const [lastYPos, setLastYPos] = useState<number | null>(null); // 直前のペンのy座標
-  // //////////////////////////////////////////////////////////////////////////////////////////////////
+
   // const [xPos, setXPos] = useState<number>(0); // ペンのx座標
   // const [yPos, setYPos] = useState<number>(0); // ペンのy座標
-  // /////////////////////////////////////////////////////////////////////////////////////////////
+
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
   const [nowConfirmPressure, setNowConfirmPressure] = useState<number|null>(null); // 1ストロークあたりの筆圧
   const [avgConfirmPressure, setAvgConfirmPressure] = useState<number|null>(null); //筆圧の平均
@@ -82,6 +87,7 @@ const Home: NextPage = () => {
   const [lineGraphData, setLineGraphData] = useState<any>(null);
   const [doughnutNowPressureGraphData, setDoughnutNowPressureGraphData] = useState<any>(null);
   const [doughnutAvgPressureGraphData, setDoughnutAvgPressureGraphData] = useState<any>(null);
+  const [imageDataList, setImageDataList] = useState<ImageDataObject[]>([]);
   const canvasRef = useRef(null);
 
   const options: {} = {
@@ -307,6 +313,20 @@ const Home: NextPage = () => {
     setPressure(null);
     setUndoable(true);
     setCount(0);
+    const canvas: any = canvasRef.current;
+    const imageUrl: string = canvas.toDataURL("image/png");
+    let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    setImageDataList((prevImageDataList) => (
+      [
+        ...prevImageDataList, 
+        {
+          url: imageUrl,
+          strokeData: imageData,
+        },
+      ]
+    ));
+    console.log(imageDataList);
   }
 
   // シンプルなundo
@@ -552,13 +572,18 @@ const Home: NextPage = () => {
                 }
               </div>
             </div>
-          </div>
+        </div>
+        <div className='w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2'>
+          {imageDataList.map((image, i) => (
+            <p key={i}>{image.url}</p>
+          ))}
         </div>
 
         {/* 書いてる時の筆圧のゲージ */}
         {/* <div className='rangebar fixed bottom-2 w-full'>
           <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
         </div> */}
+      </div>
       </div>
     </>
 	);
