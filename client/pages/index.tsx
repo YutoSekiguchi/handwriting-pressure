@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useState, useEffect, useRef, MutableRefObject, MouseEventHandler } from 'react';
+import React, { useState, useEffect, useRef, MutableRefObject, MouseEventHandler } from 'react';
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { removeItems } from '../utils/Helpers'
@@ -47,12 +47,14 @@ import PaperHeader from '../components/paper/Header';
 // let imageData: any;
 // var path: any;
 
+const pressureRangeNum = 20;
+
 let pressureArray: number[] = [];
-let aboutPressureCountArray: number[] = [...Array(11)].map(x=>0);
+let aboutPressureCountArray: number[] = [...Array(pressureRangeNum+1)].map(x=>0);
 
 type ImageDataObject = {
   url: string,
-  strokeData: ImageData
+  strokeData: (string|object)[][]
 }
 
 const Home: NextPage = () => {
@@ -83,11 +85,14 @@ const Home: NextPage = () => {
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const [boundaryPressureValue, setBoundaryPressureValue] = useState<number>(1);
   const [mode, setMode] = useState<'pen'|'erase'>('pen');
-  const labels: number[] = [...Array(11)].map((_, i) => ((10-i)/10));
+  const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum));
   const [lineGraphData, setLineGraphData] = useState<any>(null);
   const [doughnutNowPressureGraphData, setDoughnutNowPressureGraphData] = useState<any>(null);
   const [doughnutAvgPressureGraphData, setDoughnutAvgPressureGraphData] = useState<any>(null);
   const [imageDataList, setImageDataList] = useState<ImageDataObject[]>([]);
+  const [showImageDataList, setShowImageDataList] = useState<ImageDataObject[]>([]);
+  const [canvasDialog, setCanvasDialog] = useState<boolean>(false);
+  const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0);
   const canvasRef = useRef(null);
 
   const options: {} = {
@@ -136,9 +141,6 @@ const Home: NextPage = () => {
         path.blendMode = 'destination-out';
       }
 			start = Date.now();
-
-      
-
 
       let canvas: any = canvasRef.current;
       setCanvasWidth(canvas.width);
@@ -230,7 +232,7 @@ const Home: NextPage = () => {
       console.log('avgPressure', avgPressure)
       console.log(e)
       console.log(e.pointerType)
-      const aboutAvgPressure = Math.floor((1-avgPressure)*10)/10;
+      const aboutAvgPressure = Math.floor((1-avgPressure)*pressureRangeNum)/pressureRangeNum;
       const pressureArrayLength = pressureArray.length;
       while (pressureArray.length==pressureArrayLength) {
         switch (e.pointerType) {
@@ -238,21 +240,21 @@ const Home: NextPage = () => {
           case "mouse":
             const rand = Math.random();
             pressureArray.push(rand);
-            aboutPressureCountArray[((Math.floor((1-rand) * 10) / 10))*10] += 1;
+            aboutPressureCountArray[((Math.floor((1-rand) * pressureRangeNum) / pressureRangeNum))*pressureRangeNum] += 1;
             break;
           // タッチ操作なら
           case "touch":
             pressureArray.push(avgPressure);
-            aboutPressureCountArray[(aboutAvgPressure)*10] += 1;
+            aboutPressureCountArray[(aboutAvgPressure)*pressureRangeNum] += 1;
             break;
           // ペン操作なら
           case "pen":
             pressureArray.push(avgPressure);
-            aboutPressureCountArray[(aboutAvgPressure)*10] += 1;
+            aboutPressureCountArray[(aboutAvgPressure)*pressureRangeNum] += 1;
             break;
           default:
             pressureArray.push(avgPressure);
-            aboutPressureCountArray[(aboutAvgPressure)*10] += 1;
+            aboutPressureCountArray[(aboutAvgPressure)*pressureRangeNum] += 1;
         }
       }
     }
@@ -315,14 +317,13 @@ const Home: NextPage = () => {
     setCount(0);
     const canvas: any = canvasRef.current;
     const imageUrl: string = canvas.toDataURL("image/png");
-    let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    json =  Paper.project.exportJSON({ asString: false })
     setImageDataList((prevImageDataList) => (
       [
         ...prevImageDataList, 
         {
           url: imageUrl,
-          strokeData: imageData,
+          strokeData: json,
         },
       ]
     ));
@@ -390,10 +391,10 @@ const Home: NextPage = () => {
   }
 
   const fixChartData = () => {
-    let tmp: number[] = [...Array(11)].map(x=>0);
+    let tmp: number[] = [...Array(pressureRangeNum+1)].map(x=>0);
       for(let i=0;i<pressureArray.length;i++) {
-        const aboutAvgPressure = Math.floor((1-pressureArray[i])*10)/10;
-        tmp[aboutAvgPressure*10] += 1;
+        const aboutAvgPressure = Math.floor((1-pressureArray[i])*pressureRangeNum)/pressureRangeNum;
+        tmp[aboutAvgPressure*pressureRangeNum] += 1;
       }
       aboutPressureCountArray = tmp;
       setLineGraphData(
@@ -414,6 +415,10 @@ const Home: NextPage = () => {
 
   // 筆圧によった削除方法
   const handleDeleteRowPressureStroke = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(historyList.length == 0) {
+      alert('用紙に何も書かれていません');
+      return;
+    }
     boundaryValue = Number(e.target.value) / 10000;
     json =  Paper.project.exportJSON({ asString: false })
     let pressureDiff: number = 0;
@@ -455,6 +460,52 @@ const Home: NextPage = () => {
     Paper.project.clear()
     Paper.project.importJSON(json)
     setBoundaryPressureValue(boundaryValue);
+    setShowImageDataList((prevShowImageDataList) => (
+      [
+        ...prevShowImageDataList,
+        imageDataList[imageDataList.length-1],
+      ]
+    ));
+    setTimeout(function(){
+      const canvas: any = canvasRef.current;
+      const imageUrl: string = canvas.toDataURL("image/png");
+      json =  Paper.project.exportJSON({ asString: false })
+      setImageDataList((prevImageDataList) => (
+        [
+          ...prevImageDataList, 
+          {
+            url: imageUrl,
+            strokeData: json,
+          },
+        ]
+      ));
+    },500);
+  }
+
+  const showDialog = (i: number) => {
+    if(i<0) {
+      i = 0;
+    } else if(i>showImageDataList.length-1) {
+      i = showImageDataList.length-1;
+    }
+    setCanvasDialog(true);
+    setCanvasDialogImageIndex(i);
+    console.log(i)
+  }
+
+
+  const closeDialog = (e: any) => {
+    if (e.target.className == 'overlay') {
+      setCanvasDialog(false);
+    } else {
+      return;
+    }
+  }
+
+  const changeShowStroke = (data: any) => {
+    Paper.project.clear();
+    Paper.project.importJSON(data);
+    setCanvasDialog(false);
   }
 
 	useEffect(() => {
@@ -470,6 +521,38 @@ const Home: NextPage = () => {
 
 	return (
     <>
+      {canvasDialog&&
+      <div className="overlay" onClick={closeDialog}>
+        <div className="overlay-content">
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="logBackButton mr-2">
+              <button onClick={() => showDialog(canvasDialogImageIndex-1)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 200 200"><g transform="translate(-15.823 -265.198)"><path d="M115.823,265.2a100,100,0,1,0,100,100,100,100,0,0,0-100-100ZM128.5,309.54a10.887,10.887,0,0,1,7.3,19.221l-39.041,33.7,37.433,37.452a10.888,10.888,0,0,1-15.4,15.4L73.084,369.585a10.887,10.887,0,0,1,.578-15.927l47.893-41.373a10.888,10.888,0,0,1,6.943-2.745Z" fill={canvasDialogImageIndex==0?'rgb(210, 210, 210)' :'rgb(62, 82, 110)'} transform="translate(0 0)"/></g></svg>
+              </button>
+            </div>
+
+            <div className='flex-col w-full h-full justify-center items-center'>
+              <div className="relative w-full h-4/5">
+                <img src="https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685" className="absolute top-0 left-0 w-full h-full object-contain" />
+                <img src={showImageDataList[canvasDialogImageIndex].url} className="absolute top-0 left-0 w-full h-full  object-contain" />
+              </div>
+              <div className='decideButton w-full h-1/5 text-center mt-6'>
+                <button className='bg-gray-800 py-1 px-3 text-white rounded-lg' onClick={() => changeShowStroke(showImageDataList[canvasDialogImageIndex].strokeData)}>
+                  show
+                </button>
+              </div>
+            </div>
+
+            <div className="logForwardButton ml-2">
+              <button onClick={() => showDialog(canvasDialogImageIndex+1)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 200 200"><g transform="translate(-15.823 -265.198)"><path d="M115.823,265.2a100,100,0,1,0,100,100,100,100,0,0,0-100-100ZM103.146,309.54a10.889,10.889,0,0,1,6.943,2.745l47.893,41.373a10.887,10.887,0,0,1,.578,15.927l-45.707,45.727a10.888,10.888,0,1,1-15.4-15.4l37.433-37.452-39.041-33.7a10.887,10.887,0,0,1,7.3-19.221Z" fill={canvasDialogImageIndex==showImageDataList.length-1?'rgb(210, 210, 210)' :'rgb(62, 82, 110)'}  transform="translate(0 0)"/></g></svg>
+              </button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      }
       <PaperHeader 
         setColor={setColor}
         setPenWidth={setPenWidth}
@@ -486,7 +569,7 @@ const Home: NextPage = () => {
           style={{backgroundImage: 'url("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685")', touchAction: "none"}}
           id="drawingCanvas"
           width={"5000px"}
-          height={"10000px"}
+          height={"5000px"}
           className="canvas_background_note max-w-full w-8/12 max-h-full" 
           onPointerDownCapture={pointerDown}
           onPointerMoveCapture={pointerMove}
@@ -495,8 +578,9 @@ const Home: NextPage = () => {
         
         {/* 操作UI */}
         <div className='fixed top-12 right-0 w-4/12 bg-gray-900 h-full'>
-          <div className='w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2'>
-            <div className='rangebar mx-5 pt-12'>
+          <div className='w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2 text-center'>
+            <h3 className='text-white pt-3 font-bold'>Undo/Redo</h3>
+            <div className='rangebar mx-5 mt-3'>
               <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
             </div>
             <div className='chart-bar mx-5 h-2/3'>
@@ -525,7 +609,7 @@ const Home: NextPage = () => {
           </div>
           <div className='flex w-full h-1/6 mt-2'>
             <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl justify-center items-center'>
-              <h4 className='text-center text-gray-200'>now</h4>
+              <h4 className='text-center text-gray-200 font-bold'>now</h4>
               <h3 className='text-center text-gray-200 relative top-12'>
                 {nowConfirmPressure?(Math.round(nowConfirmPressure*1000)/1000):"0.0"}
               </h3>
@@ -549,7 +633,7 @@ const Home: NextPage = () => {
               </div>
             </div>
             <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl'>
-              <h4 className='text-center text-gray-200'>avg</h4>
+              <h4 className='text-center text-gray-200 font-bold'>avg</h4>
               <h3 className='text-center text-gray-200 relative top-12'>
                 {avgConfirmPressure?(Math.round(avgConfirmPressure*1000)/1000):"0.0"}
               </h3>
@@ -573,10 +657,16 @@ const Home: NextPage = () => {
               </div>
             </div>
         </div>
-        <div className='w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2'>
-          {imageDataList.map((image, i) => (
-            <p key={i}>{image.url}</p>
-          ))}
+        <div className='img-box-wrapper w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2 text-center'>
+          <h3 className='text-white my-3 font-bold'>Log</h3>
+          <div className='img-box w-full h-5/6 flex flex-wrap overflow-y-auto justify-around'>
+            {showImageDataList.map((image, i) => (
+              <div key={i} className="relative w-1/4 h-1/4 mt-2 cursor-pointer" onClick={() => showDialog(i)}>
+                <img src="https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685" className="absolute top-0 left-0 w-full h-full rounded-xl object-contain" />
+                <img src={image.url} className="absolute top-0 left-0 w-full h-full object-contain" />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* 書いてる時の筆圧のゲージ */}
