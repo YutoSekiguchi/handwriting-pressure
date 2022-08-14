@@ -38,7 +38,8 @@ let aboutPressureCountArray: number[] = [...Array(pressureRangeNum+1)].map(x=>0)
 
 type ImageDataObject = {
   url: string,
-  strokeData: (string|object)[][]
+  strokeData: (string|object)[][],
+  pressureArray: number[],
 }
 
 const Home: NextPage = () => {
@@ -78,6 +79,7 @@ const Home: NextPage = () => {
   const [canvasDialog, setCanvasDialog] = useState<boolean>(false);
   const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0);
   const canvasRef = useRef(null);
+  const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"
 
   const options: {} = {
     plugins: {
@@ -308,6 +310,7 @@ const Home: NextPage = () => {
         {
           url: imageUrl,
           strokeData: json,
+          pressureArray: pressureArray.concat()
         },
       ]
     ));
@@ -460,6 +463,7 @@ const Home: NextPage = () => {
           {
             url: imageUrl,
             strokeData: json,
+            pressureArray: pressureArray.concat()
           },
         ]
       ));
@@ -486,9 +490,13 @@ const Home: NextPage = () => {
     }
   }
 
-  const changeShowStroke = (data: any) => {
+  const changeShowStroke = (data: any, pressureData: number[]) => {
+    console.log(pressureArray)
+    console.log(pressureData)
     Paper.project.clear();
     Paper.project.importJSON(data);
+    pressureArray = pressureData;
+    console.log(pressureArray)
     setCanvasDialog(false);
   }
 
@@ -517,11 +525,11 @@ const Home: NextPage = () => {
 
             <div className='flex-col w-full h-full justify-center items-center'>
               <div className="relative w-full h-4/5">
-                <img src="https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685" className="absolute top-0 left-0 w-full h-full object-contain" />
+                <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 w-full h-full object-contain" />
                 <img src={showImageDataList[canvasDialogImageIndex].url} className="absolute top-0 left-0 w-full h-full  object-contain" />
               </div>
               <div className='decideButton w-full h-1/5 text-center mt-6'>
-                <button className='bg-gray-800 py-1 px-3 text-white rounded-lg' onClick={() => changeShowStroke(showImageDataList[canvasDialogImageIndex].strokeData)}>
+                <button className='bg-gray-800 py-1 px-3 text-white rounded-lg' onClick={() => changeShowStroke(showImageDataList[canvasDialogImageIndex].strokeData, showImageDataList[canvasDialogImageIndex].pressureArray)}>
                   show
                 </button>
               </div>
@@ -550,7 +558,7 @@ const Home: NextPage = () => {
       <div className="Canvas w-full h-full flex " id="wrapper">
         <canvas 
           ref={canvasRef}
-          style={{backgroundImage: 'url("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685")', touchAction: "none"}}
+          style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none"}}
           id="drawingCanvas"
           width={"5000px"}
           height={"5000px"}
@@ -643,10 +651,10 @@ const Home: NextPage = () => {
         </div>
         <div className='img-box-wrapper w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2 text-center'>
           <h3 className='text-white my-3 font-bold'>Log</h3>
-          <div className='img-box w-full h-5/6 flex flex-wrap overflow-y-auto justify-around'>
+          <div className='img-box w-full h-5/6 flex flex-wrap overflow-y-auto justify-start'>
             {showImageDataList.map((image, i) => (
               <div key={i} className="relative w-1/4 h-1/4 mt-2 cursor-pointer" onClick={() => showDialog(i)}>
-                <img src="https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685" className="absolute top-0 left-0 w-full h-full rounded-xl object-contain" />
+                <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 w-full h-full rounded-xl object-contain" />
                 <img src={image.url} className="absolute top-0 left-0 w-full h-full object-contain" />
               </div>
             ))}
