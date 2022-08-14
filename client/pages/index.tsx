@@ -1,8 +1,6 @@
 import type { NextPage } from 'next'
 import React, { useState, useEffect, useRef, MutableRefObject, MouseEventHandler } from 'react';
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import { removeItems } from '../utils/Helpers'
 import Paper from 'paper'
 import {
   Chart as ChartJS,
@@ -31,21 +29,7 @@ ChartJS.register(
 )
 ChartJS.defaults.scales.linear.min = 0;
 
-
 import PaperHeader from '../components/paper/Header';
-
-// import draw1 from '../utils/draw1'
-// interface IRect {
-//   width: number;
-//   height: number;
-//   left: number;
-//   right: number;
-//   top: number;
-//   bottom: number;
-// }
-
-// let imageData: any;
-// var path: any;
 
 const pressureRangeNum = 20;
 
