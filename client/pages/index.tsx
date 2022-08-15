@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import React, { useState, useEffect, useRef, MutableRefObject, MouseEventHandler } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head'
 import Paper from 'paper'
 import {
@@ -30,6 +30,7 @@ ChartJS.register(
 ChartJS.defaults.scales.linear.min = 0;
 
 import PaperHeader from '../components/paper/Header';
+import CanvasDialog from '../components/paper/CanvasDialog';
 
 const pressureRangeNum = 20;
 
@@ -515,36 +516,14 @@ const Home: NextPage = () => {
 	return (
     <>
       {canvasDialog&&
-      <div className="overlay" onClick={closeDialog}>
-        <div className="overlay-content">
-          <div className="w-full h-full flex justify-center items-center">
-            <div className="logBackButton mr-2">
-              <button onClick={() => showDialog(canvasDialogImageIndex-1)}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 200 200"><g transform="translate(-15.823 -265.198)"><path d="M115.823,265.2a100,100,0,1,0,100,100,100,100,0,0,0-100-100ZM128.5,309.54a10.887,10.887,0,0,1,7.3,19.221l-39.041,33.7,37.433,37.452a10.888,10.888,0,0,1-15.4,15.4L73.084,369.585a10.887,10.887,0,0,1,.578-15.927l47.893-41.373a10.888,10.888,0,0,1,6.943-2.745Z" fill={canvasDialogImageIndex==0?'rgb(210, 210, 210)' :'rgb(62, 82, 110)'} transform="translate(0 0)"/></g></svg>
-              </button>
-            </div>
-
-            <div className='flex-col w-full h-full justify-center items-center'>
-              <div className="relative w-full h-4/5">
-                <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 w-full h-full object-contain" />
-                <img src={showImageDataList[canvasDialogImageIndex].url} className="absolute top-0 left-0 w-full h-full  object-contain" />
-              </div>
-              <div className='decideButton w-full h-1/5 text-center mt-6'>
-                <button className='bg-gray-800 py-1 px-3 text-white rounded-lg' onClick={() => changeShowStroke(showImageDataList[canvasDialogImageIndex].strokeData, showImageDataList[canvasDialogImageIndex].pressureArray)}>
-                  change note
-                </button>
-              </div>
-            </div>
-
-            <div className="logForwardButton ml-2">
-              <button onClick={() => showDialog(canvasDialogImageIndex+1)}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 200 200"><g transform="translate(-15.823 -265.198)"><path d="M115.823,265.2a100,100,0,1,0,100,100,100,100,0,0,0-100-100ZM103.146,309.54a10.889,10.889,0,0,1,6.943,2.745l47.893,41.373a10.887,10.887,0,0,1,.578,15.927l-45.707,45.727a10.888,10.888,0,1,1-15.4-15.4l37.433-37.452-39.041-33.7a10.887,10.887,0,0,1,7.3-19.221Z" fill={canvasDialogImageIndex==showImageDataList.length-1?'rgb(210, 210, 210)' :'rgb(62, 82, 110)'}  transform="translate(0 0)"/></g></svg>
-              </button>
-            </div>
-          </div>
-          
-        </div>
-      </div>
+        <CanvasDialog 
+          closeDialog={closeDialog}
+          showDialog={showDialog}
+          canvasDialogImageIndex={canvasDialogImageIndex}
+          canvasBackgroundImageUrl={canvasBackgroundImageUrl}
+          showImageDataList={showImageDataList}
+          changeShowStroke={changeShowStroke}
+        />
       }
       <PaperHeader 
         setColor={setColor}
