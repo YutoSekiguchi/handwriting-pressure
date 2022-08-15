@@ -377,27 +377,28 @@ const Home: NextPage = () => {
     }
   }
 
+  // 筆圧折れ線グラフを書き直す
   const fixChartData = () => {
     let tmp: number[] = [...Array(pressureRangeNum+1)].map(x=>0);
       for(let i=0;i<pressureArray.length;i++) {
         const aboutAvgPressure = Math.floor((1-pressureArray[i])*pressureRangeNum)/pressureRangeNum;
         tmp[aboutAvgPressure*pressureRangeNum] += 1;
       }
-      aboutPressureCountArray = tmp;
-      setLineGraphData(
-        {
-          labels: labels,
-          datasets: [
-            {
-              label: "筆圧",
-              data: aboutPressureCountArray,
-              borderColor: "rgb(75, 192, 192)",
-              backgroundColor: "rgba(75, 192, 192, 0.1)",
-              fill: true,
-            },
-          ],
-        }
-      );
+    aboutPressureCountArray = tmp;
+    setLineGraphData(
+      {
+        labels: labels,
+        datasets: [
+          {
+            label: "筆圧",
+            data: aboutPressureCountArray,
+            borderColor: "rgb(75, 192, 192)",
+            backgroundColor: "rgba(75, 192, 192, 0.1)",
+            fill: true,
+          },
+        ],
+      }
+    );
   }
 
   // 筆圧によった削除方法
@@ -495,8 +496,8 @@ const Home: NextPage = () => {
     console.log(pressureData)
     Paper.project.clear();
     Paper.project.importJSON(data);
-    pressureArray = pressureData;
-    console.log(pressureArray)
+    pressureArray = pressureData.concat();
+    fixChartData();
     setCanvasDialog(false);
   }
 
@@ -530,7 +531,7 @@ const Home: NextPage = () => {
               </div>
               <div className='decideButton w-full h-1/5 text-center mt-6'>
                 <button className='bg-gray-800 py-1 px-3 text-white rounded-lg' onClick={() => changeShowStroke(showImageDataList[canvasDialogImageIndex].strokeData, showImageDataList[canvasDialogImageIndex].pressureArray)}>
-                  show
+                  change note
                 </button>
               </div>
             </div>
