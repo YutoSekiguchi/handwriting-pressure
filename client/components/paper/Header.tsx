@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import BackButton from '../common/BackButton';
 import ColorButton from './ColorButton';
 import PenButton from './PenButton';
