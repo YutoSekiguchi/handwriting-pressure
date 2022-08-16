@@ -39,7 +39,7 @@ const DoughnutChart: NextPage<Props> = (props) => {
 	return (
     <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl'>
       <h3 className='text-center text-gray-200 font-bold my-2'>{title}</h3>
-      <div className='chart-doughnut h-4/5 relative'>
+      <div className='chart-doughnut h-3/4 relative'>
         <h3 className='text-center text-gray-200 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'>
           {confirmPressure?(Math.round(confirmPressure*1000)/1000):"0.0"}
         </h3>

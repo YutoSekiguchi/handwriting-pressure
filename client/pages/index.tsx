@@ -10,6 +10,9 @@ const Home: NextPage = () => {
       <div className='fixed bg-gray-900 w-full h-full'>
         <AppHeader />
         <h1>HOME</h1>
+        <h1>HOME</h1>
+        <h1>HOME</h1>
+        <h1>HOME</h1>
       </div>
     </>
 	);
