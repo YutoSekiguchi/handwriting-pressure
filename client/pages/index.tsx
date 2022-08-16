@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Paper from 'paper'
 import {
   Chart as ChartJS,
+  ChartData,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -14,7 +15,7 @@ import {
   Filler,
   ArcElement
 } from 'chart.js'
-import { Line, Doughnut } from 'react-chartjs-2'
+import { Line } from 'react-chartjs-2'
 
 ChartJS.register(
   CategoryScale,
@@ -31,6 +32,7 @@ ChartJS.defaults.scales.linear.min = 0;
 
 import PaperHeader from '../components/paper/Header';
 import CanvasDialog from '../components/paper/CanvasDialog';
+import DoughnutChart from '../components/paper/DoughnutChart';
 
 const pressureRangeNum = 20;
 
@@ -73,8 +75,8 @@ const Home: NextPage = () => {
   const [mode, setMode] = useState<'pen'|'erase'>('pen');
   const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum));
   const [lineGraphData, setLineGraphData] = useState<any>(null);
-  const [doughnutNowPressureGraphData, setDoughnutNowPressureGraphData] = useState<any>(null);
-  const [doughnutAvgPressureGraphData, setDoughnutAvgPressureGraphData] = useState<any>(null);
+  const [doughnutNowPressureGraphData, setDoughnutNowPressureGraphData] = useState<ChartData<"doughnut", number[], unknown>|null>(null);
+  const [doughnutAvgPressureGraphData, setDoughnutAvgPressureGraphData] = useState<ChartData<"doughnut", number[], unknown>|null>(null);
   const [imageDataList, setImageDataList] = useState<ImageDataObject[]>([]);
   const [showImageDataList, setShowImageDataList] = useState<ImageDataObject[]>([]);
   const [canvasDialog, setCanvasDialog] = useState<boolean>(false);
@@ -82,7 +84,7 @@ const Home: NextPage = () => {
   const canvasRef = useRef(null);
   const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"
 
-  const options: {} = {
+  const lineOptions: {} = {
     plugins: {
       legend:{
         display:false,
@@ -559,12 +561,12 @@ const Home: NextPage = () => {
               {lineGraphData?
                 <Line
                   data={lineGraphData}
-                  options={options}
+                  options={lineOptions}
                   id="chart-key"
                 />
                 :
                 <Line 
-                  options={options}
+                  options={lineOptions}
                   data={{
                     labels: labels,
                     datasets: [
@@ -580,61 +582,23 @@ const Home: NextPage = () => {
             </div>
           </div>
           <div className='flex w-full h-1/6 mt-2'>
-            <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl justify-center items-center'>
-              <h4 className='text-center text-gray-200 font-bold'>now</h4>
-              <h3 className='text-center text-gray-200 relative top-12'>
-                {nowConfirmPressure?(Math.round(nowConfirmPressure*1000)/1000):"0.0"}
-              </h3>
-              <div className='chart-doughnut h-4/5 relative bottom-6'>
-                {doughnutNowPressureGraphData&&
-                <Doughnut
-                  data={doughnutNowPressureGraphData}
-                  options={
-                    {
-                      plugins: {
-                        legend:{
-                          display:false,
-                        },
-                      },
-                      cutout: 40,
-                      maintainAspectRatio: false,
-                    }
-                  }
-                />
-                }
-              </div>
-            </div>
-            <div className='w-2/5 mx-auto h-full bg-gray-800 rounded-3xl'>
-              <h4 className='text-center text-gray-200 font-bold'>avg</h4>
-              <h3 className='text-center text-gray-200 relative top-12'>
-                {avgConfirmPressure?(Math.round(avgConfirmPressure*1000)/1000):"0.0"}
-              </h3>
-              <div className='chart-doughnut h-4/5 relative bottom-6'>
-                {doughnutAvgPressureGraphData&&
-                <Doughnut
-                  data={doughnutAvgPressureGraphData}
-                  options={
-                    {
-                      plugins: {
-                        legend:{
-                          display:false,
-                        },
-                      },
-                      cutout: 40,
-                      maintainAspectRatio: false,
-                    }
-                  }
-                />
-                }
-              </div>
-            </div>
+            <DoughnutChart
+              doughnutPressureGraphData={doughnutNowPressureGraphData}
+              confirmPressure={nowConfirmPressure}
+              title={"now"}
+            />
+            <DoughnutChart
+              doughnutPressureGraphData={doughnutAvgPressureGraphData}
+              confirmPressure={avgConfirmPressure}
+              title={"avg"}
+            />
         </div>
         <div className='img-box-wrapper w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2 text-center'>
           <h3 className='text-white my-3 font-bold'>Log</h3>
           <div className='img-box w-full h-5/6 flex flex-wrap overflow-y-auto justify-start'>
             {showImageDataList.map((image, i) => (
-              <div key={i} className="relative w-1/4 h-1/4 mt-2 cursor-pointer" onClick={() => showDialog(i)}>
-                <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 w-full h-full rounded-xl object-contain" />
+              <div key={i} className="relative w-1/3 h-1/3 mt-2 cursor-pointer" onClick={() => showDialog(i)}>
+                <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 w-full h-full object-contain" />
                 <img src={image.url} className="absolute top-0 left-0 w-full h-full object-contain" />
               </div>
             ))}
