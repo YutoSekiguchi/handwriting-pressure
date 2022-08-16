@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useState, Dispatch, SetStateAction } from 'react';
 import BackButton from '../common/BackButton';
 import ColorButton from './ColorButton';
 import PenButton from './PenButton';
@@ -58,8 +58,6 @@ const PaperHeader: NextPage<Props> = (props) => {
     setNowMode(mode);
   }
 
-	useEffect(() =>{
-	}, []);
 	return (
 		<div className="PaperHeader fixed bg-cyan-900 w-full h-12 mb-5 flex">
       <div className='LeftSide flex justify-center ml-3'>
