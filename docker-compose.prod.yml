@@ -3,6 +3,6 @@ services:
   client:
     build:
       context: ./client
-      dockerfile: prod.Dockerfile
+      dockerfile: Dockerfile
     ports:
       - 7150:3000

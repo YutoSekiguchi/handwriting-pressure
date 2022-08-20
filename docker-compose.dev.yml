@@ -4,7 +4,7 @@ services:
     container_name: note-mysql
     build:
       context: ./db
-      dockerfile: dev.Dockerfile
+      dockerfile: exam.Dockerfile
     env_file: ./.env
     volumes:
       - ./db/data:/var/lib/mysql
@@ -23,19 +23,32 @@ services:
       - mysql
     networks:
       - note
-
-  client:
+  
+  api:
+    container_name: note-api
     build:
-      context: ./client
-      dockerfile: dev.Dockerfile
+      context: ./api
+      dockerfile: Dockerfile
     env_file: ./.env
     volumes:
-      - ./client:/app
+      - ./api/:/app
+    ports:
+      - 7151:8080
+    depends_on:
+      - mysql
+    networks:
+      - note
+
+  client:
+    container_name: note-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    env_file: ./.env
     ports:
       - 7150:3000
     networks:
       - note
-    tty: true
 
 volumes:
   mysql:
