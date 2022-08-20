@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
 
-	// "github.com/YutoSekiguchi/handwriting-pressure/controller"
+	"github.com/YutoSekiguchi/handwriting-pressure/controller"
 )
 
 func InitRouter(db *gorm.DB) {
@@ -21,7 +21,14 @@ func InitRouter(db *gorm.DB) {
 		AllowOrigins: []string{"http://localhost:3000", "https://vps7.nkmr.io", "http://localhost:7150"},
 		AllowHeaders: []string{echo.HeaderAuthorization, echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
-	// ctrl := controller.NewController(db)
+	ctrl := controller.NewController(db)
+
+	// ExamUser
+	examUser := e.Group("/examusers")
+	{
+		examUser.GET("", ctrl.HandleGetExamUserList)
+		examUser.POST("", ctrl.HandlePostExamUser)
+	}
 
 	// Routing
 	e.GET("/", func(c echo.Context) error {
