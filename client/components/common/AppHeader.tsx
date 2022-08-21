@@ -1,19 +1,23 @@
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router';
 import { useState, Dispatch, SetStateAction } from 'react';
 
 const AppHeader: NextPage = () => {
-
+  const router = useRouter();
+  const moveHome = () => {
+    router.push('/');
+  }
 
 	return (
-		<div className="AppHeader fixed bg-cyan-900 w-full h-12 mb-5 flex">
-      <div className='LeftSide flex justify-center ml-3'>
+		<div className="fixed flex w-full h-12 mb-5 AppHeader bg-cyan-900">
+      <div className='flex justify-center ml-3 cursor-pointer LeftSide' onClick={moveHome}>
         <h2 className='text-white'>卒論 ver 1.0.0</h2>
       </div>
-      <div className='CenterSide my-auto mx-auto'>
+      <div className='mx-auto my-auto CenterSide'>
 
       </div>
-      <div className="RightSide flex items-center">
-      <button className='bg-gray-800 py-1 px-3 text-white rounded-lg mr-5'>
+      <div className="flex items-center RightSide">
+      <button className='px-3 py-1 mr-5 text-white bg-gray-800 rounded-lg'>
         <p className='font-bold'>ログイン</p>
       </button>
       </div>
