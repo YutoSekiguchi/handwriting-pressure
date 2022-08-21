@@ -8,6 +8,7 @@ import PaperHeader from '../../components/paper/Header';
 import CanvasDialog from '../../components/paper/CanvasDialog';
 import DoughnutChart from '../../components/paper/DoughnutChart';
 import LineChart from '../../components/paper/LineChart';
+import { lineOptions } from '../../utils/LineOptions';
 
 const pressureRangeNum = 20;
 
@@ -53,22 +54,6 @@ const Note: NextPage = () => {
   const canvasRef = useRef(null);
   const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"
 
-  const lineOptions: {} = {
-    plugins: {
-      legend:{
-        display:false,
-      },
-    },
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        display: true
-      },
-      y: {
-        display: false
-      },
-    },
-  };
 
 	let path: paper.Path;
 	let start: number;
