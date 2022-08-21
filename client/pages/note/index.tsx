@@ -2,37 +2,12 @@ import type { NextPage } from 'next'
 import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head'
 import Paper from 'paper'
-import {
-  Chart as ChartJS,
-  ChartData,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-  ArcElement
-} from 'chart.js'
-import { Line } from 'react-chartjs-2'
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-  ArcElement
-)
-ChartJS.defaults.scales.linear.min = 0;
+import { ChartData } from 'chart.js'
 
 import PaperHeader from '../../components/paper/Header';
 import CanvasDialog from '../../components/paper/CanvasDialog';
 import DoughnutChart from '../../components/paper/DoughnutChart';
+import LineChart from '../../components/paper/LineChart';
 
 const pressureRangeNum = 20;
 
@@ -139,13 +114,12 @@ const Note: NextPage = () => {
       
       let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
       // console.log(canvas.toDataURL("image/png"));
-      
-      // const imageData = ctx.getImageData(0, 0, 1600, 1600);
-      
 		};
+    
 		Paper.view.onMouseDrag = (event: any) => {
 			path.add(event.point);
 		};
+    
 		Paper.view.onMouseUp = () => {
 			cutPath(true);
 			clearInterval(interval);
@@ -537,51 +511,36 @@ const Note: NextPage = () => {
         undoable={undoable} 
         redoable={redoable}
       />
-      <div className="Canvas w-full h-full flex " id="wrapper">
+      <div className="flex w-full h-full Canvas " id="wrapper">
         <canvas 
           ref={canvasRef}
           style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none"}}
           id="drawingCanvas"
           width={"5000px"}
           height={"5000px"}
-          className="canvas_background_note max-w-full w-8/12 max-h-full" 
+          className="w-8/12 max-w-full max-h-full canvas_background_note" 
           onPointerDownCapture={pointerDown}
           onPointerMoveCapture={pointerMove}
           onPointerUpCapture={pointerUp}
         />
         
         {/* 操作UI */}
-        <div className='fixed top-12 right-0 w-4/12 bg-gray-900 h-full'>
-          <div className='w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2 text-center'>
-            <h3 className='text-white pt-3 font-bold'>Undo/Redo</h3>
-            <div className='rangebar mx-5 mt-3'>
+        <div className='fixed right-0 w-4/12 h-full bg-gray-900 top-12'>
+          <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 h-1/3 rounded-3xl'>
+            <h3 className='pt-3 font-bold text-white'>Undo/Redo</h3>
+            <div className='mx-5 mt-3 rangebar'>
               <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
             </div>
-            <div className='chart-bar mx-5 h-2/3'>
-              {lineGraphData?
-                <Line
-                  data={lineGraphData}
-                  options={lineOptions}
-                  id="chart-key"
-                />
-                :
-                <Line 
-                  options={lineOptions}
-                  data={{
-                    labels: labels,
-                    datasets: [
-                      {
-                        label: '筆圧',
-                        data: aboutPressureCountArray,
-                        borderColor: "rgb(75, 192, 192)",
-                      },
-                    ],
-                  }}
-                />
-              }
+            <div className='mx-5 chart-bar h-2/3'>
+              <LineChart
+                lineGraphData={lineGraphData}
+                lineOptions={lineOptions}
+                labels={labels}
+                aboutPressureCountArray={aboutPressureCountArray}
+              />
             </div>
           </div>
-          <div className='flex w-full h-1/6 mt-2'>
+          <div className='flex w-full mt-2 h-1/6'>
             <DoughnutChart
               doughnutPressureGraphData={doughnutNowPressureGraphData}
               confirmPressure={nowConfirmPressure}
@@ -593,20 +552,20 @@ const Note: NextPage = () => {
               title={"avg"}
             />
         </div>
-        <div className='img-box-wrapper w-11/12 mx-auto h-1/3 bg-gray-800 rounded-3xl mt-2 text-center'>
-          <h3 className='text-white my-3 font-bold'>Log</h3>
-          <div className='img-box w-full h-5/6 flex flex-wrap overflow-y-auto justify-start'>
+        <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 img-box-wrapper h-1/3 rounded-3xl'>
+          <h3 className='my-3 font-bold text-white'>Log</h3>
+          <div className='flex flex-wrap justify-start w-full overflow-y-auto img-box h-5/6'>
             {showImageDataList.map((image, i) => (
-              <div key={i} className="relative w-1/3 h-1/3 mt-2 cursor-pointer" onClick={() => showDialog(i)}>
-                <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 w-full h-full object-contain" />
-                <img src={image.url} className="absolute top-0 left-0 w-full h-full object-contain" />
+              <div key={i} className="relative w-1/3 mt-2 cursor-pointer h-1/3" onClick={() => showDialog(i)}>
+                <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 object-contain w-full h-full" />
+                <img src={image.url} className="absolute top-0 left-0 object-contain w-full h-full" />
               </div>
             ))}
           </div>
         </div>
 
         {/* 書いてる時の筆圧のゲージ */}
-        {/* <div className='rangebar fixed bottom-2 w-full'>
+        {/* <div className='fixed w-full rangebar bottom-2'>
           <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
         </div> */}
       </div>
