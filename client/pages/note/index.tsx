@@ -20,6 +20,11 @@ type ImageDataObject = {
   pressureArray: number[],
 }
 
+type RedoHistoryObject = {
+  pressure: number,
+  stroke: any,
+}
+
 const Note: NextPage = () => {
 
   // const [lastXPos, setLastXPos] = useState<number | null>(null); // 直前のペンのx座標
@@ -42,7 +47,7 @@ const Note: NextPage = () => {
   const [undoable, setUndoable] = useState<boolean>(false); // undo可否
   const [redoable, setRedoable] = useState<boolean>(false); // redo可否
   const [historyList, setHistoryList] = useState<any[]>([]); // 筆跡の履歴管理（undo用）
-  const [redoHistoryList, setRedoHistoryList] = useState<any[]>([]); // undoされたものを管理（redo用）
+  const [redoHistoryList, setRedoHistoryList] = useState<RedoHistoryObject[]>([]); // undoされたものを管理（redo用）
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
@@ -85,6 +90,10 @@ const Note: NextPage = () => {
   let json: any;
 	let penColor: string;
   let boundaryValue: number;
+
+  if (redoHistoryList.length > 0){
+  console.log('his', typeof(redoHistoryList[0]));
+  console.log(redoHistoryList)}
 
 
 	const draw = () => {
