@@ -27,6 +27,8 @@ func InitRouter(db *gorm.DB) {
 	examUser := e.Group("/examusers")
 	{
 		examUser.GET("", ctrl.HandleGetExamUserList)
+		examUser.GET("/me", ctrl.HandleGetExamUserByNameAndPwd)
+		examUser.GET("/:id", ctrl.HandleGetExamUserByID)
 		examUser.POST("", ctrl.HandlePostExamUser)
 	}
 
