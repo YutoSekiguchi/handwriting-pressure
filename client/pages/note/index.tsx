@@ -26,22 +26,11 @@ type RedoHistoryObject = {
 }
 
 const Note: NextPage = () => {
-
-  // const [lastXPos, setLastXPos] = useState<number | null>(null); // 直前のペンのx座標
-  // const [lastYPos, setLastYPos] = useState<number | null>(null); // 直前のペンのy座標
-
-  // const [xPos, setXPos] = useState<number>(0); // ペンのx座標
-  // const [yPos, setYPos] = useState<number>(0); // ペンのy座標
-
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
   const [nowConfirmPressure, setNowConfirmPressure] = useState<number|null>(null); // 1ストロークあたりの筆圧
   const [avgConfirmPressure, setAvgConfirmPressure] = useState<number|null>(null); //筆圧の平均
-  // const [tiltX, setTiltX] = useState<number | null | undefined>(null); // ペンの傾きx
-  // const [tiltY, setTiltY] = useState<number | null | undefined>(null); // ペンの傾きy
-  // const [red, setRed] = useState<number>(0); // 赤
-  // const [blue, setBlue] = useState<number>(0); // 青
   const [color, setColor] = useState<string>('#000000');
-  const [count, setCount] = useState<number>(0); // 何回moveしたか
+  const [moveCount, setMoveCount] = useState<number>(0); // 何回moveしたか
   const [penWidth, setPenWidth] = useState<number>(2); // 線の太さ
   const [eraseWidth, setEraseWidth] = useState<number>(20); // 消しゴムの太さ
   const [undoable, setUndoable] = useState<boolean>(false); // undo可否
@@ -187,7 +176,7 @@ const Note: NextPage = () => {
     console.log(e.pressure)
     console.log("これみたい", e);
     if (e.pressure != 0) {
-      setCount(count+1)
+      setMoveCount(moveCount+1)
       if (pressure === null || pressure === undefined) {
         setPressure(e.pressure)
       } else {
@@ -200,7 +189,7 @@ const Note: NextPage = () => {
     setIsDrag(false);
     console.log(pressure);
     if (pressure) {
-      let avgPressure = pressure/count;
+      let avgPressure = pressure/moveCount;
       console.log('avgPressure', avgPressure)
       console.log(e)
       console.log(e.pointerType)
@@ -286,7 +275,7 @@ const Note: NextPage = () => {
     )
     setPressure(null);
     setUndoable(true);
-    setCount(0);
+    setMoveCount(0);
     const canvas: any = canvasRef.current;
     const imageUrl: string = canvas.toDataURL("image/png");
     json =  Paper.project.exportJSON({ asString: false })
