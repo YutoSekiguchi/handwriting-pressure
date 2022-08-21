@@ -1,11 +1,14 @@
 import '../styles/globals.css'
 import '../styles/Slider.css'
 import type { AppProps } from 'next/app'
+import { UsersProvider } from '../hooks/contexts/usersContext'
 // import "../styles/my-custom-class.css"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <>
-    <Component {...pageProps} />
+    <UsersProvider>
+      <Component {...pageProps} />
+    </UsersProvider>
   </>
 }
 
