@@ -66,3 +66,7 @@ a {
   background: white;
   border-radius: 10%;
 }
+
+.authDialog {
+  background: linear-gradient(to bottom right, blue, fuchsia);
+}
