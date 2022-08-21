@@ -30,6 +30,20 @@ export const UsersProvider = (props: any) => {
     }
   }
 
+  // NameとPasswordからユーザを取得
+  const getExamUserByNameAndPassword = async(name: string, password: string) => {
+    try {
+      dispatch({ type: usersActions.GET_EXAM_USER });
+      const res = await axios.get(`${url}/examusers/me?Name=${name}&Password=${password}`)
+      if (res.data.ok === true) {
+        dispatch({ type: usersActions.GET_EXAM_USER_SUCCESS });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: usersActions.GET_ALL_EXAM_USERS_ERROR, payload: error });
+    }
+  }
+
   // ユーザの追加
   const createExamUser = async(data: ExamUserObj) => {
     try {
@@ -48,6 +62,7 @@ export const UsersProvider = (props: any) => {
     return {
       state,
       getAllExamUsers,
+      getExamUserByNameAndPassword,
       createExamUser
     }
   }, [state]);
