@@ -24,7 +24,7 @@ func (s ExamUserService) GetExamUserByNameAndPwd(db *gorm.DB, c echo.Context) (*
 	name := c.QueryParam("Name")
 	password := c.QueryParam("Password")
 	if err := db.Raw("SELECT * FROM `exam_users` WHERE name = ? AND password = ? LIMIT 1", name, password).Scan(&u).Error; err != nil {
-		return u, err
+		return nil, err
 	}
 	if (u.ID == 0) {
 		return nil, nil
@@ -38,7 +38,7 @@ func (s ExamUserService) GetExamUserByID(db *gorm.DB, c echo.Context) (*ExamUser
 	id := c.Param("id")
 
 	if err := db.Raw("SELECT * FROM `exam_users` WHERE id = ? LIMIT 1", id).Scan(&u).Error; err != nil {
-		return u, err
+		return nil, err
 	}
 	if (u.ID == 0) {
 		return nil, nil
