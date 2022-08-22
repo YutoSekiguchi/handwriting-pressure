@@ -19,6 +19,7 @@ export function usersReducer(state: any, actions: any) {
       return {
         ...state,
         fetching: false,
+        userData: actions.payload,
         ok: true,
       }
 

@@ -21,8 +21,8 @@ export const UsersProvider = (props: any) => {
     try {
       dispatch({ type: usersActions.GET_ALL_EXAM_USERS });
       const res = await axios.get(`${url}/examusers`);
-      if (res.data.ok === true) {
-        dispatch({ type: usersActions.GET_ALL_EXAM_USERS_SUCCESS });
+      if (res.status === 200) {
+        dispatch({ type: usersActions.GET_ALL_EXAM_USERS_SUCCESS, payload: res.data });
       }
     } catch (error) {
       console.log(error);
@@ -35,8 +35,9 @@ export const UsersProvider = (props: any) => {
     try {
       dispatch({ type: usersActions.GET_EXAM_USER });
       const res = await axios.get(`${url}/examusers/me?Name=${name}&Password=${password}`)
-      if (res.data.ok === true) {
-        dispatch({ type: usersActions.GET_EXAM_USER_SUCCESS });
+      console.log(res);
+      if (res.status === 200) {
+        dispatch({ type: usersActions.GET_EXAM_USER_SUCCESS, payload: res.data });
       }
     } catch (error) {
       console.log(error);
@@ -49,12 +50,27 @@ export const UsersProvider = (props: any) => {
     try {
       dispatch({ type: usersActions.CREATE_EXAM_USER });
       const res = await axios.post(`${url}/examusers`, data);
-      if (res.data.ok === true) {
-        dispatch({ type: usersActions.CREATE_EXAM_USER_SUCCESS });
+      if (res.status === 200) {
+        dispatch({ type: usersActions.CREATE_EXAM_USER_SUCCESS, payload: res.data });
       }
     } catch (error) {
       console.log(error);
       dispatch({ type: usersActions.CREATE_EXAM_USER_ERROR, payload: error });
+    }
+  }
+
+  // サインイン
+  const signIn = async(name: string, password: string, data: ExamUserObj) => {
+    try {
+      const res = await axios.get(`${url}/examusers/me?Name=${name}&Password=${password}`);
+      if (res.data != null) {
+        alert('このユーザは既に存在します');
+        return;
+      } else {
+        createExamUser(data);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -63,7 +79,8 @@ export const UsersProvider = (props: any) => {
       state,
       getAllExamUsers,
       getExamUserByNameAndPassword,
-      createExamUser
+      createExamUser,
+      signIn
     }
   }, [state]);
 
