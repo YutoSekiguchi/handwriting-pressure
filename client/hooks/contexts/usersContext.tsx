@@ -35,7 +35,6 @@ export const UsersProvider = (props: any) => {
     try {
       dispatch({ type: usersActions.GET_EXAM_USER });
       const res = await axios.get(`${url}/examusers/me?Name=${name}&Password=${password}`)
-      console.log(res);
       if (res.status === 200) {
         dispatch({ type: usersActions.GET_EXAM_USER_SUCCESS, payload: res.data });
       }

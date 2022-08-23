@@ -1,5 +1,4 @@
-import React, { useMemo, useReducer, createContext, useContext, ReactNode, useState } from 'react'
-import { initialState } from '../reducers/usersReducer'
+import React, { ReactNode } from 'react'
 import { UsersProvider } from './usersContext'
 
 const AppProvider = (props: { children: ReactNode }) => {
