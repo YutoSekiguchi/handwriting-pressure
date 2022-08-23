@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router';
 import React, { ChangeEvent, useState, useEffect } from 'react'
+import CheckBox from '../../components/auth/CheckBox';
 import TextForm from '../../components/auth/TextForm';
 import AppHeader from '../../components/common/AppHeader';
 import { useUsers } from '../../hooks/contexts/usersContext';
@@ -73,7 +74,6 @@ const SignIn: NextPage = () => {
     await users.signIn(name, password, data);
   }
 
-
   useEffect(() => {
     if(count>0){
       if(users.state.userData!=null&&Object.keys(users.state.userData).length !== 0) {
@@ -92,7 +92,6 @@ const SignIn: NextPage = () => {
       alert('サインインに失敗しました');
     }
   }, [count])
-
 
   return (
     <>
@@ -116,13 +115,21 @@ const SignIn: NextPage = () => {
             <h6 className='text-white'>Gender: 性別*</h6>
             <div className='flex justify-around mb-2'>
               <div>
-                <input type="checkbox" id="male" name="male" style={{"accentColor": "black"}} className='scale-125' checked={gender=="male"} onChange={handleChangeCheckBox}/>
-                <label htmlFor="male" className='ml-2 text-white'>male: 男性</label>
+                <CheckBox
+                  label='male: 男性'
+                  checked={gender=='male'}
+                  name='male'
+                  handleChangeElement={handleChangeCheckBox}
+                />
               </div>
 
               <div>
-                <input type="checkbox" id="female" name="female" style={{"accentColor": "black"}}  className='scale-125' checked={gender=="female"} onChange={handleChangeCheckBox} />
-                <label htmlFor="female" className='ml-2 text-white'>female: 女性</label>
+                <CheckBox
+                  label='female: 女性'
+                  checked={gender=='female'}
+                  name='female'
+                  handleChangeElement={handleChangeCheckBox}
+                />
               </div>
             </div>
             
