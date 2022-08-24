@@ -66,8 +66,9 @@ const Note: NextPage = () => {
   let boundaryValue: number;
 
   if (redoHistoryList.length > 0){
-  console.log('his', typeof(redoHistoryList[0]));
-  console.log(redoHistoryList)}
+    console.log('his', typeof(redoHistoryList[0]));
+    console.log(redoHistoryList);
+  }
 
 
 	const draw = () => {
