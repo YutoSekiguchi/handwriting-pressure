@@ -1,4 +1,4 @@
-# M1チップでないmacユーザ，Windowsユーザ用のコマンド
+# 開発環境用コマンド
 start-dev:
 	docker-compose -f docker-compose.dev.yml up --build -d
 start-dev-api:
@@ -9,9 +9,6 @@ down-dev:
 # 本番環境用のコマンド
 start-prod:
 	sudo chmod -R 777 db && docker-compose -f docker-compose.prod.yml up --build -d --remove-orphans
-
-start-pre-prod:
-	docker-compose -f docker-compose.prod.yml up --build -d --remove-orphans
 
 down-prod:
 	docker-compose -f docker-compose.prod.yml down --rmi all
