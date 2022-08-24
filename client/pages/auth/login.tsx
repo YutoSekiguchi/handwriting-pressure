@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router';
-import React, { ChangeEvent, useState, useEffect } from 'react'
-import CheckBox from '../../components/auth/CheckBox';
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import TextForm from '../../components/auth/TextForm';
 import AppHeader from '../../components/common/AppHeader';
 import { useUsers } from '../../hooks/contexts/usersContext';
@@ -13,14 +12,12 @@ type UserDataObject = {
   Age: number
 }
 
-const SignIn: NextPage = () => {
+const LogIn: NextPage = () => {
   const router = useRouter();
   const users: any = useUsers();
   
   const [name, setName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [gender, setGender] = useState<string>('');
-  const [age, setAge] = useState<number|null>(null);
   const [count, setCount] = useState<number>(0);
   
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -33,51 +30,25 @@ const SignIn: NextPage = () => {
     setPassword(value);
   }
 
-  const handleChangeCheckBox = (e: ChangeEvent<HTMLInputElement>) => {
-    const value: string = e.target.name;
-    if (value == gender) {
-      setGender('');
-    } else {
-      setGender(value);
-    }
-  }
-
-  const handleChangeAge = (e: ChangeEvent<HTMLInputElement>) => {
-    const value: number = Number(e.target.value);
-    setAge(value);
-  }
-
   const moveHome = () => {
     router.push('/');
   }
 
-  const signIn = async() => {
+  const logIn = async() => {
     if (name === '') {
       alert('名前を入力してください');
       return;
     } else if (password === '') {
       alert('パスワードを入力してください');
       return;
-    } else if (gender === '') {
-      alert('性別を入力してください');
-      return;
-    } else if (age === null) {
-      alert('年齢を入力してください');
-      return;
     }
-    const data: UserDataObject = {
-      Name: name,
-      Password: password,
-      Gender: gender,
-      Age: age
-    }
-    await users.signIn(name, password, data);
+    await users.getExamUserByNameAndPassword(name, password);
   }
 
   useEffect(() => {
     if(count>0){
       if(users.state.userData!=null&&Object.keys(users.state.userData).length !== 0) {
-        window.location.href='/note';
+      window.location.href='/note';
       } else {
         setCount((prevCount) => prevCount + 1);
       }
@@ -89,17 +60,18 @@ const SignIn: NextPage = () => {
 
   useEffect(() => {
     if(count > 1) {
-      alert('サインインに失敗しました');
+      alert('名前またはパスワードが違います');
     }
   }, [count])
+
 
   return (
     <>
       <div className='fixed w-full h-full bg-gray-900'>
         <AppHeader />
-        <div className='flex flex-col items-center justify-center w-full h-4/5'>
+        <div className='flex items-center justify-center w-full h-4/5'>
           <div className='flex flex-col w-1/2 max-w-md px-16 pt-16 authDialog rounded-3xl'>
-            <h2 className='mb-6 font-bold text-center text-white align-middle'>SIGN IN</h2>
+            <h2 className='mb-6 font-bold text-center text-white align-middle'>LOGIN</h2>
             <TextForm 
               label='Name: 名前'
               type='text'
@@ -111,38 +83,15 @@ const SignIn: NextPage = () => {
               type='password'
               handleChangeElement={handleChangePassword}
             />
-            
-            <h6 className='text-white'>Gender: 性別*</h6>
-            <div className='flex justify-around mb-2'>
-              <div>
-                <CheckBox
-                  label='male: 男性'
-                  checked={gender=='male'}
-                  name='male'
-                  handleChangeElement={handleChangeCheckBox}
-                />
-              </div>
 
-              <div>
-                <CheckBox
-                  label='female: 女性'
-                  checked={gender=='female'}
-                  name='female'
-                  handleChangeElement={handleChangeCheckBox}
-                />
-              </div>
-            </div>
-            
-            <label htmlFor="age" className='text-white'>Age: 年齢*</label>
-            <input type="number" id="age" name="age" min="0" className='w-20 pl-3 mt-1 mb-6 text-center rounded-3xl' onChange={handleChangeAge} />
 
-            <div className='flex justify-around mb-6'>
+            <div className='flex justify-around mb-6 mt-12'>
               <button className='px-3 py-1 text-white bg-gray-800 rounded-lg' onClick={moveHome}>
                 <p className='font-bold'>Cancel</p>
               </button>
-              <button className='px-3 py-1 rounded-lg bg-gray-50 text-grey-800' onClick={signIn}>
+              <button className='px-3 py-1 rounded-lg bg-gray-50 text-grey-800' onClick={logIn}>
                 <p className='flex font-bold'>
-                  Sign in
+                  Login
                   <svg version="1.1" className='w-4 ml-2' xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 499.1 499.1" xmlSpace="preserve">
                     <path d="M0,249.6c0,9.5,7.7,17.2,17.2,17.2h327.6l-63.9,63.8c-6.7,6.7-6.7,17.6,0,24.3c3.3,3.3,7.7,5,12.1,5s8.8-1.7,12.1-5
                       l93.1-93.1c6.7-6.7,6.7-17.6,0-24.3l-93.1-93.1c-6.7-6.7-17.6-6.7-24.3,0c-6.7,6.7-6.7,17.6,0,24.3l63.8,63.8H17.2
@@ -162,4 +111,4 @@ const SignIn: NextPage = () => {
   );
 }
 
-export default SignIn;
+export default LogIn;
