@@ -6,12 +6,12 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 dotenv.config();
 
-// const nextConfig = {
-//   reactStrictMode: true,
-// }
+const nextConfig = {
+  reactStrictMode: true,
+}
 
 module.exports = {
-  // nextConfig,
+  nextConfig,
   env: {
     API_URL: IS_PRODUCTION ? process.env.API_URL_PROD : process.env.API_URL_DEV,
   },
