@@ -30,7 +30,7 @@ const Note: NextPage = () => {
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
   const [nowConfirmPressure, setNowConfirmPressure] = useState<number|null>(null); // 1ストロークあたりの筆圧
   const [avgConfirmPressure, setAvgConfirmPressure] = useState<number|null>(null); //筆圧の平均
-  const [color, setColor] = useState<string>('#000000');
+  const [color, setColor] = useState<string>('#000000'); // 色
   const [moveCount, setMoveCount] = useState<number>(0); // 何回moveしたか
   const [penWidth, setPenWidth] = useState<number>(2); // 線の太さ
   const [eraseWidth, setEraseWidth] = useState<number>(20); // 消しゴムの太さ
@@ -42,17 +42,17 @@ const Note: NextPage = () => {
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
   const [isDrag, setIsDrag] = useState<boolean>(false); // ペンがノートに置かれているか否か
   const [boundaryPressureValue, setBoundaryPressureValue] = useState<number>(1);
-  const [mode, setMode] = useState<'pen'|'erase'>('pen');
-  const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum));
-  const [lineGraphData, setLineGraphData] = useState<any>(null);
-  const [doughnutNowPressureGraphData, setDoughnutNowPressureGraphData] = useState<ChartData<"doughnut", number[], unknown>|null>(null);
-  const [doughnutAvgPressureGraphData, setDoughnutAvgPressureGraphData] = useState<ChartData<"doughnut", number[], unknown>|null>(null);
-  const [imageDataList, setImageDataList] = useState<ImageDataObject[]>([]);
-  const [showImageDataList, setShowImageDataList] = useState<ImageDataObject[]>([]);
-  const [canvasDialog, setCanvasDialog] = useState<boolean>(false);
-  const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0);
+  const [mode, setMode] = useState<'pen'|'erase'>('pen'); // ペンか消しゴムか
+  const [lineGraphData, setLineGraphData] = useState<any>(null); // 折れ線グラフのデータ
+  const [doughnutNowPressureGraphData, setDoughnutNowPressureGraphData] = useState<ChartData<"doughnut", number[], unknown>|null>(null); // 現在の筆圧データ
+  const [doughnutAvgPressureGraphData, setDoughnutAvgPressureGraphData] = useState<ChartData<"doughnut", number[], unknown>|null>(null); // 平均筆圧データ
+  const [imageDataList, setImageDataList] = useState<ImageDataObject[]>([]); // ストロークごとに画像保存しているリスト
+  const [showImageDataList, setShowImageDataList] = useState<ImageDataObject[]>([]); // ログで表示するための画像のリスト
+  const [canvasDialog, setCanvasDialog] = useState<boolean>(false); // ログのダイアログの表示・非表示
+  const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0); // ログの何枚目かを示す数値
   const canvasRef = useRef(null);
-  const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"
+  const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum)); // グラフ表示用のラベル
+  const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"; // canvasの背景画像
 
 
 	let path: paper.Path;
