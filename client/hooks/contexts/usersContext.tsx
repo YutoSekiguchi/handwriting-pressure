@@ -2,6 +2,7 @@ import React, { useMemo, useReducer, createContext, useContext } from 'react'
 import { initialState, usersReducer } from '../reducers/usersReducer'
 import { usersActions } from '../actions/usersActions'
 import axios from 'axios'
+import lscache from 'lscache';
 
 const UsersContext = createContext(null);
 
@@ -14,6 +15,7 @@ type ExamUserObj = {
 
 export const UsersProvider = (props: any) => {
   const url = process.env.API_URL;
+  const minutes = 120;
   const [state, dispatch] = useReducer(usersReducer, initialState);
 
   // ユーザの一覧を取得
@@ -36,6 +38,10 @@ export const UsersProvider = (props: any) => {
       dispatch({ type: usersActions.GET_EXAM_USER });
       const res = await axios.get(`${url}/examusers/me?Name=${name}&Password=${password}`)
       if (res.status === 200) {
+        if (res.data) {
+          lscache.set('loginUserData', res.data, minutes);
+          console.log('ls cache!!');
+        }
         dispatch({ type: usersActions.GET_EXAM_USER_SUCCESS, payload: res.data });
       }
     } catch (error) {
@@ -50,6 +56,10 @@ export const UsersProvider = (props: any) => {
       dispatch({ type: usersActions.CREATE_EXAM_USER });
       const res = await axios.post(`${url}/examusers`, data);
       if (res.status === 200) {
+        if(res.data) {
+          lscache.set('loginUserData', res.data, minutes);
+          console.log('localstorageに保存');
+        }
         dispatch({ type: usersActions.CREATE_EXAM_USER_SUCCESS, payload: res.data });
       }
     } catch (error) {
