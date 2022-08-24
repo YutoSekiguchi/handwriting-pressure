@@ -35,6 +35,12 @@
     MODE=exam // 実験用はexam
     ```
 
+- `./client/.env`
+  - ```
+    API_URL_DEV=http://localhost:7151 // 開発環境のAPIのURL
+    API_URL_PROD=https://xxx.com/api // 本番環境のAPIのURL
+    ```
+
 ### 開発で使用するポート一覧
 
 |     | port | 説明                           | docker container 名 |
