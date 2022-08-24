@@ -44,4 +44,4 @@
 |     | 7152 | データベース，   MySQL         | note-mysql          |
 |     | 7153 | データベースの操作, PHPMyAdmin | note-phpmyadmin     |
 
-> 開発環境ではクライアントは`npm run dev`を実行してdocker上では実行しない方法の方がいいかも
+> 今は開発環境ではクライアントは`npm run dev`を実行してdocker上では実行しない方法の方がいいかも
