@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 function MyApp({ Component, pageProps, router }: AppProps) {
   useEffect(() => {
-    if (router.pathname.includes('auth')||router.pathname==='/') return;
+    if (router.pathname.includes('auth')||router.pathname==='/'||router.pathname==='/detail') return;
     // 期限切れのデータを削除
     lscache.flushExpired();
     // loginIdを取得できない場合

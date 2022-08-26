@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router';
-import { useState, Dispatch, SetStateAction } from 'react';
 
 const AppHeader: NextPage = () => {
   const router = useRouter();
