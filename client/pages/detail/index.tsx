@@ -1,13 +1,11 @@
 import type { NextPage } from 'next'
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React from 'react';
 import Head from 'next/head'
 import AppHeader from '../../components/common/AppHeader';
 import Image from 'next/image'
-import { useRouter } from 'next/router';
 import HoverColorChangeButton from '../../components/common/HoverColorChangeButton';
 
 const Detail: NextPage = () => {
-  const router = useRouter();
 	return (
     <>
       <div className='fixed w-full h-full bg-gray-900'>
