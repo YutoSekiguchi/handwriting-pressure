@@ -9,7 +9,7 @@ const AppHeader: NextPage = () => {
   }
 
 	return (
-		<div className="fixed flex w-full h-12 mb-5 AppHeader bg-cyan-900">
+		<div className="fixed flex w-full h-12 mb-5 AppHeader bg-sky-900">
       <div className='flex justify-center ml-3 cursor-pointer LeftSide' onClick={moveHome}>
         <h2 className='text-white'>卒論 ver 1.0.0</h2>
       </div>
