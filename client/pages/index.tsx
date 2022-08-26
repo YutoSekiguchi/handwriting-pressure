@@ -4,6 +4,7 @@ import Head from 'next/head'
 import AppHeader from '../components/common/AppHeader';
 import Image from 'next/image'
 import { useRouter } from 'next/router';
+import HoverColorChangeButton from '../components/common/HoverColorChangeButton';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -23,12 +24,14 @@ const Home: NextPage = () => {
           </div>
 
           <div>
-            <button 
-              className="px-6 py-3 mt-12 rounded-xl bg-gray-50 text-gray-800 hover:bg-sky-800 hover:text-gray-50 hover:border-2 hover:border-white hover:mt-11"
-              onClick={() => {router.push('/detail')}}
-            >
-              <p className='font-bold'>実験説明画面へ進む</p>
-            </button>
+            <HoverColorChangeButton
+              url='/detail'
+              margin='ml-0'
+              hoverMargin='ml-0'
+              hoverBackgroundColor='bg-sky-800'
+              backgroundColor='bg-gray-50'
+              text='実験説明画面へ進む'
+            />
           </div>
         </div>
       </div>
