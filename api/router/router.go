@@ -32,6 +32,13 @@ func InitRouter(db *gorm.DB) {
 		examUser.POST("", ctrl.HandlePostExamUser)
 	}
 
+	// Log
+	log := e.Group("/logs")
+	{
+		log.GET("/paper/:pdid/", ctrl.HandleGetLogsByPDID)
+		log.POST("", ctrl.HandlePostLog)
+	}
+
 	// Routing
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, Echo!!")
