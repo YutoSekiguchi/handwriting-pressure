@@ -15,7 +15,6 @@ function MyApp({ Component, pageProps, router }: AppProps) {
       alert('タイムアウトが発生しました。ログインし直してください');
       window.location.href='/';
     }
-
   }, [Component]);
 
   return <>
