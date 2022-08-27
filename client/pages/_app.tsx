@@ -13,7 +13,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
     // loginIdを取得できない場合
     if (!lscache.get('loginUserData')) {
       alert('タイムアウトが発生しました。ログインし直してください');
-      window.location.href='/';
+      window.location.href='/auth/login';
     }
   }, [Component]);
 
