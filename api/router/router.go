@@ -32,6 +32,13 @@ func InitRouter(db *gorm.DB) {
 		examUser.POST("", ctrl.HandlePostExamUser)
 	}
 
+	// Paper
+	paper := e.Group("/papers")
+	{
+		paper.GET("/list/:uid", ctrl.HandleGetPapersByUID)
+		paper.POST("", ctrl.HandlePostPaper)
+	}
+
 	// Log
 	log := e.Group("/logs")
 	{
