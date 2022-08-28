@@ -62,7 +62,7 @@ export const PaperDetailsProvider = (props: any) => {
 export const usePaperDetails = () => {
   const context = useContext(PaperDetailsContext);
   if(!context) {
-    throw Error('useUsers is out Provider');
+    throw Error('usePaperDetails is out Provider');
   }
   return context;
 }
