@@ -6,6 +6,7 @@ import lscache from 'lscache';
 import Image from 'next/image';
 import { usePapers } from '../../hooks/contexts/papersContext';
 import { usePaperDetails } from '../../hooks/contexts/paperDetailsContext';
+import { stringify } from 'querystring';
 
 type FolderObj = {
   ID: number,
@@ -126,7 +127,7 @@ const Library: NextPage = () => {
     }
     await paperDetails.createPaperDetail(data);
     setNoteName('');
-    window.location.href=('/note');
+    // window.location.href=('/note');
   }
 
   useEffect(() => {
@@ -202,17 +203,20 @@ const Library: NextPage = () => {
 
           <div className='w-5/6 h-full bg-gray-800'>
             <div className='flex-col mt-16 mx-6 h-full'>
-              {openFolderIndexAndPID&&openFolderIndexAndPID.index==0&&
+              {openFolderIndexAndPID&&
                 <div>
                 </div>
               }
 
-              {openFolderIndexAndPID&&openFolderIndexAndPID.index>0&&
+              {openFolderIndexAndPID&&openFolderIndexAndPID.index>=0&&
                 <div className='flex w-full h-full'>
                   {noteList&&
                     noteList.map((note, i) => (
-                      <div className='' key={i}>
-
+                      <div className='mr-4 mb-2' key={i}>
+                        <div className='border-gray-300 w-36 h-48 border flex items-center justify-center cursor-pointer'>
+                          ここに画像
+                        </div>
+                        <p className='text-white text-center'>{note.Title}</p>
                       </div>
                     ))
                   }
