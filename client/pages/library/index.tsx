@@ -5,6 +5,7 @@ import AppHeader from '../../components/common/AppHeader';
 import lscache from 'lscache';
 import Image from 'next/image';
 import { usePapers } from '../../hooks/contexts/papersContext';
+import { usePaperDetails } from '../../hooks/contexts/paperDetailsContext';
 
 type FolderObj = {
   ID: number,
@@ -13,18 +14,43 @@ type FolderObj = {
   CreatedAt: string
 }
 
+type NoteObj = {
+  ID: number,
+  PID: number,
+  UID: number,
+  Title: string,
+  PaperWidth: number,
+  PaperHeight: number,
+  PaperImage: string,
+  PaperJson: string,
+  PressureList: string,
+  BackgroundImage: string,
+  CreatedAt: string,
+}
+
+type FolderIndexAndPIDObj = {
+  pid: number,
+  index: number
+}
+
 const Library: NextPage = () => {
   const userData = lscache.get('loginUserData');
   const papers: any = usePapers();
-  const [paperAddInput, setPaperAddInput] = useState<boolean>(false);
-  const [folderName, setFolderName] = useState<string>('');
-  const [allFolderData, setAllFolderData] = useState<FolderObj[]>([]);
-  const [openFolderIndex, setOpenFolderIndex] = useState<number>(0);
+  const paperDetails: any = usePaperDetails();
+  const [paperAddInput, setPaperAddInput] = useState<boolean>(false); // 追加のためのinputタグを開くかどうか
+  const [folderName, setFolderName] = useState<string>(''); // 追加しようとしてるフォルダの名前
+  const [allFolderData, setAllFolderData] = useState<FolderObj[]>([]); // 全てのフォルダのデータ
+  const [openFolderIndexAndPID, setOpenFolderIndexAndPID] = useState<FolderIndexAndPIDObj|null>(null); // 開いてるフォルダの番号(index)
+  const [noteList, setNoteList] = useState<NoteObj[]>([]); // フォルダの中にあるノート一覧
+  const [newNoteDialog, setNewNoteDialog] = useState<boolean>(false);
+  const [noteName, setNoteName] = useState<string>('');
   
+  // フォルダの追加のためにinputタグ開く
   const handleAddPaper = () => {
     setPaperAddInput(true);
   }
 
+  // 新規フォルダのinputタグ閉じる
   const handleClosePaperAddInput = async(e: any) => {
     if (e.target.id !== 'add-folder-button'&&e.target.id !== 'folder-input') {
       setPaperAddInput(false);
@@ -42,16 +68,65 @@ const Library: NextPage = () => {
     }
   }
 
+  // フォルダの名前入力
   const changeFolderName = (e: ChangeEvent<HTMLInputElement>) => {
     setFolderName(e.target.value);
   }
 
-  const handleClickFolder = (pid: number, i: number) => {
-    setOpenFolderIndex(i);
+  // ノートの名前入力
+  const changeNoteName = (e: ChangeEvent<HTMLInputElement>) => {
+    setNoteName(e.target.value);
   }
 
+  // フォルダクリック時
+  const handleClickFolder = async(pid: number, i: number) => {
+    await paperDetails.getPaperDetailsByPID(pid);
+    setOpenFolderIndexAndPID({pid: pid, index: i});
+  }
+
+  // uidからフォルダをとってくる
   const getPapersData = async() => {
-    await papers.getPapersByUID(userData['ID']);
+    if(userData) {
+      await papers.getPapersByUID(userData['ID']);
+    }
+  }
+
+  // ノートを作るためにプラスマークを押下時
+  const createNewNote = async() => {
+    if (userData) {
+      setNewNoteDialog(true);
+    }
+  }
+
+  // ノート作成ダイアログを閉じる
+  const closeNewNoteDialog = (e: any) => {
+    if (e.target.className == 'overlay') {
+      setNewNoteDialog(false);
+    } else {
+      return;
+    }
+  }
+
+  // ノート作成ボタン押下時
+  const onSubmitNote = async() => {
+    if (noteName===''||noteName===null) {
+      alert('ノートの名前を入力してください');
+      return;
+    }
+    const data = {
+      PID: openFolderIndexAndPID?.pid,
+      UID: userData?.ID,
+      Title: noteName,
+      PaperWidth: 0,
+      PaaperHeight: 0,
+      PaperImage: '',
+      PaperJson: '',
+      PressureList: '',
+      BackgroundImage: '',
+    }
+    await paperDetails.createPaperDetail(data);
+    setNoteName('');
+    window.location.href=('/note');
   }
 
   useEffect(() => {
@@ -62,10 +137,36 @@ const Library: NextPage = () => {
     setAllFolderData(papers.state.papersList);
   }, [papers.state])
 
+  useEffect(() => {
+    setNoteList(paperDetails.state.paperDetailsList);
+  }, [paperDetails.state])
+
 	return (
     <>
       <div className='fixed w-full h-full bg-gray-800'>
         <AppHeader />
+        {newNoteDialog&&
+          <div className="overlay" onClick={closeNewNoteDialog}>
+            <div className="overlay-content">
+              <div className="w-full h-full flex justify-center items-center relative">
+                <div className='flex-col'>
+                  <h4 className='text-center font-bold mb-1'>ノートのタイトルを入力</h4>
+                  <input 
+                    type={"text"}
+                    name="noteName"
+                    required
+                    autoComplete='off'
+                    className='py-2 px-3 mb-3 rounded-lg bg-gray-700 text-white'
+                    onInput={changeNoteName}
+                  />
+                </div>
+                <button className='px-3 py-1 text-white bg-gray-800 rounded-lg absolute bottom-3' onClick={onSubmitNote}>
+                  <p className='font-bold'>作成</p>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
         <div className="w-full h-full flex" onClick={handleClosePaperAddInput}>
           <div className='w-1/6 h-full bg-gray-900 border-r-2 border-sky-200'>
             <div className='flex-col mt-12'>
@@ -100,12 +201,27 @@ const Library: NextPage = () => {
           </div>
 
           <div className='w-5/6 h-full bg-gray-800'>
-            <div className='flex-col mt-12'>
-              {openFolderIndex==0&&<div></div>}
-              {openFolderIndex>0&&
-                <>
-                  
-                </>
+            <div className='flex-col mt-16 mx-6 h-full'>
+              {openFolderIndexAndPID&&openFolderIndexAndPID.index==0&&
+                <div>
+                </div>
+              }
+
+              {openFolderIndexAndPID&&openFolderIndexAndPID.index>0&&
+                <div className='flex w-full h-full'>
+                  {noteList&&
+                    noteList.map((note, i) => (
+                      <div className='' key={i}>
+
+                      </div>
+                    ))
+                  }
+                  <div className='border-gray-300 w-36 h-48 border-dashed border flex items-center justify-center cursor-pointer' onClick={createNewNote}>
+                    <div className='rounded-full bg-sky-900 w-16 h-16 items-center flex justify-center'>
+                      <Image src={'/plus.svg'} width={30} height={30} />
+                    </div>
+                  </div>
+                </div>
               }
             </div>
           </div>
