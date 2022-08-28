@@ -62,16 +62,6 @@ const Library: NextPage = () => {
       <div className='fixed w-full h-full bg-gray-800'>
         <AppHeader />
         <div className="w-full h-full flex" onClick={handleClosePaperAddInput}>
-          {/* {paperDialog&&
-            <CanvasDialog 
-              closeDialog={closeDialog}
-              showDialog={showDialog}
-              canvasDialogImageIndex={canvasDialogImageIndex}
-              canvasBackgroundImageUrl={canvasBackgroundImageUrl}
-              showImageDataList={showImageDataList}
-              changeShowStroke={changeShowStroke}
-            />
-          } */}
           <div className='w-1/6 h-full bg-gray-900 border-r-2 border-sky-200'>
             <div className='flex-col mt-12'>
 
@@ -86,12 +76,15 @@ const Library: NextPage = () => {
               </div>
 
               {/* フォルダ一覧 */}
-              {allFolderData.map((obj, i) => (
-                <div className='flex pl-10 cursor-pointer border-b border-gray-600 py-1' key={i}>
-                  <Image src={'/folder.svg'} width={15} height={15} />
-                  <h6 className='text-white pl-2'>{obj.Name}</h6>
-                </div>
-              ))}
+              {allFolderData&&
+                allFolderData.map((obj, i) => (
+                  <div className='flex pl-10 cursor-pointer border-b border-gray-600 py-1' key={i}>
+                    <Image src={'/folder.svg'} width={15} height={15} />
+                    <h6 className='text-white pl-2'>{obj.Name}</h6>
+                  </div>
+                ))
+              }
+
               {paperAddInput&&
                 <div className='flex pl-10 cursor-pointer border-b border-gray-600 folder-input'>
                   <Image src={'/folder.svg'} width={15} height={15} />
