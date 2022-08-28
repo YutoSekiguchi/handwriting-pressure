@@ -50,5 +50,8 @@ export const papersDetailReducer = (state: any, actions: any) => {
         fetching: false,
         error: actions.payload
       }
+    
+    default:
+      return state
   }
 }
