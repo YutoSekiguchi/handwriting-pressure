@@ -6,7 +6,6 @@ import lscache from 'lscache';
 import Image from 'next/image';
 import { usePapers } from '../../hooks/contexts/papersContext';
 import { usePaperDetails } from '../../hooks/contexts/paperDetailsContext';
-import { stringify } from 'querystring';
 
 type FolderObj = {
   ID: number,
@@ -127,7 +126,7 @@ const Library: NextPage = () => {
     }
     await paperDetails.createPaperDetail(data);
     setNoteName('');
-    // window.location.href=('/note');
+    window.location.href=('/note');
   }
 
   useEffect(() => {
