@@ -19,7 +19,7 @@ export const papersReducer = (state: any, actions: any) => {
       return {
         ...state,
         fetching: false,
-        papersList: actions.payload,
+        paper: actions.payload,
         ok: true,
       }
     
@@ -40,7 +40,7 @@ export const papersReducer = (state: any, actions: any) => {
       return {
         ...state,
         fetching: false,
-        paper: actions.payload,
+        papersList: actions.payload,
         ok: true,
       }
 
