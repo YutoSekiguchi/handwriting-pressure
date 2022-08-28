@@ -42,7 +42,7 @@ const LogIn: NextPage = () => {
   useEffect(() => {
     if(count>0){
       if(users.state.userData!=null&&Object.keys(users.state.userData).length !== 0) {
-      window.location.href='/note';
+      window.location.href='/library';
       } else {
         setCount((prevCount) => prevCount + 1);
       }
