@@ -7,7 +7,7 @@ export const initialState = {
   error: null
 }
 
-export function usersReducer(state: any, actions: any) {
+export const usersReducer = (state: any, actions: any) => {
   switch (actions.type) {
     case usersActions.CREATE_EXAM_USER:
       return {
