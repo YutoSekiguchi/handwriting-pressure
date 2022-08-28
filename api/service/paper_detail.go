@@ -13,7 +13,7 @@ func (s PaperDetailService) GetPaperDetailByPID(db *gorm.DB, c echo.Context) ([]
 	var pd []PaperDetail
 	pid := c.Param("pid")
 
-	if err := db.Raw("SELECT * FROM `paper_detail` WHERE pid = ?", pid).Scan(&pd).Error; err != nil {
+	if err := db.Raw("SELECT * FROM `paper_details` WHERE pid = ?", pid).Scan(&pd).Error; err != nil {
 		return nil, err
 	}
 	return pd, nil
