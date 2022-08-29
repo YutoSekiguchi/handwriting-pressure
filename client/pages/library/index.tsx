@@ -122,7 +122,7 @@ const Library: NextPage = () => {
       PaperImage: '',
       PaperJson: '',
       PressureList: '',
-      BackgroundImage: '',
+      BackgroundImage: 'https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685',
     }
     await paperDetails.createPaperDetail(data);
     setNoteName('');
@@ -213,7 +213,10 @@ const Library: NextPage = () => {
                     noteList.map((note, i) => (
                       <div className='mr-4 mb-2' key={i}>
                         <div className='border-gray-300 w-36 h-48 border flex items-center justify-center cursor-pointer'>
-                          ここに画像
+                          {note.PaperImage!=''
+                            ? <img src={note.PaperImage} />
+                            : <img src={note.BackgroundImage} />
+                          }
                         </div>
                         <p className='text-white text-center'>{note.Title}</p>
                       </div>
