@@ -10,11 +10,11 @@ const Home: NextPage = () => {
     <>
       <div className='fixed w-full h-full bg-gray-900'>
         <AppHeader />
-        <div className="w-full h-full flex justify-center items-center flex-col">
-          <div className='w-1/2 h-1/2 bg-gray-800 rounded-3xl border-2 border-sky-200 relative'>
+        <div className="flex flex-col items-center justify-center w-full h-full">
+          <div className='relative w-1/2 bg-gray-800 border-2 h-1/2 rounded-3xl border-sky-200'>
             <div className='flex-col'>
-              <h2 className='font-bold text-center text-white my-2'>実験システム</h2>
-              <h3 className='text-white ml-6'>この実験では〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜。</h3>
+              <h2 className='my-2 font-bold text-center text-white'>実験システム</h2>
+              <h3 className='ml-6 text-white'>この実験では〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜。</h3>
             </div>
             <div className='absolute bottom-2 right-2'>
               <Image src={'/pen.gif'} width={150} height={150} />

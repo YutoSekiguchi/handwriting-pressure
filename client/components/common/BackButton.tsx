@@ -8,11 +8,11 @@ const BackButton: NextPage<Props> = (props) => {
   const {buttonText} = props;
 	return (
 		<>
-      <button className='ReturnButton flex'>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400 my-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <button className='flex ReturnButton'>
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 my-auto text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
-        <a href="/" className='text-blue-400 text-sm my-auto'>{buttonText}</a>
+        <a href="/library" className='my-auto text-sm text-blue-400'>{buttonText}</a>
       </button>
     </>
 	);
