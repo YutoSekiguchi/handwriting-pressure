@@ -155,32 +155,32 @@ const Library: NextPage = () => {
         {newNoteDialog&&
           <div className="overlay" onClick={closeNewNoteDialog}>
             <div className="overlay-content">
-              <div className="w-full h-full flex justify-center items-center relative">
+              <div className="relative flex items-center justify-center w-full h-full">
                 <div className='flex-col'>
-                  <h4 className='text-center font-bold mb-1'>ノートのタイトルを入力</h4>
+                  <h4 className='mb-1 font-bold text-center'>ノートのタイトルを入力</h4>
                   <input 
                     type={"text"}
                     name="noteName"
                     required
                     autoComplete='off'
-                    className='py-2 px-3 mb-3 rounded-lg bg-gray-700 text-white'
+                    className='px-3 py-2 mb-3 text-white bg-gray-700 rounded-lg'
                     onInput={changeNoteName}
                     autoFocus
                   />
                 </div>
-                <button className='px-3 py-1 text-white bg-gray-800 rounded-lg absolute bottom-3' onClick={onSubmitNote}>
+                <button className='absolute px-3 py-1 text-white bg-gray-800 rounded-lg bottom-3' onClick={onSubmitNote}>
                   <p className='font-bold'>作成</p>
                 </button>
               </div>
             </div>
           </div>
         }
-        <div className="w-full h-full flex" onClick={handleClosePaperAddInput}>
+        <div className="flex w-full h-full" onClick={handleClosePaperAddInput}>
           <div className='w-1/6 h-full bg-gray-900 border-r-2 border-sky-200'>
             <div className='flex-col mt-12'>
               {/* 名前とフォルダ追加ボタン */}
-              <div className='flex justify-between items-center bg-gray-700 px-6'>
-                <h4 className='font-bold text-center text-white my-2' suppressHydrationWarning>
+              <div className='flex items-center justify-between px-6 bg-gray-700'>
+                <h4 className='my-2 font-bold text-center text-white' suppressHydrationWarning>
                   {userData&&userData.Name}
                 </h4>
                 <button className='text-white' id="add-folder-button" onClick={handleAddPaper} >
@@ -191,47 +191,47 @@ const Library: NextPage = () => {
               {/* フォルダ一覧 */}
               {allFolderData&&
                 allFolderData.map((obj, i) => (
-                  <div className='flex pl-10 cursor-pointer border-b border-gray-600 py-1' key={i} onClick={() => handleClickFolder(obj.ID, i)}>
+                  <div className='flex py-1 pl-10 border-b border-gray-600 cursor-pointer' key={i} onClick={() => handleClickFolder(obj.ID, i)}>
                     <Image src={'/folder.svg'} width={15} height={15} />
-                    <h6 className='text-white pl-2'>{obj.Name}</h6>
+                    <h6 className='pl-2 text-white'>{obj.Name}</h6>
                   </div>
                 ))
               }
 
               {/* フォルダ新規追加 */}
               {paperAddInput&&
-                <div className='flex pl-10 cursor-pointer border-b border-gray-600 folder-input'>
+                <div className='flex pl-10 border-b border-gray-600 cursor-pointer folder-input'>
                   <Image src={'/folder.svg'} width={15} height={15} />
-                  <input type="text" onInput={changeFolderName} id="folder-input" className="bg-gray-700 text-white w-4/5 ml-2 my-1" autoFocus />
+                  <input type="text" onInput={changeFolderName} id="folder-input" className="w-4/5 my-1 ml-2 text-white bg-gray-700" autoFocus />
                 </div>
               }
             </div>
           </div>
 
           <div className='w-5/6 h-full bg-gray-800'>
-            <div className='flex-col mt-16 mx-6 h-full'>
+            <div className='flex-col h-full mx-6 mt-16'>
               {openFolderIndexAndPID&&
                 <div>
                 </div>
               }
 
               {openFolderIndexAndPID&&openFolderIndexAndPID.index>=0&&
-                <div className='flex w-full h-full'>
+                <div className='flex flex-wrap'>
                   {noteList&&
                     noteList.map((note, i) => (
-                      <div className='mr-4 mb-2' key={i}>
-                        <div className='border-gray-300 w-36 h-48 border flex items-center justify-center cursor-pointer' onClick={() => moveNotePage(note.ID, note.UID)}>
+                      <div className='mb-3 mr-4' key={i}>
+                        <div className='flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36' onClick={() => moveNotePage(note.ID, note.UID)}>
                           {note.PaperImage!=''
                             ? <img src={note.PaperImage} />
                             : <img src={note.BackgroundImage} />
                           }
                         </div>
-                        <p className='text-white text-center'>{note.Title}</p>
+                        <p className='text-center text-white'>{note.Title}</p>
                       </div>
                     ))
                   }
-                  <div className='border-gray-300 w-36 h-48 border-dashed border flex items-center justify-center cursor-pointer' onClick={createNewNote}>
-                    <div className='rounded-full bg-sky-900 w-16 h-16 items-center flex justify-center'>
+                  <div className='flex items-center justify-center h-48 border border-gray-300 border-dashed cursor-pointer w-36' onClick={createNewNote}>
+                    <div className='flex items-center justify-center w-16 h-16 rounded-full bg-sky-900'>
                       <Image src={'/plus.svg'} width={30} height={30} />
                     </div>
                   </div>
