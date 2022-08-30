@@ -4,11 +4,12 @@ import Head from 'next/head'
 import Paper from 'paper'
 import { ChartData } from 'chart.js'
 
-import PaperHeader from '../../components/paper/Header';
-import CanvasDialog from '../../components/paper/CanvasDialog';
-import DoughnutChart from '../../components/paper/DoughnutChart';
-import LineChart from '../../components/paper/LineChart';
-import { lineOptions } from '../../utils/LineOptions';
+import PaperHeader from '../../../../components/paper/Header';
+import CanvasDialog from '../../../../components/paper/CanvasDialog';
+import DoughnutChart from '../../../../components/paper/DoughnutChart';
+import LineChart from '../../../../components/paper/LineChart';
+import { lineOptions } from '../../../../utils/LineOptions';
+import { useRouter } from 'next/router';
 
 const pressureRangeNum = 20;
 
@@ -27,6 +28,8 @@ type RedoHistoryObject = {
 }
 
 const Note: NextPage = () => {
+  const router = useRouter();
+  const isReady = router.isReady;
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
   const [nowConfirmPressure, setNowConfirmPressure] = useState<number|null>(null); // 1ストロークあたりの筆圧
   const [avgConfirmPressure, setAvgConfirmPressure] = useState<number|null>(null); //筆圧の平均
@@ -462,14 +465,19 @@ const Note: NextPage = () => {
     setCanvasDialog(false);
   }
 
+
 	useEffect(() => {
-		Paper.setup('drawingCanvas');
-		Paper.install(window);
-		draw();
-	}, []);
+    if(isReady){
+      Paper.setup('drawingCanvas');
+      Paper.install(window);
+      draw();
+    }
+	}, [isReady]);
 
   useEffect(() => {
+    if(isReady){
     draw();
+    }
   }, [color, penWidth, eraseWidth, mode])
 
 

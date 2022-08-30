@@ -6,6 +6,7 @@ import lscache from 'lscache';
 import Image from 'next/image';
 import { usePapers } from '../../hooks/contexts/papersContext';
 import { usePaperDetails } from '../../hooks/contexts/paperDetailsContext';
+import { useRouter } from 'next/router';
 
 type FolderObj = {
   ID: number,
@@ -35,6 +36,7 @@ type FolderIndexAndPIDObj = {
 
 const Library: NextPage = () => {
   const userData = lscache.get('loginUserData');
+  const router = useRouter();
   const papers: any = usePapers();
   const paperDetails: any = usePaperDetails();
   const [paperAddInput, setPaperAddInput] = useState<boolean>(false); // 追加のためのinputタグを開くかどうか
@@ -126,7 +128,12 @@ const Library: NextPage = () => {
     }
     await paperDetails.createPaperDetail(data);
     setNoteName('');
-    window.location.href=('/note');
+  }
+
+  // ノートをクリックした時
+  const moveNotePage = async(pdid: number, uid: number) => {
+    // window.location.href=(`/note/${pdid}/${uid}`);
+    router.replace({pathname: `/note/[pdid]/[uid]`, query: { pdid: pdid, uid: uid },});
   }
 
   useEffect(() => {
@@ -158,6 +165,7 @@ const Library: NextPage = () => {
                     autoComplete='off'
                     className='py-2 px-3 mb-3 rounded-lg bg-gray-700 text-white'
                     onInput={changeNoteName}
+                    autoFocus
                   />
                 </div>
                 <button className='px-3 py-1 text-white bg-gray-800 rounded-lg absolute bottom-3' onClick={onSubmitNote}>
@@ -212,7 +220,7 @@ const Library: NextPage = () => {
                   {noteList&&
                     noteList.map((note, i) => (
                       <div className='mr-4 mb-2' key={i}>
-                        <div className='border-gray-300 w-36 h-48 border flex items-center justify-center cursor-pointer'>
+                        <div className='border-gray-300 w-36 h-48 border flex items-center justify-center cursor-pointer' onClick={() => moveNotePage(note.ID, note.UID)}>
                           {note.PaperImage!=''
                             ? <img src={note.PaperImage} />
                             : <img src={note.BackgroundImage} />
