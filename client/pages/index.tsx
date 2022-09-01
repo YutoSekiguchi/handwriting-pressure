@@ -25,8 +25,8 @@ const Home: NextPage = () => {
             <HoverColorChangeButton
               url='/detail'
               margin='ml-0'
-              hoverMargin='ml-0'
-              hoverBackgroundColor='bg-sky-800'
+              hoverMargin='hover:ml-0'
+              hoverBackgroundColor='hover:bg-sky-800'
               backgroundColor='bg-gray-50'
               text='実験説明画面へ進む'
             />
