@@ -30,13 +30,13 @@ export const papersDetailReducer = (state: any, actions: any) => {
         error: actions.payload
       }
 
-    case papersDetailActions.CREATE_PAPER_DETAIL:
+    case papersDetailActions.GET_PAPER_DETAIL:
       return {
         ...state,
         fetching: true,
       }
 
-    case papersDetailActions.CREATE_PAPER_DETAIL_SUCCESS:
+    case papersDetailActions.GET_PAPER_DETAIL_SUCCESS:
       return {
         ...state,
         fetching: false,
@@ -44,7 +44,7 @@ export const papersDetailReducer = (state: any, actions: any) => {
         ok: true,
       }
     
-    case papersDetailActions.CREATE_PAPER_DETAIL_ERROR:
+    case papersDetailActions.GET_PAPER_DETAIL_ERROR:
       return {
         ...state,
         fetching: false,
