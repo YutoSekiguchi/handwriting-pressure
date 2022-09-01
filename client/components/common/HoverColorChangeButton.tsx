@@ -17,7 +17,7 @@ const HoverColorChangeButton: NextPage<Props> = (props) => {
 	return (
     <>
       <button 
-        className={`px-6 py-3 mt-12 rounded-xl ${backgroundColor} text-gray-800 hover:${hoverBackgroundColor} hover:text-gray-50 hover:border-2 hover:border-white hover:mt-11 ${margin} hover:${hoverMargin}`}
+        className={`px-6 py-3 mt-12 rounded-xl ${backgroundColor} text-gray-800 ${hoverBackgroundColor} hover:text-gray-50 hover:border-2 hover:border-white hover:mt-11 ${margin} ${hoverMargin}`}
         onClick={() => {router.push(`${url}`)}}
       >
         <p className='font-bold'>{text}</p>
