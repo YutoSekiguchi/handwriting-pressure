@@ -8,6 +8,17 @@ import (
 type PaperDetailService struct{}
 
 // GET
+// idを指定してpaperを取得
+func (s PaperDetailService) GetPaperDetailByID(db *gorm.DB, c echo.Context) (*PaperDetail, error) {
+	pd := new(PaperDetail)
+	id := c.Param("id")
+
+	if err := db.Raw("SELECT * FROM `paper_details` WHERE id = ?", id).Scan(&pd).Error; err != nil {
+		return nil, err
+	}
+	return pd, nil
+}
+
 // pidを指定して同じグループに部類されてるpaperを取得
 func (s PaperDetailService) GetPaperDetailByPID(db *gorm.DB, c echo.Context) ([]PaperDetail, error) {
 	var pd []PaperDetail

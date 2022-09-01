@@ -5,6 +5,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// idを指定してpaperの取得
+func (ctrl Controller) HandleGetPaperDetailByID(c echo.Context) error {
+	var s service.PaperDetailService
+	p, err := s.GetPaperDetailByID(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
 // pidを指定してそのpapersに入ってるノートの情報の取得
 func (ctrl Controller) HandleGetPaperDetailsByPID(c echo.Context) error {
 	var s service.PaperDetailService
