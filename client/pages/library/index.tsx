@@ -139,6 +139,7 @@ const Library: NextPage = () => {
   // ノートをクリックした時
   const moveNotePage = async(pdid: number, uid: number) => {
     // window.location.href=(`/note/${pdid}/${uid}`);
+    // router.push({pathname: `/note/[pdid]/[uid]`, query: { pdid: pdid, uid: uid },});
     router.replace({pathname: `/note/[pdid]/[uid]`, query: { pdid: pdid, uid: uid },});
   }
 

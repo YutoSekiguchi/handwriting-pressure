@@ -10,6 +10,7 @@ import DoughnutChart from '../../../../components/paper/DoughnutChart';
 import LineChart from '../../../../components/paper/LineChart';
 import { lineOptions } from '../../../../utils/LineOptions';
 import { useRouter } from 'next/router';
+import { usePaperDetails } from '../../../../hooks/contexts/paperDetailsContext';
 
 const pressureRangeNum = 20;
 
@@ -29,7 +30,9 @@ type RedoHistoryObject = {
 
 const Note: NextPage = () => {
   const router = useRouter();
+  const paperDetails: any = usePaperDetails();
   const isReady = router.isReady;
+  const { pdid, uid } = router.query;
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
   const [nowConfirmPressure, setNowConfirmPressure] = useState<number|null>(null); // 1ストロークあたりの筆圧
   const [avgConfirmPressure, setAvgConfirmPressure] = useState<number|null>(null); //筆圧の平均
@@ -465,9 +468,13 @@ const Note: NextPage = () => {
     setCanvasDialog(false);
   }
 
+  const getPaperDetailData = async() => {
+    await paperDetails.getPaperDetailByID(pdid);
+  }
 
 	useEffect(() => {
     if(isReady){
+      getPaperDetailData();
       Paper.setup('drawingCanvas');
       Paper.install(window);
       draw();
