@@ -40,3 +40,19 @@ func (s PaperDetailService) PostPaperDetail(db *gorm.DB, c echo.Context) (PaperD
 	}
 	return pd, nil
 }
+
+// PUT
+func (s PaperDetailService) UpdatePaperDetail(db *gorm.DB, c echo.Context) (*PaperDetail, error) {
+	pd := new(PaperDetail)
+	id := c.Param("id")
+
+	if err := db.Where("id = ?", id).First(&pd).Error; err != nil {
+		return nil, err
+	}
+	if err := c.Bind(&pd); err != nil {
+		return nil, err
+	}
+	db.Save(&pd)
+
+	return pd, nil
+}

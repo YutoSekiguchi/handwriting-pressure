@@ -45,6 +45,7 @@ func InitRouter(db *gorm.DB) {
 		paper_detail.GET("/:id", ctrl.HandleGetPaperDetailByID)
 		paper_detail.GET("/list/:pid/folder", ctrl.HandleGetPaperDetailsByPID)
 		paper_detail.POST("", ctrl.HandlePostPaperDetail)
+		paper_detail.PUT("/:id", ctrl.HandleUpdatePaperDetail)
 	}
 	// Log
 	log := e.Group("/logs")
