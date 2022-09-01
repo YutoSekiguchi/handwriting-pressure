@@ -63,12 +63,27 @@ export const PaperDetailsProvider = (props: any) => {
     }
   }
 
+  // paper_detailの編集
+  const updatePaperDetail = async(id: number, data: PaperDetailObj) => {
+    try {
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAIL });
+      const res = await axios.put(`${url}/paper-details/${id}`, data);
+      if (res.status === 200) {
+        dispatch({ type: papersDetailActions.GET_PAPER_DETAIL_SUCCESS, payload: res.data });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAIL_ERROR, payload: error });
+    }
+  }
+
   const value = useMemo(() => {
     return {
       state,
       getPaperDetailByID,
       getPaperDetailsByPID,
       createPaperDetail,
+      updatePaperDetail,
     }
   }, [state]);
 
