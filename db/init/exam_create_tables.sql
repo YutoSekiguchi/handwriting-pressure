@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS paper_details (
   title TEXT NOT NULL,
   paper_width INT NOT NULL,
   paper_height INT NOT NULL,
-  paper_image TEXT NOT NULL,
+  paper_image LONGTEXT NOT NULL,
   paper_json TEXT NOT NULL,
   pressure_list TEXT NOT NULL,
   background_image TEXT NOT NULL,
