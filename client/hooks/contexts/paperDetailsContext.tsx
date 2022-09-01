@@ -21,6 +21,20 @@ export const PaperDetailsProvider = (props: any) => {
   const url = process.env.API_URL;
   const [state, dispatch] = useReducer(papersDetailReducer, initialState);
 
+  // idを指定してpaper_detailの取得
+  const getPaperDetailByID = async(id: number) => {
+    try {
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAIL });
+      const res = await axios.get(`${url}/paper-details/${id}`);
+      if (res.status===200) {
+        dispatch({ type: papersDetailActions.GET_PAPER_DETAIL_SUCCESS, payload: res.data });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAIL_ERROR, payload: error });
+    }
+  }
+
   // pidを指定してpapersの中に入ってるpaper_detailを全て取得
   const getPaperDetailsByPID = async(pid: number) => {
     try {
@@ -31,7 +45,7 @@ export const PaperDetailsProvider = (props: any) => {
       }
     } catch (error) {
       console.log(error);
-      dispatch({ type: papersDetailActions.CREATE_PAPER_DETAIL_ERROR, payload: error });
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_ERROR, payload: error });
     }
   }
 
@@ -52,6 +66,7 @@ export const PaperDetailsProvider = (props: any) => {
   const value = useMemo(() => {
     return {
       state,
+      getPaperDetailByID,
       getPaperDetailsByPID,
       createPaperDetail,
     }
