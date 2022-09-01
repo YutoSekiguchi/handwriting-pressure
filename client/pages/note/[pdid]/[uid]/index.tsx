@@ -471,13 +471,26 @@ const Note: NextPage = () => {
     await paperDetails.getPaperDetailByID(pdid);
   }
 
-  const saveNote = () => {
+  const saveNote = async() => {
     console.log("aaa");
     console.log(pressureArray)
     const canvas: any = canvasRef.current;
     const imageUrl: string = canvas.toDataURL("image/png");
-    json =  Paper.project.exportJSON({ asString: true });
-    
+    const paperJson =  Paper.project.exportJSON({ asString: true });
+    const pdData = paperDetails.state.paperDetail;
+    const updateData = {
+      PID: pdData.PID,
+      UID: pdData.UID,
+      Title: pdData.Title,
+      PaperWidth: pdData.PaperWidth,
+      PaperHeight: pdData.PaperHeight,
+      PaperImage: imageUrl,
+      PaperJson: paperJson,
+      PressureList: `${pressureArray}`,
+      BackgroundImage: pdData.BackgroundImage
+    }
+    await paperDetails.updatePaperDetail(pdid, updateData);
+    console.log('保存しました');
   }
 
 	useEffect(() => {

@@ -70,3 +70,10 @@ a {
 .authDialog {
   background: linear-gradient(to bottom right, blue, fuchsia);
 }
+
+.stroke-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

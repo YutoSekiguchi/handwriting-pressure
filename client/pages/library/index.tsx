@@ -155,6 +155,12 @@ const Library: NextPage = () => {
     setNoteList(paperDetails.state.paperDetailsList);
   }, [paperDetails.state])
 
+  useEffect(() => {
+    if(paperDetails.state.paperDetail?.ID) {
+      moveNotePage(paperDetails.state.paperDetail.ID, userData.ID);
+    }
+  }, [paperDetails.state.paperDetail])
+
 	return (
     <>
       <div className='fixed w-full h-full bg-gray-800'>
@@ -246,7 +252,10 @@ const Library: NextPage = () => {
                       <div className='mb-3 mr-4' key={i}>
                         <div className='flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36' onClick={() => moveNotePage(note.ID, note.UID)}>
                           {note.PaperImage!=''
-                            ? <img src={note.PaperImage} />
+                            ? <div className="relative w-full h-full">
+                                <img src={note.BackgroundImage} className="stroke-image" />
+                                <img src={note.PaperImage} className="stroke-image" />
+                              </div>
                             : <img src={note.BackgroundImage} />
                           }
                         </div>
