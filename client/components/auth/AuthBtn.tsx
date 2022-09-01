@@ -11,7 +11,7 @@ const AuthBtn: NextPage<Props> = (props) => {
   const {text, authFunc} = props;
 	return (
 		<>
-      <button className='px-3 py-1 rounded-lg bg-gray-50 text-grey-800' onClick={authFunc}>
+      <button className='px-3 py-1 text-gray-800 rounded-lg bg-gray-50' onClick={authFunc}>
         <p className='flex font-bold'>
           {text}
           &nbsp;

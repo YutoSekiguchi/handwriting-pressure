@@ -449,7 +449,6 @@ const Note: NextPage = () => {
     console.log(i)
   }
 
-
   const closeDialog = (e: any) => {
     if (e.target.className == 'overlay') {
       setCanvasDialog(false);
@@ -470,6 +469,15 @@ const Note: NextPage = () => {
 
   const getPaperDetailData = async() => {
     await paperDetails.getPaperDetailByID(pdid);
+  }
+
+  const saveNote = () => {
+    console.log("aaa");
+    console.log(pressureArray)
+    const canvas: any = canvasRef.current;
+    const imageUrl: string = canvas.toDataURL("image/png");
+    json =  Paper.project.exportJSON({ asString: true });
+    
   }
 
 	useEffect(() => {
@@ -509,6 +517,7 @@ const Note: NextPage = () => {
         redo={normalRedo} 
         undoable={undoable} 
         redoable={redoable}
+        func={saveNote}
       />
       <div className="flex w-full h-full Canvas " id="wrapper">
         <canvas 
