@@ -28,3 +28,11 @@ func (ctrl Controller) HandlePostPaperDetail(c echo.Context) error {
 
 	return Res(c, p, err)
 }
+
+// paepr_detailの変更
+func (ctrl Controller) HandleUpdatePaperDetail(c echo.Context) error {
+	var s service.PaperDetailService
+	p, err := s.UpdatePaperDetail(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
