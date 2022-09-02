@@ -26,6 +26,7 @@ type NoteObj = {
   PaperJson: string,
   PressureList: string,
   BoundaryPressure: number,
+  AvgPressure: number,
   BackgroundImage: string,
   CreatedAt: string,
 }
@@ -49,6 +50,7 @@ const Library: NextPage = () => {
   const [noteName, setNoteName] = useState<string>('');
   const [width, setWidth] = useState<number>(210);
   const [height, setHeight] = useState<number>(297);
+  const [userName, setUserName] = useState<string>('');
   
   // フォルダの追加のためにinputタグ開く
   const handleAddPaper = () => {
@@ -99,6 +101,7 @@ const Library: NextPage = () => {
   const getPapersData = async() => {
     if(userData) {
       await papers.getPapersByUID(userData['ID']);
+      setUserName(userData['Name']);
     }
   }
 
@@ -177,6 +180,7 @@ const Library: NextPage = () => {
       PaperJson: '',
       PressureList: '',
       BoundaryPressure: 0,
+      AvgPressure: 0,
       BackgroundImage: 'https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685',
     }
     await paperDetails.createPaperDetail(data);
@@ -254,9 +258,9 @@ const Library: NextPage = () => {
           <div className='w-1/6 h-full bg-gray-900 border-r-2 border-sky-200' id="folder-outer" onClick={handleNoSelectedFolder}>
             <div className='flex-col mt-12'>
               {/* 名前とフォルダ追加ボタン */}
-              <div className='flex items-center justify-between px-6 bg-gray-700'>
-                <h4 className='my-2 font-bold text-center text-white' suppressHydrationWarning>
-                  {userData&&userData.Name}<span className='text-xs font-medium'>さん</span>
+              <div className='flex items-center justify-between px-6 bg-gray-700' suppressHydrationWarning>
+                <h4 className='my-2 font-bold text-center text-white'>
+                  {userName}<span className='text-xs font-medium'>さん</span>
                 </h4>
                 <button className='text-white' id="add-folder-button" onClick={handleAddPaper} >
                   <Image src={'/plus.svg'} id="add-folder-button" width={10} height={10} />
