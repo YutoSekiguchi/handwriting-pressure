@@ -56,6 +56,7 @@ const Note: NextPage = () => {
   const [showImageDataList, setShowImageDataList] = useState<ImageDataObject[]>([]); // ログで表示するための画像のリスト
   const [canvasDialog, setCanvasDialog] = useState<boolean>(false); // ログのダイアログの表示・非表示
   const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0); // ログの何枚目かを示す数値
+  const [isGetData, setIsGetData] = useState<boolean>(false); // data取得したか否か
   const canvasRef = useRef(null);
   const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum)); // グラフ表示用のラベル
   const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"; // canvasの背景画像
@@ -97,8 +98,10 @@ const Note: NextPage = () => {
 			start = Date.now();
 
       let canvas: any = canvasRef.current;
-      setCanvasWidth(canvas.width);
-      setCanvasHeight(canvas.height);
+      console.log(canvas.width);
+      console.log(canvas.height);
+      // setCanvasWidth(canvas.width);
+      // setCanvasHeight(canvas.height);
       // const imageData = Paper.View.context.getImageData(0, 0, width, height);
 
       
@@ -213,6 +216,7 @@ const Note: NextPage = () => {
     }
     
     json =  Paper.project.exportJSON({ asString: false })
+    console.log(json[0][1]['children']);
     if (json[0][1]["children"].length != pressureArray.length) {
       pressureArray.push(0);
       aboutPressureCountArray[0] += 1;
@@ -469,10 +473,10 @@ const Note: NextPage = () => {
 
   const getPaperDetailData = async() => {
     await paperDetails.getPaperDetailByID(pdid);
+    setIsGetData(true);
   }
 
   const saveNote = async() => {
-    console.log("aaa");
     console.log(pressureArray)
     const canvas: any = canvasRef.current;
     const imageUrl: string = canvas.toDataURL("image/png");
@@ -487,6 +491,7 @@ const Note: NextPage = () => {
       PaperImage: imageUrl,
       PaperJson: paperJson,
       PressureList: `${pressureArray}`,
+      BoundaryPressure: boundaryPressureValue,
       BackgroundImage: pdData.BackgroundImage
     }
     await paperDetails.updatePaperDetail(pdid, updateData);
@@ -495,18 +500,44 @@ const Note: NextPage = () => {
 
 	useEffect(() => {
     if(isReady){
+      console.log(canvasWidth, canvasHeight);
       getPaperDetailData();
-      Paper.setup('drawingCanvas');
+      if (canvasWidth!=0&&canvasHeight!=0) {
+        Paper.setup('drawingCanvas2');
+      } else {
+        Paper.setup('drawingCanvas');
+      }
       Paper.install(window);
       draw();
     }
-	}, [isReady]);
+    if(paperDetails.state.paperDetail.PaperJson!=null&&paperDetails.state.paperDetail.PaperJson!=''){
+      Paper.project.clear();
+      Paper.project.importJSON(paperDetails.state.paperDetail.PaperJson);
+    }
+	}, [isReady, canvasWidth, canvasHeight]);
 
   useEffect(() => {
     if(isReady){
-    draw();
+      draw();
     }
   }, [color, penWidth, eraseWidth, mode])
+
+  useEffect(() => {
+    if(isGetData) {
+      if((paperDetails.state.paperDetail.PaperWidth!=null&&paperDetails.state.paperDetail.PaperWidth!=0)&&(paperDetails.state.paperDetail.PaperHeight!=null&&paperDetails.state.paperDetail.PaperHeight!=0)) {
+        setCanvasWidth(paperDetails.state.paperDetail.PaperWidth);
+        setCanvasHeight(paperDetails.state.paperDetail.PaperHeight);
+      } else {
+        setCanvasWidth(1000);
+        setCanvasHeight(1000);
+      }
+      if(paperDetails.state.paperDetail.PressureList!=null&&paperDetails.state.paperDetail.PressureList!='') {
+        pressureArray = paperDetails.state.paperDetail.PressureList.split(',');
+        pressureArray = pressureArray.map(Number);
+        fixChartData();
+      }
+    }
+  }, [isGetData])
 
 
 	return (
@@ -533,17 +564,30 @@ const Note: NextPage = () => {
         func={saveNote}
       />
       <div className="flex w-full h-full Canvas " id="wrapper">
-        <canvas 
-          ref={canvasRef}
-          style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none"}}
-          id="drawingCanvas"
-          width={"5000px"}
-          height={"5000px"}
-          className="w-8/12 max-w-full max-h-full canvas_background_note" 
-          onPointerDownCapture={pointerDown}
-          onPointerMoveCapture={pointerMove}
-          onPointerUpCapture={pointerUp}
-        />
+
+          <canvas 
+            ref={canvasRef}
+            style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none", display:`${(canvasHeight!=0&&canvasWidth!=0)? "none": "block"}`}}
+            id="drawingCanvas"
+            width={'1000px'}
+            height={'1000px'}
+            className="w-8/12 max-w-full max-h-full canvas_background_note" 
+            onPointerDownCapture={pointerDown}
+            onPointerMoveCapture={pointerMove}
+            onPointerUpCapture={pointerUp}
+          />
+
+          <canvas 
+            ref={canvasRef}
+            style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none", display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`}}
+            id="drawingCanvas2"
+            width={`${canvasWidth}px`}
+            height={`${canvasHeight}px`}
+            className="w-8/12 max-w-full max-h-full canvas_background_note" 
+            onPointerDownCapture={pointerDown}
+            onPointerMoveCapture={pointerMove}
+            onPointerUpCapture={pointerUp}
+          />
         
         {/* 操作UI */}
         <div className='fixed right-0 w-4/12 h-full bg-gray-900 top-12'>
@@ -572,26 +616,26 @@ const Note: NextPage = () => {
               confirmPressure={avgConfirmPressure}
               title={"avg"}
             />
-        </div>
-        <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 img-box-wrapper h-1/3 rounded-3xl'>
-          <h3 className='my-3 font-bold text-white'>Log</h3>
-          <div className='flex flex-wrap justify-start w-full overflow-y-auto img-box h-5/6'>
-            {showImageDataList.map((image, i) => (
-              <div key={i} className="relative w-1/3 mt-2 cursor-pointer h-1/3" onClick={() => showDialog(i)}>
-                <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 object-contain w-full h-full" />
-                <img src={image.url} className="absolute top-0 left-0 object-contain w-full h-full" />
-              </div>
-            ))}
           </div>
-        </div>
+          <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 img-box-wrapper h-1/3 rounded-3xl'>
+            <h3 className='my-3 font-bold text-white'>Log</h3>
+            <div className='flex flex-wrap justify-start w-full overflow-y-auto img-box h-5/6'>
+              {showImageDataList.map((image, i) => (
+                <div key={i} className="relative w-1/3 mt-2 cursor-pointer h-1/3" onClick={() => showDialog(i)}>
+                  <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 object-contain w-full h-full" />
+                  <img src={image.url} className="absolute top-0 left-0 object-contain w-full h-full" />
+                </div>
+              ))}
+            </div>
+          </div>
 
         {/* 書いてる時の筆圧のゲージ */}
         {/* <div className='fixed w-full rangebar bottom-2'>
           <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
         </div> */}
+        </div>
       </div>
-      </div>
-    </>
+  </>
 	);
 }
 
