@@ -57,6 +57,7 @@ const Note: NextPage = () => {
   const [canvasDialog, setCanvasDialog] = useState<boolean>(false); // ログのダイアログの表示・非表示
   const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0); // ログの何枚目かを示す数値
   const [isGetData, setIsGetData] = useState<boolean>(false); // data取得したか否か
+  const [defaultBoundaryPressure, setDefaultBoundaryPressure] = useState<number|null>(null); // バーの初期値
   const canvasRef = useRef(null);
   const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum)); // グラフ表示用のラベル
   const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"; // canvasの背景画像
@@ -492,9 +493,11 @@ const Note: NextPage = () => {
       PaperJson: paperJson,
       PressureList: `${pressureArray}`,
       BoundaryPressure: boundaryPressureValue,
+      AvgPressure: avgConfirmPressure,
       BackgroundImage: pdData.BackgroundImage
     }
     await paperDetails.updatePaperDetail(pdid, updateData);
+    alert('保存が完了しました');
     console.log('保存しました');
   }
 
@@ -537,6 +540,14 @@ const Note: NextPage = () => {
         fixChartData();
       }
     }
+    if(paperDetails.state.paperDetail.BoundaryPressure!=null) {
+      if (paperDetails.state.paperDetail.BoundaryPressure!=0) {
+      console.log("実行された")
+      setDefaultBoundaryPressure(paperDetails.state.paperDetail.BoundaryPressure*10000);
+      } else {
+        setDefaultBoundaryPressure(10000);
+      }
+    }
   }, [isGetData])
 
 
@@ -564,37 +575,38 @@ const Note: NextPage = () => {
         func={saveNote}
       />
       <div className="flex w-full h-full Canvas " id="wrapper">
+        <canvas 
+          ref={canvasRef}
+          style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none", display:`${(canvasHeight!=0&&canvasWidth!=0)? "none": "block"}`}}
+          id="drawingCanvas"
+          width={'1000px'}
+          height={'1000px'}
+          className="w-8/12 max-w-full max-h-full canvas_background_note" 
+          onPointerDownCapture={pointerDown}
+          onPointerMoveCapture={pointerMove}
+          onPointerUpCapture={pointerUp}
+        />
 
-          <canvas 
-            ref={canvasRef}
-            style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none", display:`${(canvasHeight!=0&&canvasWidth!=0)? "none": "block"}`}}
-            id="drawingCanvas"
-            width={'1000px'}
-            height={'1000px'}
-            className="w-8/12 max-w-full max-h-full canvas_background_note" 
-            onPointerDownCapture={pointerDown}
-            onPointerMoveCapture={pointerMove}
-            onPointerUpCapture={pointerUp}
-          />
-
-          <canvas 
-            ref={canvasRef}
-            style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none", display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`}}
-            id="drawingCanvas2"
-            width={`${canvasWidth}px`}
-            height={`${canvasHeight}px`}
-            className="w-8/12 max-w-full max-h-full canvas_background_note" 
-            onPointerDownCapture={pointerDown}
-            onPointerMoveCapture={pointerMove}
-            onPointerUpCapture={pointerUp}
-          />
+        <canvas 
+          ref={canvasRef}
+          style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none", display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`}}
+          id="drawingCanvas2"
+          width={`${canvasWidth}px`}
+          height={`${canvasHeight}px`}
+          className="w-8/12 max-w-full max-h-full canvas_background_note" 
+          onPointerDownCapture={pointerDown}
+          onPointerMoveCapture={pointerMove}
+          onPointerUpCapture={pointerUp}
+        />
         
         {/* 操作UI */}
         <div className='fixed right-0 w-4/12 h-full bg-gray-900 top-12'>
           <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 h-1/3 rounded-3xl'>
             <h3 className='pt-3 font-bold text-white'>Undo/Redo</h3>
             <div className='mx-5 mt-3 rangebar'>
-              <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
+              {defaultBoundaryPressure&&
+              <input id="large-range" type="range" defaultValue={defaultBoundaryPressure} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
+              }
             </div>
             <div className='mx-5 chart-bar h-2/3'>
               <LineChart
