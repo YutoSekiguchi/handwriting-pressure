@@ -25,6 +25,7 @@ type NoteObj = {
   PaperImage: string,
   PaperJson: string,
   PressureList: string,
+  BoundaryPressure: number,
   BackgroundImage: string,
   CreatedAt: string,
 }
@@ -46,6 +47,8 @@ const Library: NextPage = () => {
   const [noteList, setNoteList] = useState<NoteObj[]>([]); // フォルダの中にあるノート一覧
   const [newNoteDialog, setNewNoteDialog] = useState<boolean>(false);
   const [noteName, setNoteName] = useState<string>('');
+  const [width, setWidth] = useState<number>(210);
+  const [height, setHeight] = useState<number>(297);
   
   // フォルダの追加のためにinputタグ開く
   const handleAddPaper = () => {
@@ -115,6 +118,49 @@ const Library: NextPage = () => {
     }
   }
 
+  // ノートのサイズ選択
+  const changePaperSize = (e: ChangeEvent<HTMLSelectElement>) => {
+    console.log(e.target.value)
+    const val = e.target.value;
+    switch(val) {
+      case 'a4':
+        setWidth(210);
+        setHeight(297);
+        break;
+      case 'a4side':
+        setWidth(297);
+        setHeight(210);
+        break;
+      case 'a3':
+        setWidth(297);
+        setHeight(420);
+        break;
+      case 'a3side':
+        setWidth(420);
+        setHeight(297);
+        break;
+      case 'b5':
+        setWidth(182);
+        setHeight(257);
+        break;
+      case 'b5side':
+        setWidth(257);
+        setHeight(182);
+        break;
+      case 'b4':
+        setWidth(257);
+        setHeight(364);
+        break;
+      case 'b4side':
+        setWidth(364);
+        setHeight(257);
+        break;
+      default:
+        setWidth(210);
+        setHeight(297);
+    }
+  }
+
   // ノート作成ボタン押下時
   const onSubmitNote = async() => {
     if (noteName===''||noteName===null) {
@@ -125,11 +171,12 @@ const Library: NextPage = () => {
       PID: openFolderIndexAndPID?.pid,
       UID: userData?.ID,
       Title: noteName,
-      PaperWidth: 0,
-      PaaperHeight: 0,
+      PaperWidth: width,
+      PaperHeight: height,
       PaperImage: '',
       PaperJson: '',
       PressureList: '',
+      BoundaryPressure: 0,
       BackgroundImage: 'https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685',
     }
     await paperDetails.createPaperDetail(data);
@@ -169,17 +216,31 @@ const Library: NextPage = () => {
           <div className="overlay" onClick={closeNewNoteDialog}>
             <div className="overlay-content">
               <div className="relative flex items-center justify-center w-full h-full">
-                <div className='flex-col'>
+                <div className='flex-col text-center'>
                   <h4 className='mb-1 font-bold text-center'>ノートのタイトルを入力</h4>
                   <input 
                     type={"text"}
                     name="noteName"
                     required
                     autoComplete='off'
-                    className='px-3 py-2 mb-3 text-white bg-gray-700 rounded-lg'
+                    className='px-3 py-2 mb-6 text-center text-white bg-gray-700 rounded-lg'
                     onInput={changeNoteName}
                     autoFocus
                   />
+
+                  <div className='text-center'>
+                    <h4 className='mb-1 font-bold text-center'>ノートのサイズを選択</h4>
+                    <select className='px-20 py-2 text-white bg-gray-700 rounded-lg' name="size" id="size-select" onChange={changePaperSize}>
+                      <option value="a4">A4</option>
+                      <option value="a3">A5</option>
+                      <option value="b5">B5</option>
+                      <option value="b4">B4</option>
+                      <option value="a4side">A4横</option>
+                      <option value="a3side">A5横</option>
+                      <option value="b5side">B5横</option>
+                      <option value="b4side">B4横</option>
+                    </select>
+                  </div>
                 </div>
                 <button className='absolute px-3 py-1 text-white bg-gray-800 rounded-lg bottom-3' onClick={onSubmitNote}>
                   <p className='font-bold'>作成</p>
@@ -195,7 +256,7 @@ const Library: NextPage = () => {
               {/* 名前とフォルダ追加ボタン */}
               <div className='flex items-center justify-between px-6 bg-gray-700'>
                 <h4 className='my-2 font-bold text-center text-white' suppressHydrationWarning>
-                  {userData&&userData.Name}
+                  {userData&&userData.Name}<span className='text-xs font-medium'>さん</span>
                 </h4>
                 <button className='text-white' id="add-folder-button" onClick={handleAddPaper} >
                   <Image src={'/plus.svg'} id="add-folder-button" width={10} height={10} />
@@ -253,8 +314,8 @@ const Library: NextPage = () => {
                         <div className='flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36' onClick={() => moveNotePage(note.ID, note.UID)}>
                           {note.PaperImage!=''
                             ? <div className="relative w-full h-full">
-                                <img src={note.BackgroundImage} className="stroke-image" />
-                                <img src={note.PaperImage} className="stroke-image" />
+                                <img src={note.BackgroundImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
+                                <img src={note.PaperImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
                               </div>
                             : <img src={note.BackgroundImage} />
                           }
