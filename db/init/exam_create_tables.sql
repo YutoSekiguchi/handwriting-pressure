@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS paper_details (
   paper_json LONGTEXT NOT NULL,
   pressure_list TEXT NOT NULL,
   boundary_pressure FLOAT NOT NULL,
+  avg_pressure FLOAT NOT NULL,
   background_image TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
