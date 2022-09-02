@@ -13,6 +13,7 @@ type PaperDetail struct {
 	PaperJson        string    `gorm:"not null;column:paper_json"`
 	PressureList     string    `gorm:"not null;column:pressure_list"`
 	BoundaryPressure float64   `gorm:"not null;column:boundart_pressure"`
+	AvgPressure      float64   `gorm:"not null;column:avg_pressure"`
 	BackgroundImage  string    `gorm:"not null;column:background_image"`
 	CreatedAt        time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
 }
