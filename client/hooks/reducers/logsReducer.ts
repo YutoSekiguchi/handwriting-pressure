@@ -19,7 +19,7 @@ export const logsReducer = (state: any, actions: any) => {
       return {
         ...state,
         fetching: false,
-        userData: actions.payload,
+        log: actions.payload,
         ok: true,
       }
 
@@ -40,7 +40,7 @@ export const logsReducer = (state: any, actions: any) => {
       return {
         ...state,
         fetching: false,
-        userData: actions.payload,
+        logsList: actions.payload,
         ok: true,
       }
 
