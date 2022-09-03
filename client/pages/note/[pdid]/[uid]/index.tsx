@@ -562,6 +562,21 @@ const Note: NextPage = () => {
           setDefaultBoundaryPressure(10000);
         }
       }
+      console.log(logs.state.logsList);
+      if(logs.state.logsList!=null&&logs.state.logsList.length>0) {
+        const logDataList = logs.state.logsList;
+        let tmp: any = [];
+        for(var i=0; i<logDataList.length; i++) {
+          console.log(logDataList[i].Url);
+          const el = {
+            url: logDataList[i].Url,
+            strokeData: logDataList[i].StrokeData,
+            pressureArray: (logDataList[i].PressureList.split(',')).map(Number)
+          }
+          tmp.push(el);
+        }
+        setShowImageDataList(tmp);
+      }
     }
   }, [isGetData])
 
