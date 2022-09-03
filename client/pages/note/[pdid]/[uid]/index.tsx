@@ -11,6 +11,7 @@ import LineChart from '../../../../components/paper/LineChart';
 import { lineOptions } from '../../../../utils/LineOptions';
 import { useRouter } from 'next/router';
 import { usePaperDetails } from '../../../../hooks/contexts/paperDetailsContext';
+import { useLogs } from '../../../../hooks/contexts/logsContext';
 
 const pressureRangeNum = 20;
 
@@ -31,6 +32,7 @@ type RedoHistoryObject = {
 const Note: NextPage = () => {
   const router = useRouter();
   const paperDetails: any = usePaperDetails();
+  const logs: any = useLogs();
   const isReady = router.isReady;
   const { pdid, uid } = router.query;
   const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
@@ -426,7 +428,7 @@ const Note: NextPage = () => {
         imageDataList[imageDataList.length-1],
       ]
     ));
-    setTimeout(function(){
+    setTimeout(async function(){
       const canvas: any = canvasRef.current;
       const imageUrl: string = canvas.toDataURL("image/png");
       json =  Paper.project.exportJSON({ asString: false })
@@ -440,6 +442,18 @@ const Note: NextPage = () => {
           },
         ]
       ));
+      
+      const pdData = paperDetails.state.paperDetail;
+      const stringJson = Paper.project.exportJSON({ asString: true });
+      // LogをDBに登録
+      const createLogData = {
+        UID: pdData.UID,
+        PDID: Number(pdid),
+        StrokeData: stringJson,
+        url: imageUrl,
+        pressureList: String(pressureArray.concat()),
+      }
+      await logs.createLog(createLogData);
     },500);
   }
 
@@ -472,8 +486,9 @@ const Note: NextPage = () => {
     setCanvasDialog(false);
   }
 
-  const getPaperDetailData = async() => {
+  const getData = async() => {
     await paperDetails.getPaperDetailByID(pdid);
+    await logs.getLogsByPDID(pdid);
     setIsGetData(true);
   }
 
@@ -504,7 +519,7 @@ const Note: NextPage = () => {
 	useEffect(() => {
     if(isReady){
       console.log(canvasWidth, canvasHeight);
-      getPaperDetailData();
+      getData();
       if (canvasWidth!=0&&canvasHeight!=0) {
         Paper.setup('drawingCanvas2');
       } else {
@@ -539,13 +554,13 @@ const Note: NextPage = () => {
         pressureArray = pressureArray.map(Number);
         fixChartData();
       }
-    }
-    if(paperDetails.state.paperDetail.BoundaryPressure!=null) {
-      if (paperDetails.state.paperDetail.BoundaryPressure!=0) {
-      console.log("実行された")
-      setDefaultBoundaryPressure(paperDetails.state.paperDetail.BoundaryPressure*10000);
-      } else {
-        setDefaultBoundaryPressure(10000);
+      if(paperDetails.state.paperDetail.BoundaryPressure!=null) {
+        if (paperDetails.state.paperDetail.BoundaryPressure!=0) {
+        console.log("実行された")
+        setDefaultBoundaryPressure(paperDetails.state.paperDetail.BoundaryPressure*10000);
+        } else {
+          setDefaultBoundaryPressure(10000);
+        }
       }
     }
   }, [isGetData])
