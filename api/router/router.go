@@ -47,6 +47,14 @@ func InitRouter(db *gorm.DB) {
 		paper_detail.POST("", ctrl.HandlePostPaperDetail)
 		paper_detail.PUT("/:id", ctrl.HandleUpdatePaperDetail)
 	}
+
+	// Stroke
+	stroke := e.Group("/strokes")
+	{
+		stroke.GET("/paper/:pdid", ctrl.HandleGetStrokesByPDID)
+		stroke.POST("", ctrl.HandlePostStroke)
+	}
+
 	// Log
 	log := e.Group("/logs")
 	{
