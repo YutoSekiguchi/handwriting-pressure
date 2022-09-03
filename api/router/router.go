@@ -50,7 +50,7 @@ func InitRouter(db *gorm.DB) {
 	// Log
 	log := e.Group("/logs")
 	{
-		log.GET("/paper/:pdid/", ctrl.HandleGetLogsByPDID)
+		log.GET("/paper/:pdid", ctrl.HandleGetLogsByPDID)
 		log.POST("", ctrl.HandlePostLog)
 	}
 
