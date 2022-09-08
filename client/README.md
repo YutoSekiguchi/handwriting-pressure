@@ -39,3 +39,4 @@
 ├── yarn.lock
 └── README.md
 ```
+  - componentsにコンポーネント，hooksに状態管理，pagesに主要なページ
