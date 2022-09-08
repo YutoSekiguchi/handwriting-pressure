@@ -12,6 +12,7 @@ type StrokeObj = {
   AvgPressure: number,
   PressureList: string,
   Time: number,
+  Mode: string,
 }
 
 export const StrokesProvider = (props: any) => {
