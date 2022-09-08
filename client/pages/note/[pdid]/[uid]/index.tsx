@@ -12,11 +12,14 @@ import { lineOptions } from '../../../../utils/LineOptions';
 import { useRouter } from 'next/router';
 import { usePaperDetails } from '../../../../hooks/contexts/paperDetailsContext';
 import { useLogs } from '../../../../hooks/contexts/logsContext';
+import { useStrokes } from '../../../../hooks/contexts/strokesContext';
 
 const pressureRangeNum = 20;
 
 let pressureArray: number[] = [];
 let aboutPressureCountArray: number[] = [...Array(pressureRangeNum+1)].map(x=>0);
+let startTime: number;
+let endTime: number;
 
 type ImageDataObject = {
   url: string,
@@ -33,13 +36,13 @@ const Note: NextPage = () => {
   const router = useRouter();
   const paperDetails: any = usePaperDetails();
   const logs: any = useLogs();
+  const strokes: any = useStrokes();
   const isReady = router.isReady;
   const { pdid, uid } = router.query;
-  const [pressure, setPressure] = useState<number | null | undefined>(null); // 筆圧
+  const [pressure, setPressure] = useState<number[] | null | undefined>(null); // 筆圧
   const [nowConfirmPressure, setNowConfirmPressure] = useState<number|null>(null); // 1ストロークあたりの筆圧
   const [avgConfirmPressure, setAvgConfirmPressure] = useState<number|null>(null); //筆圧の平均
   const [color, setColor] = useState<string>('#000000'); // 色
-  const [moveCount, setMoveCount] = useState<number>(0); // 何回moveしたか
   const [penWidth, setPenWidth] = useState<number>(2); // 線の太さ
   const [eraseWidth, setEraseWidth] = useState<number>(20); // 消しゴムの太さ
   const [undoable, setUndoable] = useState<boolean>(false); // undo可否
@@ -74,6 +77,7 @@ const Note: NextPage = () => {
   let json: any;
 	let penColor: string;
   let boundaryValue: number;
+
 
   if (redoHistoryList.length > 0){
     console.log('his', typeof(redoHistoryList[0]));
@@ -163,6 +167,7 @@ const Note: NextPage = () => {
 
   const pointerDown = () => {
     setIsDrag(true);
+    startTime = performance.now();
     if (redoHistoryList.length > 0) {
       setRedoHistoryList([]);
       setRedoable(false);
@@ -174,23 +179,34 @@ const Note: NextPage = () => {
     console.log(e.pressure)
     console.log("これみたい", e);
     if (e.pressure != 0) {
-      setMoveCount(moveCount+1)
       if (pressure === null || pressure === undefined) {
-        setPressure(e.pressure)
+        setPressure([e.pressure])
       } else {
-        setPressure(pressure+e.pressure);
+        const tmp = pressure.concat();
+        tmp.push(e.pressure);
+        setPressure(tmp);
       }
     }
   }
 
   const pointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
     setIsDrag(false);
-    console.log(pressure);
+    endTime = performance.now();
+    let diffTime = 0;
+    if (startTime!=0&&endTime!=0) {
+      diffTime = Math.round((endTime - startTime)*100)/100;
+      startTime = 0;
+      endTime = 0;
+    }
+    let avgPressure;
+    console.log('今回のストロークの筆圧：', pressure);
     if (pressure) {
-      let avgPressure = pressure/moveCount;
+      let sumPressure = pressure.reduce((a, b) => {
+        return a + b;
+      });
+      avgPressure = sumPressure/pressure.length;
+      console.log('sumPressure', sumPressure)
       console.log('avgPressure', avgPressure)
-      console.log(e)
-      console.log(e.pointerType)
       const aboutAvgPressure = Math.floor((1-avgPressure)*pressureRangeNum)/pressureRangeNum;
       const pressureArrayLength = pressureArray.length;
       while (pressureArray.length==pressureArrayLength) {
@@ -226,6 +242,21 @@ const Note: NextPage = () => {
     }
     console.log('pressureArray', pressureArray)
     console.log(aboutPressureCountArray);
+
+
+    // ストロークのデータ登録
+    const strongJson = Paper.project.exportJSON({ asString: true });
+    const postStrokeData = {
+      UID: Number(uid),
+      PDID: Number(pdid),
+      Detail: strongJson,
+      AvgPressure: avgPressure,
+      PressureList: `${pressure}`,
+      Time: diffTime,
+      Mode: mode,
+    }
+    strokes.createStroke(postStrokeData);
+    
     setLineGraphData(
       {
         labels: labels,
@@ -274,7 +305,6 @@ const Note: NextPage = () => {
     )
     setPressure(null);
     setUndoable(true);
-    setMoveCount(0);
     const canvas: any = canvasRef.current;
     const imageUrl: string = canvas.toDataURL("image/png");
     json =  Paper.project.exportJSON({ asString: false })
