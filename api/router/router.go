@@ -46,6 +46,7 @@ func InitRouter(db *gorm.DB) {
 		paper_detail.GET("/list/:pid/folder", ctrl.HandleGetPaperDetailsByPID)
 		paper_detail.POST("", ctrl.HandlePostPaperDetail)
 		paper_detail.PUT("/:id", ctrl.HandleUpdatePaperDetail)
+		paper_detail.DELETE("/:id", ctrl.HandleDeletePaperDetail)
 	}
 
 	// Stroke
@@ -53,6 +54,7 @@ func InitRouter(db *gorm.DB) {
 	{
 		stroke.GET("/paper/:pdid", ctrl.HandleGetStrokesByPDID)
 		stroke.POST("", ctrl.HandlePostStroke)
+		stroke.DELETE("/:pdid", ctrl.HandleDeleteStroke)
 	}
 
 	// Log
@@ -60,6 +62,7 @@ func InitRouter(db *gorm.DB) {
 	{
 		log.GET("/paper/:pdid", ctrl.HandleGetLogsByPDID)
 		log.POST("", ctrl.HandlePostLog)
+		log.DELETE("/:pdid", ctrl.HandleDeleteLog)
 	}
 
 	// Routing

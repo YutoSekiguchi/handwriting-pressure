@@ -22,3 +22,12 @@ func (ctrl Controller) HandlePostLog(c echo.Context) error {
 
 	return Res(c, p, err)
 }
+
+// DELETE
+// logの削除
+func (ctrl Controller) HandleDeleteLog(c echo.Context) error {
+	var s service.LogService
+	p, err := s.DeleteLog(ctrl.Db, c)
+
+	return Res(c, p, err)
+}

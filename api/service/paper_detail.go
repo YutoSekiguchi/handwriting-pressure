@@ -56,3 +56,14 @@ func (s PaperDetailService) UpdatePaperDetail(db *gorm.DB, c echo.Context) (*Pap
 
 	return pd, nil
 }
+
+// DELETE
+func (s PaperDetailService) DeletePaperDetail(db *gorm.DB, c echo.Context) ([]PaperDetail, error) {
+	var pd []PaperDetail
+	id := c.Param("id")
+
+	if err := db.Where("id = ?", id).Delete(&pd).Error; err != nil {
+		return nil, err
+	}
+	return pd, nil
+}

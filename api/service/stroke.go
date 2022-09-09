@@ -28,3 +28,14 @@ func (s StrokeService) PostStroke(db *gorm.DB, c echo.Context) (Stroke, error) {
 	}
 	return stroke, nil
 }
+
+// DELETE
+func (s StrokeService) DeleteStroke(db *gorm.DB, c echo.Context) ([]Stroke, error) {
+	var st []Stroke
+	pdid := c.Param("pdid")
+
+	if err := db.Where("pdid = ?", pdid).Delete(&st).Error; err != nil {
+		return st, err
+	}
+	return st, nil
+}

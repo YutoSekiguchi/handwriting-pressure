@@ -28,3 +28,14 @@ func (s LogService) PostLog(db *gorm.DB, c echo.Context) (Log, error) {
 	}
 	return log, nil
 }
+
+// DELETE
+func (s LogService) DeleteLog(db *gorm.DB, c echo.Context) ([]Log, error) {
+	var l []Log
+	pdid := c.Param("pdid")
+
+	if err := db.Where("pdid = ?", pdid).Delete(&l).Error; err != nil {
+		return l, err
+	}
+	return l, nil
+}
