@@ -36,3 +36,11 @@ func (ctrl Controller) HandleUpdatePaperDetail(c echo.Context) error {
 
 	return Res(c, p, err)
 }
+
+// paper_detalの削除
+func (ctrl Controller) HandleDeletePaperDetail(c echo.Context) error {
+	var s service.PaperDetailService
+	p, err := s.DeletePaperDetail(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
