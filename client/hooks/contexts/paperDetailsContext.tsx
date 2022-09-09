@@ -79,6 +79,20 @@ export const PaperDetailsProvider = (props: any) => {
     }
   }
 
+  // paper_detailの削除
+  const deletePaperDetail = async(pdid: number) => {
+    try {
+      dispatch({ type: papersDetailActions.DELETE_PAPER_DETAIL });
+      const res = await axios.delete(`${url}/paper-details/${pdid}`);
+      if (res.status === 200) {
+        dispatch({ type: papersDetailActions.DELETE_PAPER_DETAIL_SUCCESS });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: papersDetailActions.DELETE_PAPER_DETAIL_ERROR, payload: error });
+    }
+  }
+
   const value = useMemo(() => {
     return {
       state,
@@ -86,6 +100,7 @@ export const PaperDetailsProvider = (props: any) => {
       getPaperDetailsByPID,
       createPaperDetail,
       updatePaperDetail,
+      deletePaperDetail,
     }
   }, [state]);
 
