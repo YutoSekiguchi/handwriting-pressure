@@ -60,9 +60,17 @@ func (s PaperDetailService) UpdatePaperDetail(db *gorm.DB, c echo.Context) (*Pap
 // DELETE
 func (s PaperDetailService) DeletePaperDetail(db *gorm.DB, c echo.Context) ([]PaperDetail, error) {
 	var pd []PaperDetail
+	var stroke []Stroke
+	var log []Log
 	id := c.Param("id")
 
 	if err := db.Where("id = ?", id).Delete(&pd).Error; err != nil {
+		return nil, err
+	}
+	if err := db.Where("pdid = ?", id).Delete(&stroke).Error; err != nil {
+		return nil, err
+	}
+	if err := db.Where("pdid = ?", id).Delete(&log).Error; err != nil {
 		return nil, err
 	}
 	return pd, nil
