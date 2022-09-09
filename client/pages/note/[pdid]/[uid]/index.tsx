@@ -78,13 +78,6 @@ const Note: NextPage = () => {
 	let penColor: string;
   let boundaryValue: number;
 
-
-  if (redoHistoryList.length > 0){
-    console.log('his', typeof(redoHistoryList[0]));
-    console.log(redoHistoryList);
-  }
-
-
 	const draw = () => {
     Paper.view.onMouseDown = () => {
       
@@ -177,7 +170,6 @@ const Note: NextPage = () => {
   const pointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!isDrag) { return }
     console.log(e.pressure)
-    console.log("これみたい", e);
     if (e.pressure != 0) {
       if (pressure === null || pressure === undefined) {
         setPressure([e.pressure])
@@ -257,20 +249,9 @@ const Note: NextPage = () => {
     }
     strokes.createStroke(postStrokeData);
     
-    setLineGraphData(
-      {
-        labels: labels,
-        datasets: [
-          {
-            label: "筆圧",
-            data: aboutPressureCountArray,
-            borderColor: "rgb(75, 192, 192)",
-            backgroundColor: "rgba(75, 192, 192, 0.1)",
-            fill: true,
-          },
-        ],
-      }
-    );
+    // Lineグラフデータ登録
+    setLineData(labels, "筆圧", aboutPressureCountArray);
+    
     setNowConfirmPressure(pressureArray[pressureArray.length-1]);
     setDoughnutNowPressureGraphData(
       {
@@ -389,13 +370,18 @@ const Note: NextPage = () => {
         tmp[aboutAvgPressure*pressureRangeNum] += 1;
       }
     aboutPressureCountArray = tmp;
+    setLineData(labels, "筆圧", aboutPressureCountArray);
+  }
+
+  // グラフデータ登録
+  const setLineData = (labels: number[], label: string, data: number[]) => {
     setLineGraphData(
       {
         labels: labels,
         datasets: [
           {
-            label: "筆圧",
-            data: aboutPressureCountArray,
+            label: label,
+            data: data,
             borderColor: "rgb(75, 192, 192)",
             backgroundColor: "rgba(75, 192, 192, 0.1)",
             fill: true,
@@ -495,7 +481,6 @@ const Note: NextPage = () => {
     }
     setCanvasDialog(true);
     setCanvasDialogImageIndex(i);
-    console.log(i)
   }
 
   const closeDialog = (e: any) => {
@@ -586,8 +571,7 @@ const Note: NextPage = () => {
       }
       if(paperDetails.state.paperDetail.BoundaryPressure!=null) {
         if (paperDetails.state.paperDetail.BoundaryPressure!=0) {
-        console.log("実行された")
-        setDefaultBoundaryPressure(paperDetails.state.paperDetail.BoundaryPressure*10000);
+          setDefaultBoundaryPressure(paperDetails.state.paperDetail.BoundaryPressure*10000);
         } else {
           setDefaultBoundaryPressure(10000);
         }
