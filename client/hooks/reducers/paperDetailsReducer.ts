@@ -71,7 +71,26 @@ export const papersDetailReducer = (state: any, actions: any) => {
         fetching: false,
         error: actions.payload
       }
+
+    case papersDetailActions.DELETE_PAPER_DETAIL:
+      return {
+        ...state,
+        fetching: true,
+      }
     
+    case papersDetailActions.DELETE_PAPER_DETAIL_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
+        ok: true,
+      }
+    
+    case papersDetailActions.DELETE_PAPER_DETAIL_ERROR:
+      return {
+        ...state,
+        fetching: false,
+        error: actions.payload
+      }
     default:
       return state
   }

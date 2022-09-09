@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { usePapers } from '../../hooks/contexts/papersContext';
 import { usePaperDetails } from '../../hooks/contexts/paperDetailsContext';
 import { useRouter } from 'next/router';
+import DeleteDialog from '../../components/library/DeleteDialog';
 
 type FolderObj = {
   ID: number,
@@ -51,6 +52,7 @@ const Library: NextPage = () => {
   const [width, setWidth] = useState<number>(210);
   const [height, setHeight] = useState<number>(297);
   const [userName, setUserName] = useState<string>('');
+  const [deleteDialogID, setDeleteDialogID] = useState<number|null>(null); // 削除確認ダイアログ
   
   // フォルダの追加のためにinputタグ開く
   const handleAddPaper = () => {
@@ -116,6 +118,20 @@ const Library: NextPage = () => {
   const closeNewNoteDialog = (e: any) => {
     if (e.target.className == 'overlay') {
       setNewNoteDialog(false);
+    } else {
+      return;
+    }
+  }
+
+
+  const openDeleteDialog = (pdid: number) => {
+    setDeleteDialogID(pdid);
+  }
+
+  // deleteダイアログを閉じる
+  const closeDeleteDialog = (e: any) => {
+    if (e.target.className == 'overlay') {
+      setDeleteDialogID(null);
     } else {
       return;
     }
@@ -194,6 +210,15 @@ const Library: NextPage = () => {
     router.replace({pathname: `/note/[pdid]/[uid]`, query: { pdid: pdid, uid: uid },});
   }
 
+
+  // ノートの削除
+  const handleDeletePaper = async(pdid: number) => {
+    await paperDetails.deletePaperDetail(pdid);
+    alert('削除しました');
+    setDeleteDialogID(null);
+    await paperDetails.getPaperDetailsByPID(openFolderIndexAndPID?.pid);
+  }
+
   useEffect(() => {
     getPapersData();
   }, [])
@@ -252,6 +277,15 @@ const Library: NextPage = () => {
               </div>
             </div>
           </div>
+        }
+
+        {deleteDialogID&&
+          <DeleteDialog
+            closeDialog={closeDeleteDialog}
+            handleDeletePaper={handleDeletePaper}
+            pdid={deleteDialogID}
+            setDeleteDialogID={setDeleteDialogID}
+          />
         }
         
         <div className="flex w-full h-full" onClick={handleClosePaperAddInput}>
@@ -324,7 +358,12 @@ const Library: NextPage = () => {
                             : <img src={note.BackgroundImage} />
                           }
                         </div>
-                        <p className='text-center text-white'>{note.Title}</p>
+                        <div className='flex items-center justify-center'>
+                          <p className='mr-2 text-center text-white'>{note.Title}</p>
+                          <button className='flex items-center justify-center' onClick={() => openDeleteDialog(note.ID)}>
+                            <Image src={'/trash.svg'} width={15} height={15} />
+                          </button>
+                        </div>
                       </div>
                     ))
                   }
