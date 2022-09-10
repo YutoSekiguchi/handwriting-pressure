@@ -52,7 +52,8 @@ const Library: NextPage = () => {
   const [width, setWidth] = useState<number>(210);
   const [height, setHeight] = useState<number>(297);
   const [userName, setUserName] = useState<string>('');
-  const [deleteDialogID, setDeleteDialogID] = useState<number|null>(null); // 削除確認ダイアログ
+  const [deletePaperDetailDialogID, setDeletePaperDetailDialogID] = useState<number|null>(null); // ノート削除確認ダイアログ
+  const [deletePaperDialogID, setDeletePaperDialogID] = useState<number|null>(null); // フォルダ削除確認ダイアログ
   
   // フォルダの追加のためにinputタグ開く
   const handleAddPaper = () => {
@@ -123,15 +124,26 @@ const Library: NextPage = () => {
     }
   }
 
-
-  const openDeleteDialog = (pdid: number) => {
-    setDeleteDialogID(pdid);
+  const openDeletePaperDetailDialog = (id: number) => {
+    setDeletePaperDetailDialogID(id);
   }
 
   // deleteダイアログを閉じる
-  const closeDeleteDialog = (e: any) => {
+  const closeDeletePaperDetailDialog = (e: any) => {
     if (e.target.className == 'overlay') {
-      setDeleteDialogID(null);
+      setDeletePaperDetailDialogID(null);
+    } else {
+      return;
+    }
+  }
+
+  const openDeletePaperDialog = (id: number) => {
+    setDeletePaperDialogID(id);
+  }
+
+  const closeDeletePaperDialog = (e: any) => {
+    if (e.target.className == 'overlay') {
+      setDeletePaperDialogID(null);
     } else {
       return;
     }
@@ -215,8 +227,16 @@ const Library: NextPage = () => {
   const handleDeletePaper = async(pdid: number) => {
     await paperDetails.deletePaperDetail(pdid);
     alert('削除しました');
-    setDeleteDialogID(null);
+    setDeletePaperDetailDialogID(null);
     await paperDetails.getPaperDetailsByPID(openFolderIndexAndPID?.pid);
+  }
+
+  // フォルダの削除
+  const handleDeleteFolder = async(id: number) => {
+    await papers.deletePaper(id);
+    alert('削除しました');
+    setDeletePaperDialogID(null);
+    await getPapersData();
   }
 
   useEffect(() => {
@@ -279,12 +299,21 @@ const Library: NextPage = () => {
           </div>
         }
 
-        {deleteDialogID&&
+        {deletePaperDetailDialogID&&
           <DeleteDialog
-            closeDialog={closeDeleteDialog}
-            handleDeletePaper={handleDeletePaper}
-            pdid={deleteDialogID}
-            setDeleteDialogID={setDeleteDialogID}
+            closeDialog={closeDeletePaperDetailDialog}
+            handleDelete={handleDeletePaper}
+            id={deletePaperDetailDialogID}
+            setDeleteDialogID={setDeletePaperDetailDialogID}
+          />
+        }
+        
+        {deletePaperDialogID&&
+          <DeleteDialog
+            closeDialog={closeDeletePaperDialog}
+            handleDelete={handleDeleteFolder}
+            id={deletePaperDialogID}
+            setDeleteDialogID={setDeletePaperDialogID}
           />
         }
         
@@ -304,9 +333,14 @@ const Library: NextPage = () => {
               {/* フォルダ一覧 */}
               {allFolderData&&
                 allFolderData.map((obj, i) => (
-                  <div className='flex py-1 pl-10 border-b border-gray-600 cursor-pointer' key={i} onClick={() => handleClickFolder(obj.ID, i)}>
-                    <Image src={'/folder.svg'} width={15} height={15} />
-                    <h6 className='pl-2 text-white'>{obj.Name}</h6>
+                  <div className={`flex justify-between py-1 pl-10 border-b border-gray-600 cursor-pointer ${obj.ID==openFolderIndexAndPID?.pid&&'bg-gray-800'}`} key={i} onClick={() => handleClickFolder(obj.ID, i)}>
+                    <div className='flex'>
+                      <Image src={'/folder.svg'} width={15} height={15} />
+                      <h6 className='pl-2 text-white'>{obj.Name}</h6>
+                    </div>
+                    <button className='flex items-center justify-center mr-1' onClick={() => openDeletePaperDialog(obj.ID)}>
+                      <Image src={'/trash.svg'} width={15} height={15} />
+                    </button>
                   </div>
                 ))
               }
@@ -345,34 +379,36 @@ const Library: NextPage = () => {
               }
 
               {openFolderIndexAndPID&&openFolderIndexAndPID.index>=0&&
-                <div className='flex flex-wrap'>
-                  {noteList&&
-                    noteList.map((note, i) => (
-                      <div className='mb-3 mr-4' key={i}>
-                        <div className='flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36' onClick={() => moveNotePage(note.ID, note.UID)}>
-                          {note.PaperImage!=''
-                            ? <div className="relative w-full h-full">
-                                <img src={note.BackgroundImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
-                                <img src={note.PaperImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
-                              </div>
-                            : <img src={note.BackgroundImage} />
-                          }
+                <>
+                  <div className='flex flex-wrap'>
+                    {noteList&&
+                      noteList.map((note, i) => (
+                        <div className='mb-3 mr-4' key={i}>
+                          <div className='flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36' onClick={() => moveNotePage(note.ID, note.UID)}>
+                            {note.PaperImage!=''
+                              ? <div className="relative w-full h-full">
+                                  <img src={note.BackgroundImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
+                                  <img src={note.PaperImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
+                                </div>
+                              : <img src={note.BackgroundImage} />
+                            }
+                          </div>
+                          <div className='flex items-center justify-center'>
+                            <p className='mr-2 text-center text-white'>{note.Title}</p>
+                            <button className='flex items-center justify-center' onClick={() => openDeletePaperDetailDialog(note.ID)}>
+                              <Image src={'/trash.svg'} width={15} height={15} />
+                            </button>
+                          </div>
                         </div>
-                        <div className='flex items-center justify-center'>
-                          <p className='mr-2 text-center text-white'>{note.Title}</p>
-                          <button className='flex items-center justify-center' onClick={() => openDeleteDialog(note.ID)}>
-                            <Image src={'/trash.svg'} width={15} height={15} />
-                          </button>
-                        </div>
+                      ))
+                    }
+                    <div className='flex items-center justify-center h-48 border border-gray-300 border-dashed cursor-pointer w-36' onClick={createNewNote}>
+                      <div className='flex items-center justify-center w-16 h-16 rounded-full bg-sky-900'>
+                        <Image src={'/plus.svg'} width={30} height={30} />
                       </div>
-                    ))
-                  }
-                  <div className='flex items-center justify-center h-48 border border-gray-300 border-dashed cursor-pointer w-36' onClick={createNewNote}>
-                    <div className='flex items-center justify-center w-16 h-16 rounded-full bg-sky-900'>
-                      <Image src={'/plus.svg'} width={30} height={30} />
                     </div>
                   </div>
-                </div>
+                </>
               }
             </div>
           </div>
