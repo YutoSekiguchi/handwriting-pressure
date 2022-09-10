@@ -37,6 +37,7 @@ func InitRouter(db *gorm.DB) {
 	{
 		paper.GET("/list/:uid", ctrl.HandleGetPapersByUID)
 		paper.POST("", ctrl.HandlePostPaper)
+		paper.DELETE("/:id", ctrl.HandleDeletePaper)
 	}
 
 	// PaperDetail

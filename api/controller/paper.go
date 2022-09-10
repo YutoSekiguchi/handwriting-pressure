@@ -22,3 +22,12 @@ func (ctrl Controller) HandlePostPaper(c echo.Context) error {
 
 	return Res(c, p, err)
 }
+
+// DELETE
+// Paperの削除
+func (ctrl Controller) HandleDeletePaper(c echo.Context) error {
+	var s service.PaperService
+	p, err := s.DeletePaper(ctrl.Db, c)
+
+	return Res(c, p, err)
+}

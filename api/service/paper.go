@@ -30,3 +30,15 @@ func (s PaperService) PostPaper(db *gorm.DB, c echo.Context) (Paper, error) {
 	}
 	return paper, nil
 }
+
+// DELETE
+// paperの削除
+func (s PaperService) DeletePaper(db *gorm.DB, c echo.Context) ([]Paper, error) {
+	var p []Paper
+	id := c.Param("id")
+
+	if err := db.Where("id = ?", id).Delete(&p).Error; err != nil {
+		return nil, err
+	}
+	return p, nil
+}
