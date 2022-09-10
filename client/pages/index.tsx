@@ -8,16 +8,16 @@ import HoverColorChangeButton from '../components/common/HoverColorChangeButton'
 const Home: NextPage = () => {
 	return (
     <>
-      <div className='fixed w-full h-full bg-gray-900'>
+      <div className='fixed w-full h-full bg-gray-500'>
         <AppHeader />
         <div className="flex flex-col items-center justify-center w-full h-full">
           <div className='relative w-1/2 bg-gray-800 border-2 h-1/2 rounded-3xl border-sky-200'>
-            <div className='flex-col'>
-              <h2 className='my-2 font-bold text-center text-white'>実験システム</h2>
-              <h3 className='ml-6 text-white'>この実験では〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜。</h3>
+            <div className='flex-col items-center justify-center'>
+              <h2 className='mt-2 mb-6 font-bold text-center text-white'>実験システム</h2>
+              <h3 className='mx-6 leading-snug text-white'>このシステムは，重要度や自信度，後で消す予定のものに対して<strong className='text-orange-300'>筆圧</strong>を変化させることで，重要度や自信度の低いものを簡単に消すことができるシステムです。</h3>
             </div>
-            <div className='absolute bottom-2 right-2'>
-              <Image src={'/pen.gif'} width={150} height={150} />
+            <div className='w-4/5 mx-auto mt-12'>
+              <Image src={'/top-ex.png'} className="" width={1200} height={300} />
             </div>
           </div>
 
