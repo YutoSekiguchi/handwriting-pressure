@@ -2,13 +2,13 @@ import type { NextPage } from 'next'
 
 type Props = {
   closeDialog: (e: any) => void,
-  handleDeletePaper: (pdid: number) => void,
-  pdid: number|null,
+  handleDelete: (pdid: number) => void,
+  id: number|null,
   setDeleteDialogID: React.Dispatch<React.SetStateAction<number | null>>
 }
 
 const DeleteDialog: NextPage<Props> = (props) => {
-  const {closeDialog, handleDeletePaper, pdid, setDeleteDialogID} = props;
+  const {closeDialog, handleDelete, id, setDeleteDialogID} = props;
   
   return (
     <div className="overlay" onClick={closeDialog}>
@@ -22,8 +22,8 @@ const DeleteDialog: NextPage<Props> = (props) => {
                 <button className='px-3 py-1 mr-4 text-white bg-gray-800 rounded-lg' onClick={() => {setDeleteDialogID(null)}}>
                   <p className='font-bold'>キャンセル</p>
                 </button>
-                {pdid&&
-                  <button className='px-3 py-1 ml-4 text-white bg-gray-800 rounded-lg' onClick={() => handleDeletePaper(pdid)}>
+                {id&&
+                  <button className='px-3 py-1 ml-4 text-white bg-gray-800 rounded-lg' onClick={() => handleDelete(id)}>
                     <p className='font-bold'>削除する</p>
                   </button>
                 }
