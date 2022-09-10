@@ -379,34 +379,36 @@ const Library: NextPage = () => {
               }
 
               {openFolderIndexAndPID&&openFolderIndexAndPID.index>=0&&
-                <div className='flex flex-wrap'>
-                  {noteList&&
-                    noteList.map((note, i) => (
-                      <div className='mb-3 mr-4' key={i}>
-                        <div className='flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36' onClick={() => moveNotePage(note.ID, note.UID)}>
-                          {note.PaperImage!=''
-                            ? <div className="relative w-full h-full">
-                                <img src={note.BackgroundImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
-                                <img src={note.PaperImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
-                              </div>
-                            : <img src={note.BackgroundImage} />
-                          }
+                <>
+                  <div className='flex flex-wrap'>
+                    {noteList&&
+                      noteList.map((note, i) => (
+                        <div className='mb-3 mr-4' key={i}>
+                          <div className='flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36' onClick={() => moveNotePage(note.ID, note.UID)}>
+                            {note.PaperImage!=''
+                              ? <div className="relative w-full h-full">
+                                  <img src={note.BackgroundImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
+                                  <img src={note.PaperImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
+                                </div>
+                              : <img src={note.BackgroundImage} />
+                            }
+                          </div>
+                          <div className='flex items-center justify-center'>
+                            <p className='mr-2 text-center text-white'>{note.Title}</p>
+                            <button className='flex items-center justify-center' onClick={() => openDeletePaperDetailDialog(note.ID)}>
+                              <Image src={'/trash.svg'} width={15} height={15} />
+                            </button>
+                          </div>
                         </div>
-                        <div className='flex items-center justify-center'>
-                          <p className='mr-2 text-center text-white'>{note.Title}</p>
-                          <button className='flex items-center justify-center' onClick={() => openDeletePaperDetailDialog(note.ID)}>
-                            <Image src={'/trash.svg'} width={15} height={15} />
-                          </button>
-                        </div>
+                      ))
+                    }
+                    <div className='flex items-center justify-center h-48 border border-gray-300 border-dashed cursor-pointer w-36' onClick={createNewNote}>
+                      <div className='flex items-center justify-center w-16 h-16 rounded-full bg-sky-900'>
+                        <Image src={'/plus.svg'} width={30} height={30} />
                       </div>
-                    ))
-                  }
-                  <div className='flex items-center justify-center h-48 border border-gray-300 border-dashed cursor-pointer w-36' onClick={createNewNote}>
-                    <div className='flex items-center justify-center w-16 h-16 rounded-full bg-sky-900'>
-                      <Image src={'/plus.svg'} width={30} height={30} />
                     </div>
                   </div>
-                </div>
+                </>
               }
             </div>
           </div>
