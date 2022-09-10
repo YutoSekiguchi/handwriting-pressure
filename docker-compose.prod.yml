@@ -1,8 +1,58 @@
 version: '3'
 services:
+  mysql:
+    container_name: note-mysql
+    build:
+      context: ./db
+      dockerfile: exam.Dockerfile
+    env_file: ./.env
+    volumes:
+      - ./db/data:/var/lib/mysql
+    ports:
+      - "7152:3306"
+    networks:
+      - note
+  
+  phpmyadmin:
+    container_name: note-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 7153:80
+    env_file: ./.env
+    depends_on:
+      - mysql
+    networks:
+      - note
+  
+  api:
+    container_name: note-api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    env_file: ./.env
+    volumes:
+      - ./api/:/app
+    ports:
+      - 7151:8080
+    depends_on:
+      - mysql
+    networks:
+      - note
+
   client:
+    container_name: note-client
     build:
       context: ./client
       dockerfile: Dockerfile
+    env_file: ./.env
     ports:
       - 7150:3000
+    networks:
+      - note
+
+volumes:
+  mysql:
+
+networks:
+  note:
+    driver: bridge
