@@ -318,7 +318,7 @@ const Library: NextPage = () => {
         }
         
         <div className="flex w-full h-full" onClick={handleClosePaperAddInput}>
-          <div className='w-1/6 h-full bg-gray-900 border-r-2 border-sky-200' id="folder-outer" onClick={handleNoSelectedFolder}>
+          <div className='w-1/2 h-full bg-gray-900 border-r-2 border-sky-200' id="folder-outer" style={{"maxWidth": "200px"}} onClick={handleNoSelectedFolder}>
             <div className='flex-col mt-12'>
               {/* 名前とフォルダ追加ボタン */}
               <div className='flex items-center justify-between px-6 bg-gray-700' suppressHydrationWarning>
@@ -333,10 +333,10 @@ const Library: NextPage = () => {
               {/* フォルダ一覧 */}
               {allFolderData&&
                 allFolderData.map((obj, i) => (
-                  <div className={`flex justify-between py-1 pl-10 border-b border-gray-600 cursor-pointer ${obj.ID==openFolderIndexAndPID?.pid&&'bg-gray-800'}`} key={i} onClick={() => handleClickFolder(obj.ID, i)}>
+                  <div className={`flex justify-between py-1 border-b border-gray-600 cursor-pointer ${obj.ID==openFolderIndexAndPID?.pid&&'bg-gray-800'} pl-2`} key={i} onClick={() => handleClickFolder(obj.ID, i)}>
                     <div className='flex'>
                       <Image src={'/folder.svg'} width={15} height={15} />
-                      <h6 className='pl-2 text-white'>{obj.Name}</h6>
+                      <h6 className='pl-2 text-white'>{obj.Name.length>8?`${obj.Name.slice(0,8)}...`:obj.Name}</h6>
                     </div>
                     <button className='flex items-center justify-center mr-1' onClick={() => openDeletePaperDialog(obj.ID)}>
                       <Image src={'/trash.svg'} width={15} height={15} />
@@ -347,7 +347,7 @@ const Library: NextPage = () => {
 
               {/* フォルダ新規追加 */}
               {paperAddInput&&
-                <div className='flex pl-10 border-b border-gray-600 cursor-pointer folder-input'>
+                <div className='flex pl-2 border-b border-gray-600 cursor-pointer folder-input'>
                   <Image src={'/folder.svg'} width={15} height={15} />
                   <input type="text" onInput={changeFolderName} id="folder-input" className="w-4/5 my-1 ml-2 text-white bg-gray-700" autoFocus />
                 </div>
