@@ -237,6 +237,7 @@ const Library: NextPage = () => {
     alert('削除しました');
     setDeletePaperDialogID(null);
     await getPapersData();
+    setOpenFolderIndexAndPID(null);
   }
 
   useEffect(() => {
