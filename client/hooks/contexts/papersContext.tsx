@@ -42,11 +42,26 @@ export const PapersProvider = (props: any) => {
     }
   }
 
+  // papersの削除
+  const deletePaper = async(id: number) => {
+    try {
+      dispatch({ type: papersActions.DELETE_PAPER });
+      const res = await axios.delete(`${url}/papers/${id}`);
+      if (res.status === 200) {
+        dispatch({ type: papersActions.DELETE_PAPER_SUCCESS });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: papersActions.DELETE_PAPER_ERROR, payload: error });
+    }
+  }
+
   const value = useMemo(() => {
     return {
       state,
       getPapersByUID,
       createPaper,
+      deletePaper
     }
   }, [state]);
 
