@@ -51,4 +51,4 @@
 |     | 7153 | データベースの操作, PHPMyAdmin | note-phpmyadmin     |
 
 > 今は開発環境ではクライアントは`npm run dev`を実行してdocker上では実行しない方法の方がいいかも
-  > `npm run dev`での実行だとhttp://localhost:3000/api/〜は働かないので注意.（http://localhost:7151）にアクセスしよう 
+  > `npm run dev`での実行だとhttp://localhost:3000/api/〜 は働かないので注意.（http://localhost:7151）にアクセスしよう 
