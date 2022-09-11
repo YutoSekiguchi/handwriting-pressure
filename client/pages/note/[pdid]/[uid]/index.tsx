@@ -581,7 +581,6 @@ const Note: NextPage = () => {
         const logDataList = logs.state.logsList;
         let tmp: any = [];
         for(var i=0; i<logDataList.length; i++) {
-          console.log(logDataList[i].Url);
           const el = {
             url: logDataList[i].Url,
             strokeData: logDataList[i].StrokeData,
