@@ -9,6 +9,7 @@ import { usePaperDetails } from '../../hooks/contexts/paperDetailsContext';
 import { useRouter } from 'next/router';
 import DeleteDialog from '../../components/library/DeleteDialog';
 import NewNoteDialog from '../../components/library/NewNoteDialog';
+import ShowUserName from '../../components/library/ShowUserName';
 
 type FolderObj = {
   ID: number,
@@ -56,11 +57,6 @@ const Library: NextPage = () => {
   const [deletePaperDetailDialogID, setDeletePaperDetailDialogID] = useState<number|null>(null); // ノート削除確認ダイアログ
   const [deletePaperDialogID, setDeletePaperDialogID] = useState<number|null>(null); // フォルダ削除確認ダイアログ
   
-  // フォルダの追加のためにinputタグ開く
-  const handleAddPaper = () => {
-    setPaperAddInput(true);
-  }
-
   // 新規フォルダのinputタグ閉じる
   const handleClosePaperAddInput = async(e: any) => {
     if (e.target.id !== 'add-folder-button'&&e.target.id !== 'folder-input') {
@@ -247,14 +243,10 @@ const Library: NextPage = () => {
           <div className='w-1/2 h-full bg-gray-900 border-r-2 border-sky-200' id="folder-outer" style={{"maxWidth": "200px"}} onClick={handleNoSelectedFolder}>
             <div className='flex-col mt-12'>
               {/* 名前とフォルダ追加ボタン */}
-              <div className='flex items-center justify-between px-6 bg-gray-700' suppressHydrationWarning>
-                <h4 className='my-2 font-bold text-center text-white'>
-                  {userName}<span className='text-xs font-medium'>さん</span>
-                </h4>
-                <button className='text-white' id="add-folder-button" onClick={handleAddPaper} >
-                  <Image src={'/plus.svg'} id="add-folder-button" width={10} height={10} />
-                </button>
-              </div>
+              <ShowUserName 
+                userName={userName}
+                setPaperAddInput={setPaperAddInput}
+              />
 
               {/* フォルダ一覧 */}
               {allFolderData&&
