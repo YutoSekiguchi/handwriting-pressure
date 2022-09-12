@@ -6,19 +6,20 @@ type Props = {
   setWidth: (value: React.SetStateAction<number>) => void,
   setHeight: (value: React.SetStateAction<number>) => void,
   setNoteName: (value: React.SetStateAction<string>) => void,
-  closeNewNoteDialog: (e: any) => void,
+  closeNewNoteDialog:  (state: (value: React.SetStateAction<any>) => void, val: false|null, e: any) => void,
+  setNewNoteDialog: (value: React.SetStateAction<boolean>) => void,
   onSubmitNote: () => Promise<void>,
 }
 
 const NewNoteDialog: NextPage<Props> = (props) => {
-  const { setWidth, setHeight, setNoteName, closeNewNoteDialog, onSubmitNote } = props;
+  const { setWidth, setHeight, setNoteName, closeNewNoteDialog, setNewNoteDialog, onSubmitNote } = props;
   // ノートの名前入力
   const changeNoteName = (e: ChangeEvent<HTMLInputElement>) => {
     setNoteName(e.target.value);
   }
   
   return (
-    <div className="overlay" onClick={closeNewNoteDialog}>
+    <div className="overlay" onClick={(event) => closeNewNoteDialog(setNewNoteDialog, false, event)}>
       <div className="overlay-content">
         <div className="relative flex items-center justify-center w-full h-full">
           <div className='flex-col text-center'>
