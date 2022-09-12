@@ -8,6 +8,7 @@ import { usePapers } from '../../hooks/contexts/papersContext';
 import { usePaperDetails } from '../../hooks/contexts/paperDetailsContext';
 import { useRouter } from 'next/router';
 import DeleteDialog from '../../components/library/DeleteDialog';
+import NewNoteDialog from '../../components/library/NewNoteDialog';
 
 type FolderObj = {
   ID: number,
@@ -89,11 +90,6 @@ const Library: NextPage = () => {
     setFolderName(e.target.value);
   }
 
-  // ノートの名前入力
-  const changeNoteName = (e: ChangeEvent<HTMLInputElement>) => {
-    setNoteName(e.target.value);
-  }
-
   // フォルダクリック時
   const handleClickFolder = async(pid: number, i: number) => {
     await paperDetails.getPaperDetailsByPID(pid);
@@ -146,49 +142,6 @@ const Library: NextPage = () => {
       setDeletePaperDialogID(null);
     } else {
       return;
-    }
-  }
-
-  // ノートのサイズ選択
-  const changePaperSize = (e: ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value)
-    const val = e.target.value;
-    switch(val) {
-      case 'a4':
-        setWidth(210);
-        setHeight(297);
-        break;
-      case 'a4side':
-        setWidth(297);
-        setHeight(210);
-        break;
-      case 'a3':
-        setWidth(297);
-        setHeight(420);
-        break;
-      case 'a3side':
-        setWidth(420);
-        setHeight(297);
-        break;
-      case 'b5':
-        setWidth(182);
-        setHeight(257);
-        break;
-      case 'b5side':
-        setWidth(257);
-        setHeight(182);
-        break;
-      case 'b4':
-        setWidth(257);
-        setHeight(364);
-        break;
-      case 'b4side':
-        setWidth(364);
-        setHeight(257);
-        break;
-      default:
-        setWidth(210);
-        setHeight(297);
     }
   }
 
@@ -263,41 +216,13 @@ const Library: NextPage = () => {
       <div className='fixed w-full h-full bg-gray-800'>
         <AppHeader />
         {newNoteDialog&&
-          <div className="overlay" onClick={closeNewNoteDialog}>
-            <div className="overlay-content">
-              <div className="relative flex items-center justify-center w-full h-full">
-                <div className='flex-col text-center'>
-                  <h4 className='mb-1 font-bold text-center'>ノートのタイトルを入力</h4>
-                  <input 
-                    type={"text"}
-                    name="noteName"
-                    required
-                    autoComplete='off'
-                    className='px-3 py-2 mb-6 text-center text-white bg-gray-700 rounded-lg'
-                    onInput={changeNoteName}
-                    autoFocus
-                  />
-
-                  <div className='text-center'>
-                    <h4 className='mb-1 font-bold text-center'>ノートのサイズを選択</h4>
-                    <select className='px-20 py-2 text-white bg-gray-700 rounded-lg' name="size" id="size-select" onChange={changePaperSize}>
-                      <option value="a4">A4</option>
-                      <option value="a3">A5</option>
-                      <option value="b5">B5</option>
-                      <option value="b4">B4</option>
-                      <option value="a4side">A4横</option>
-                      <option value="a3side">A5横</option>
-                      <option value="b5side">B5横</option>
-                      <option value="b4side">B4横</option>
-                    </select>
-                  </div>
-                </div>
-                <button className='absolute px-3 py-1 text-white bg-gray-800 rounded-lg bottom-3' onClick={onSubmitNote}>
-                  <p className='font-bold'>作成</p>
-                </button>
-              </div>
-            </div>
-          </div>
+          <NewNoteDialog
+            setWidth={setWidth}
+            setHeight={setHeight}
+            setNoteName={setNoteName}
+            closeNewNoteDialog={closeNewNoteDialog}
+            onSubmitNote={onSubmitNote}
+          />
         }
 
         {deletePaperDetailDialogID&&
