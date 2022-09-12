@@ -16,8 +16,6 @@ const NewNoteDialog: NextPage<Props> = (props) => {
   const changeNoteName = (e: ChangeEvent<HTMLInputElement>) => {
     setNoteName(e.target.value);
   }
-
-  
   
   return (
     <div className="overlay" onClick={closeNewNoteDialog}>
