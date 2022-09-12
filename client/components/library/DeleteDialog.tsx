@@ -1,17 +1,17 @@
 import type { NextPage } from 'next'
 
 type Props = {
-  closeDialog: (e: any) => void,
+  closeDialog: (state: (value: React.SetStateAction<any>) => void, val: false|null, e: any) => void,
   handleDelete: (pdid: number) => void,
   id: number|null,
-  setDeleteDialogID: React.Dispatch<React.SetStateAction<number | null>>
+  setDeleteDialogID: React.Dispatch<React.SetStateAction<number | null>>,
 }
 
 const DeleteDialog: NextPage<Props> = (props) => {
   const {closeDialog, handleDelete, id, setDeleteDialogID} = props;
   
   return (
-    <div className="overlay" onClick={closeDialog}>
+    <div className="overlay" onClick={(e) => closeDialog(setDeleteDialogID, null, e)}>
       <div className="delete-overlay-content">
         <div className="relative flex items-center justify-center w-full h-full">
           <div className='flex-col text-center'>

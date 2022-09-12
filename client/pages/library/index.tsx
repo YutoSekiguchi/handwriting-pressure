@@ -1,9 +1,8 @@
 import type { NextPage } from 'next'
-import React, { ChangeEvent, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head'
 import AppHeader from '../../components/common/AppHeader';
 import lscache from 'lscache';
-import Image from 'next/image';
 import { usePapers } from '../../hooks/contexts/papersContext';
 import { usePaperDetails } from '../../hooks/contexts/paperDetailsContext';
 import { useRouter } from 'next/router';
@@ -93,27 +92,9 @@ const Library: NextPage = () => {
     }
   }
 
-  // ノート作成ダイアログを閉じる
-  const closeNewNoteDialog = (e: any) => {
+  const closeDialog = (state: (value: React.SetStateAction<any>) => void, val: false|null, e: any) => {
     if (e.target.className == 'overlay') {
-      setNewNoteDialog(false);
-    } else {
-      return;
-    }
-  }
-
-  // deleteダイアログを閉じる
-  const closeDeletePaperDetailDialog = (e: any) => {
-    if (e.target.className == 'overlay') {
-      setDeletePaperDetailDialogID(null);
-    } else {
-      return;
-    }
-  }
-
-  const closeDeletePaperDialog = (e: any) => {
-    if (e.target.className == 'overlay') {
-      setDeletePaperDialogID(null);
+      state(val);
     } else {
       return;
     }
@@ -148,7 +129,6 @@ const Library: NextPage = () => {
     // router.push({pathname: `/note/[pdid]/[uid]`, query: { pdid: pdid, uid: uid },});
     router.replace({pathname: `/note/[pdid]/[uid]`, query: { pdid: pdid, uid: uid },});
   }
-
 
   // ノートの削除
   const handleDeletePaper = async(pdid: number) => {
@@ -194,14 +174,15 @@ const Library: NextPage = () => {
             setWidth={setWidth}
             setHeight={setHeight}
             setNoteName={setNoteName}
-            closeNewNoteDialog={closeNewNoteDialog}
+            closeNewNoteDialog={closeDialog}
+            setNewNoteDialog={setNewNoteDialog}
             onSubmitNote={onSubmitNote}
           />
         }
 
         {deletePaperDetailDialogID&&
           <DeleteDialog
-            closeDialog={closeDeletePaperDetailDialog}
+            closeDialog={closeDialog}
             handleDelete={handleDeletePaper}
             id={deletePaperDetailDialogID}
             setDeleteDialogID={setDeletePaperDetailDialogID}
@@ -210,7 +191,7 @@ const Library: NextPage = () => {
         
         {deletePaperDialogID&&
           <DeleteDialog
-            closeDialog={closeDeletePaperDialog}
+            closeDialog={closeDialog}
             handleDelete={handleDeleteFolder}
             id={deletePaperDialogID}
             setDeleteDialogID={setDeletePaperDialogID}
