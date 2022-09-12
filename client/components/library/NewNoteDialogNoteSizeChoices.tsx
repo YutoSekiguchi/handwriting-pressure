@@ -16,7 +16,6 @@ const NewNoteDialogNoteSizeChoices: NextPage<Props> = (props) => {
     const val = e.target.value.split(',');
     const width = Number(val[0]);
     const height = Number(val[1]);
-
     setWidth(width);
     setHeight(height);
   }
