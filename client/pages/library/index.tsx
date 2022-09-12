@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import DeleteDialog from '../../components/library/DeleteDialog';
 import NewNoteDialog from '../../components/library/NewNoteDialog';
 import ShowUserName from '../../components/library/ShowUserName';
+import FolderList from '../../components/library/FolderList';
 
 type FolderObj = {
   ID: number,
@@ -86,12 +87,6 @@ const Library: NextPage = () => {
     setFolderName(e.target.value);
   }
 
-  // フォルダクリック時
-  const handleClickFolder = async(pid: number, i: number) => {
-    await paperDetails.getPaperDetailsByPID(pid);
-    setOpenFolderIndexAndPID({pid: pid, index: i});
-  }
-
   // uidからフォルダをとってくる
   const getPapersData = async() => {
     if(userData) {
@@ -127,10 +122,6 @@ const Library: NextPage = () => {
     } else {
       return;
     }
-  }
-
-  const openDeletePaperDialog = (id: number) => {
-    setDeletePaperDialogID(id);
   }
 
   const closeDeletePaperDialog = (e: any) => {
@@ -250,17 +241,12 @@ const Library: NextPage = () => {
 
               {/* フォルダ一覧 */}
               {allFolderData&&
-                allFolderData.map((obj, i) => (
-                  <div className={`flex justify-between py-1 border-b border-gray-600 cursor-pointer ${obj.ID==openFolderIndexAndPID?.pid&&'bg-gray-800'} pl-2`} key={i} onClick={() => handleClickFolder(obj.ID, i)}>
-                    <div className='flex'>
-                      <Image src={'/folder.svg'} width={15} height={15} />
-                      <h6 className='pl-2 text-white'>{obj.Name.length>8?`${obj.Name.slice(0,8)}...`:obj.Name}</h6>
-                    </div>
-                    <button className='flex items-center justify-center mr-1' onClick={() => openDeletePaperDialog(obj.ID)}>
-                      <Image src={'/trash.svg'} width={15} height={15} />
-                    </button>
-                  </div>
-                ))
+                <FolderList
+                  allFolderData={allFolderData}
+                  openFolderIndexAndPID={openFolderIndexAndPID}
+                  setOpenFolderIndexAndPID={setOpenFolderIndexAndPID}
+                  setDeletePaperDialogID={setDeletePaperDialogID}
+                />
               }
 
               {/* フォルダ新規追加 */}
