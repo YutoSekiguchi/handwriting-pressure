@@ -11,6 +11,7 @@ import DeleteDialog from '../../components/library/DeleteDialog';
 import NewNoteDialog from '../../components/library/NewNoteDialog';
 import ShowUserName from '../../components/library/ShowUserName';
 import FolderList from '../../components/library/FolderList';
+import InputNewFolder from '../../components/library/InputNewFolder';
 
 type FolderObj = {
   ID: number,
@@ -80,11 +81,6 @@ const Library: NextPage = () => {
     if (e.target.id==='folder-outer') {
       setOpenFolderIndexAndPID(null);
     }
-  }
-
-  // フォルダの名前入力
-  const changeFolderName = (e: ChangeEvent<HTMLInputElement>) => {
-    setFolderName(e.target.value);
   }
 
   // uidからフォルダをとってくる
@@ -251,10 +247,9 @@ const Library: NextPage = () => {
 
               {/* フォルダ新規追加 */}
               {paperAddInput&&
-                <div className='flex pl-2 border-b border-gray-600 cursor-pointer folder-input'>
-                  <Image src={'/folder.svg'} width={15} height={15} />
-                  <input type="text" onInput={changeFolderName} id="folder-input" className="w-4/5 my-1 ml-2 text-white bg-gray-700" autoFocus />
-                </div>
+                <InputNewFolder
+                  setFolderName={setFolderName}
+                />
               }
             </div>
           </div>
