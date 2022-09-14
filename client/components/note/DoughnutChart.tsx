@@ -13,7 +13,6 @@ import {
   ArcElement
 } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
-import Image from 'next/image';
 import QuestionMarkButton from '../common/QuestionMarkButton';
 
 ChartJS.register(
