@@ -4,11 +4,10 @@ import Image from "next/image";
 
 type Props = {
   index: number,
-  setIndex: React.Dispatch<React.SetStateAction<number>>,
-  
+  setIndex?: React.Dispatch<React.SetStateAction<number>>,
 }
 
-const ExplainDialog: NextPage<Props> = (props) => {
+const Explain: NextPage<Props> = (props) => {
   const { index, setIndex } = props;
   const imageList = [
     '/ex_1.gif',
@@ -17,38 +16,47 @@ const ExplainDialog: NextPage<Props> = (props) => {
     '/ex_4.png'
   ];
   const handleChangeDetail = (mode: 'forward'|'ago') => {
-    switch(mode) {
-      case 'forward':
-        switch (index) {
-          case imageList.length-1:
-            setIndex(0);
-            break;
-          default:
-            setIndex((prevIndex) => prevIndex + 1);
-        }
-        break;
-      case 'ago':
-        switch (index) {
-          case 0:
-            setIndex(imageList.length-1);
-            break;
-          default:
-            setIndex((prevIndex) => prevIndex - 1);
-        }
-        break;
+    if (setIndex) {
+      switch(mode) {
+        case 'forward':
+          switch (index) {
+            case imageList.length-1:
+              setIndex(0);
+              break;
+            default:
+              setIndex((prevIndex) => prevIndex + 1);
+          }
+          break;
+        case 'ago':
+          switch (index) {
+            case 0:
+              setIndex(imageList.length-1);
+              break;
+            default:
+              setIndex((prevIndex) => prevIndex - 1);
+          }
+          break;
+      }
     }
   }
   return (
-    <div className='flex items-center justify-between w-1/2 overflow-y-auto border-2 border-gray-400 h-1/2 bg-gray-50 rounded-3xl img-box'>
-      <div className="ml-2 cursor-pointer logBackButton" onClick={() => handleChangeDetail('ago')}>
-        <Image src={'/sliderBackButton.svg'} width={35} height={35} />
-      </div>
+    <>
+      {setIndex&&
+        <div className="ml-2 cursor-pointer logBackButton" onClick={() => handleChangeDetail('ago')}>
+          <Image src={'/sliderBackButton.svg'} width={35} height={35} />
+        </div>
+      }
 
       <div className='flex-col'>
         <h3 className='mb-6 font-bold text-center'>実験説明（{index+1}）</h3>
         <div className="flex flex-col items-center justify-center w-full h-1/2">
-          <Image src={imageList[index]} width={366} height={206} objectFit={'contain'} />
+          {setIndex?
+            <Image src={imageList[index]} width={366} height={206} objectFit={'contain'} />
+            :
+            <img src={imageList[index]} className="object-contain"></img>
+          }
         </div>
+        
         <div className='w-full mx-auto mt-6 text-left decideButton h-1/2'>
           {index===0&&
             <p className='font-bold'>1.&nbsp;ノート画面ではスタイラスペンを使って文字を書くことができます</p>
@@ -67,11 +75,13 @@ const ExplainDialog: NextPage<Props> = (props) => {
         </div>
       </div>
 
-      <div className="mr-2 cursor-pointer logForwardButton" onClick={() => handleChangeDetail('forward')}>
-        <Image src={'/sliderForwardButton.svg'} width={35} height={35} />
-      </div>
-    </div>
+      {setIndex&&
+        <div className="mr-2 cursor-pointer logForwardButton" onClick={() => handleChangeDetail('forward')}>
+          <Image src={'/sliderForwardButton.svg'} width={35} height={35} />
+        </div>
+      }
+    </>
   );
 }
 
-export default ExplainDialog;
+export default Explain;
