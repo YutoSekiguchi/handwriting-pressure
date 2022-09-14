@@ -6,6 +6,7 @@ import PenButton from './PenButton';
 import EraserButton from './EraserButton';
 import UndoButton from './UndoButton';
 import RedoButton from './RedoButton';
+import QuestionMarkButton from '../common/QuestionMarkButton';
 
 type Props = {
   setColor: Dispatch<SetStateAction<string>>,
@@ -17,11 +18,12 @@ type Props = {
   undoable: boolean,
   redoable: boolean,
   func: MouseEventHandler<HTMLButtonElement> | undefined,
+  setShowExplainDialog: React.Dispatch<React.SetStateAction<number | null>>,
 }
 
 const PaperHeader: NextPage<Props> = (props) => {
 
-  const {setColor, setPenWidth, setEraseWidth, setMode, undo, redo, undoable, redoable, func} = props;
+  const {setColor, setPenWidth, setEraseWidth, setMode, undo, redo, undoable, redoable, func, setShowExplainDialog} = props;
 
   let mode: 'pen'|'erase' = 'pen';
   const [nowMode, setNowMode] = useState<'pen'|'erase'>('pen');
@@ -58,6 +60,10 @@ const PaperHeader: NextPage<Props> = (props) => {
     setMode(mode);
     setNowMode(mode);
   }
+  
+  const openDialog = () => {
+    setShowExplainDialog(1);
+  }
 
 	return (
 		<div className="fixed flex w-full h-12 mb-5 PaperHeader bg-cyan-900">
@@ -77,6 +83,7 @@ const PaperHeader: NextPage<Props> = (props) => {
               <ColorButton buttonColor={label} isChoice={clickList[index]} />
             </div>
           ))}
+          <div className='flex ml-4' onClick={openDialog}><QuestionMarkButton /></div>
         </div>
       </div>
       <div className="flex items-center RightSide">

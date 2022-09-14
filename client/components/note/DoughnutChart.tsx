@@ -14,6 +14,7 @@ import {
 } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 import Image from 'next/image';
+import QuestionMarkButton from '../common/QuestionMarkButton';
 
 ChartJS.register(
   CategoryScale,
@@ -46,13 +47,7 @@ const DoughnutChart: NextPage<Props> = (props) => {
     <div className='w-2/5 h-full mx-auto bg-gray-800 rounded-3xl'>
       <div className='flex items-center justify-center'>
         <h3 className='my-2 mr-2 font-bold text-center text-gray-200'>{title}</h3>
-        <Image 
-          className='cursor-pointer'
-          src={'/question-mark.svg'}
-          width={16}
-          height={16}
-          onClick={openDialog}
-        />
+        <div className='flex' onClick={openDialog}><QuestionMarkButton /></div>
       </div>
       <div className='relative chart-doughnut h-3/4'>
         <h3 className='absolute text-center text-gray-200 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>

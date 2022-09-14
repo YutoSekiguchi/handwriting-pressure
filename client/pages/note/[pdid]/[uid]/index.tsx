@@ -625,6 +625,7 @@ const Note: NextPage = () => {
         undoable={undoable} 
         redoable={redoable}
         func={saveNote}
+        setShowExplainDialog={setShowExplainDialog}
       />
       <div className="flex w-full h-full Canvas " id="wrapper">
         <canvas 
