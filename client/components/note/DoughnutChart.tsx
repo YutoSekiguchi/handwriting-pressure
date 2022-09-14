@@ -14,6 +14,7 @@ import {
 } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 import QuestionMarkButton from '../common/QuestionMarkButton';
+import { doughnutOptions } from '../../utils/DoughnutOptions';
 
 ChartJS.register(
   CategoryScale,
@@ -56,15 +57,7 @@ const DoughnutChart: NextPage<Props> = (props) => {
         <Doughnut
           data={doughnutPressureGraphData}
           options={
-            {
-              plugins: {
-                legend:{
-                  display:false,
-                },
-              },
-              cutout: 40,
-              maintainAspectRatio: false,
-            }
+            doughnutOptions
           }
         />
         }
