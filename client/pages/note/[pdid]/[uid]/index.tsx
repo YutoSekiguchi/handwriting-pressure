@@ -4,16 +4,16 @@ import Head from 'next/head'
 import Paper from 'paper'
 import { ChartData } from 'chart.js'
 
-import PaperHeader from '../../../../components/paper/Header';
-import CanvasDialog from '../../../../components/paper/CanvasDialog';
-import DoughnutChart from '../../../../components/paper/DoughnutChart';
-import LineChart from '../../../../components/paper/LineChart';
+import PaperHeader from '../../../../components/note/Header';
+import CanvasDialog from '../../../../components/note/CanvasDialog';
+import DoughnutChart from '../../../../components/note/DoughnutChart';
+import LineChart from '../../../../components/note/LineChart';
 import { lineOptions } from '../../../../utils/LineOptions';
 import { useRouter } from 'next/router';
 import { usePaperDetails } from '../../../../hooks/contexts/paperDetailsContext';
 import { useLogs } from '../../../../hooks/contexts/logsContext';
 import { useStrokes } from '../../../../hooks/contexts/strokesContext';
-import ExplainDialog from '../../../../components/paper/ExplainDialog';
+import ExplainDialog from '../../../../components/note/ExplainDialog';
 
 const pressureRangeNum = 20;
 
