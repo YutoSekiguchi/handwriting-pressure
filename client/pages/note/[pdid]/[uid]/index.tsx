@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import { usePaperDetails } from '../../../../hooks/contexts/paperDetailsContext';
 import { useLogs } from '../../../../hooks/contexts/logsContext';
 import { useStrokes } from '../../../../hooks/contexts/strokesContext';
+import ExplainDialog from '../../../../components/paper/ExplainDialog';
 
 const pressureRangeNum = 20;
 
@@ -63,6 +64,7 @@ const Note: NextPage = () => {
   const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0); // ログの何枚目かを示す数値
   const [isGetData, setIsGetData] = useState<boolean>(false); // data取得したか否か
   const [defaultBoundaryPressure, setDefaultBoundaryPressure] = useState<number|null>(null); // バーの初期値
+  const [showExplainDialog, setShowExplainDialog] = useState<number|null>(null); // 実験説明ダイアログ
   const canvasRef = useRef(null);
   const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum)); // グラフ表示用のラベル
   const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"; // canvasの背景画像
@@ -606,6 +608,13 @@ const Note: NextPage = () => {
           changeShowStroke={changeShowStroke}
         />
       }
+      {showExplainDialog&&
+        <ExplainDialog 
+          setShowExplainDialog={setShowExplainDialog}
+          showExplainDialog={showExplainDialog}
+        />
+      }
+      
       <PaperHeader 
         setColor={setColor}
         setPenWidth={setPenWidth}
@@ -665,11 +674,13 @@ const Note: NextPage = () => {
               doughnutPressureGraphData={doughnutNowPressureGraphData}
               confirmPressure={nowConfirmPressure}
               title={"now"}
+              setShowExplainDialog={setShowExplainDialog}
             />
             <DoughnutChart
               doughnutPressureGraphData={doughnutAvgPressureGraphData}
               confirmPressure={avgConfirmPressure}
               title={"avg"}
+              setShowExplainDialog={setShowExplainDialog}
             />
           </div>
           <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 img-box-wrapper h-1/3 rounded-3xl'>

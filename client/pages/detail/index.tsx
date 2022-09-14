@@ -2,9 +2,8 @@ import type { NextPage } from 'next'
 import React, { useState } from 'react';
 import Head from 'next/head'
 import AppHeader from '../../components/common/AppHeader';
-import Image from 'next/image'
 import HoverColorChangeButton from '../../components/common/HoverColorChangeButton';
-import ExplainDialog from '../../components/detail/ExplainDialog';
+import Explain from '../../components/detail/Explain';
 
 const Detail: NextPage = () => {
   const [index, setIndex] = useState<number>(0);
@@ -14,10 +13,12 @@ const Detail: NextPage = () => {
       <div className='fixed w-full h-full bg-gray-900'>
         <AppHeader />
         <div className="flex flex-col items-center justify-center w-full h-full">
-          <ExplainDialog
-            index={index}
-            setIndex={setIndex}
-          />
+          <div className='flex items-center justify-between w-1/2 overflow-y-auto border-2 border-gray-400 h-1/2 bg-gray-50 rounded-3xl img-box'>
+            <Explain
+              index={index}
+              setIndex={setIndex}
+            />
+          </div>
 
           <div className='flex justify-center w-1/2'>
             <HoverColorChangeButton 
