@@ -55,7 +55,7 @@ func InitRouter(db *gorm.DB) {
 	{
 		stroke.GET("/paper/:pdid", ctrl.HandleGetStrokesByPDID)
 		stroke.POST("", ctrl.HandlePostStroke)
-		stroke.PUT("/:id", ctrl.HandleUpdateStroke)
+		stroke.PUT("/:pdid", ctrl.HandleUpdateStroke)
 		stroke.DELETE("/:pdid", ctrl.HandleDeleteStroke)
 		stroke.DELETE("/unsave/:pdid", ctrl.HandleDeleteNotSaveStroke)
 	}

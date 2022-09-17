@@ -19,6 +19,20 @@ export const StrokesProvider = (props: any) => {
   const url = process.env.API_URL;
   const [state, dispatch] = useReducer(strokeReducer, initialState);
 
+  // ノートのstrokeの取得
+  const fetchStrokesByPDID = async(pdid: number) => {
+    try {
+      dispatch({ type: strokesActions.GET_STROKES });
+      const res = await axios.get(`${url}/strokes/paper/${pdid}`);
+      if (res.status === 200) {
+        dispatch({ type: strokesActions.GET_STROKES_SUCCESS, payload: res.data });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: strokesActions.GET_STROKES_ERROR, payload: error });
+    }
+  }
+
   // strokeの追加
   const createStroke = async(data: StrokeObj) => {
     try {
@@ -33,10 +47,41 @@ export const StrokesProvider = (props: any) => {
     }
   }
 
+  // strokeの編集
+  const updateStroke = async(pdid: number) => {
+    try {
+      dispatch({ type: strokesActions.GET_STROKES });
+      const res = await axios.put(`${url}/strokes/${pdid}`);
+      if (res.status == 200) {
+        dispatch({ type: strokesActions.GET_STROKES_SUCCESS, payload: res.data });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: strokesActions.GET_STROKES_ERROR, payload: error });
+    }
+  }
+
+  // 保存されてないstrokeの削除
+  const deleteNotSaveStrokes = async(pdid: number) => {
+    try {
+      dispatch({ type: strokesActions.DELETE_STROKES });
+      const res = await axios.delete(`${url}/strokes/unsave/${pdid}`);
+      if (res.status == 200) {
+        dispatch({ type: strokesActions.DELETE_STROKES_SUCCESS });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: strokesActions.DELETE_STROKES_ERROR, payload: error });
+    }
+  }
+
   const value = useMemo(() => {
     return {
       state,
+      fetchStrokesByPDID,
       createStroke,
+      updateStroke,
+      deleteNotSaveStrokes
     }
   }, [state]);
 

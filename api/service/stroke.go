@@ -30,17 +30,14 @@ func (s StrokeService) PostStroke(db *gorm.DB, c echo.Context) (Stroke, error) {
 }
 
 // PUT
-func (s StrokeService) UpdateStroke(db *gorm.DB, c echo.Context) (*Stroke, error) {
-	st := new(Stroke)
-	id := c.Param("id")
+func (s StrokeService) UpdateStroke(db *gorm.DB, c echo.Context) ([]Stroke, error) {
+	var st []Stroke
+	pdid := c.Param("pdid")
 
-	if err := db.Where("id = ?", id).First(&st).Error; err != nil {
+	
+	if err := db.Table("strokes").Where("pdid = ?", pdid).Updates(map[string]interface{}{"save": 1}).Scan(&st).Error; err != nil {
 		return nil, err
 	}
-	if err := c.Bind(&st); err != nil {
-		return nil, err
-	}
-	db.Save(&st)
 
 	return st, nil
 }
