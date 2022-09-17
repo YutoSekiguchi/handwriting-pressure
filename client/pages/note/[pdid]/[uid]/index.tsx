@@ -598,6 +598,9 @@ const Note: NextPage = () => {
 
 	return (
     <>
+      <Head>
+        <title>卒論：ノート</title>
+      </Head>
       {canvasDialog&&
         <CanvasDialog 
           closeDialog={closeDialog}
