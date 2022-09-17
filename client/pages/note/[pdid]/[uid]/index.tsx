@@ -594,6 +594,8 @@ const Note: NextPage = () => {
         }
         setShowImageDataList(tmp);
       }
+      // 未保存のストロークの削除
+      strokes.deleteNotSaveStrokes(pdid);
     }
   }, [isGetData])
 
