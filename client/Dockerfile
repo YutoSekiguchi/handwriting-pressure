@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 node:18.7
+FROM node:18.9
 
 WORKDIR /app
 
