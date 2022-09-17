@@ -248,6 +248,7 @@ const Note: NextPage = () => {
       PressureList: `${pressure}`,
       Time: diffTime,
       Mode: mode,
+      Save: 0,
     }
     strokes.createStroke(postStrokeData);
     
@@ -529,6 +530,7 @@ const Note: NextPage = () => {
       BackgroundImage: pdData.BackgroundImage
     }
     await paperDetails.updatePaperDetail(pdid, updateData);
+    await strokes.updateStroke(pdid);
     alert('保存が完了しました');
     console.log('保存しました');
   }
