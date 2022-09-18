@@ -21,6 +21,7 @@ let pressureArray: number[] = [];
 let aboutPressureCountArray: number[] = [...Array(pressureRangeNum+1)].map(x=>0);
 let startTime: number;
 let endTime: number;
+let stringJson: string;
 
 type ImageDataObject = {
   url: string,
@@ -292,6 +293,8 @@ const Note: NextPage = () => {
     const canvas: any = canvasRef.current;
     const imageUrl: string = canvas.toDataURL("image/png");
     json =  Paper.project.exportJSON({ asString: false })
+    stringJson = Paper.project.exportJSON({ asString: true })
+    console.log("stringJson", stringJson);
     setImageDataList((prevImageDataList) => (
       [
         ...prevImageDataList, 
@@ -337,6 +340,7 @@ const Note: NextPage = () => {
       // redo可能状態に
       setRedoable(true);
       fixChartData();
+      stringJson = Paper.project.exportJSON({ asString: true });
     }
   }
 
@@ -364,6 +368,7 @@ const Note: NextPage = () => {
       Paper.project.importJSON(redoStrokes);
       setUndoable(true);
       fixChartData();
+      stringJson = Paper.project.exportJSON({ asString: true });
     }
   }
 
@@ -465,16 +470,18 @@ const Note: NextPage = () => {
       ));
       
       const pdData = paperDetails.state.paperDetail;
-      const stringJson = Paper.project.exportJSON({ asString: true });
+      // const stringJson = Paper.project.exportJSON({ asString: true });
       // LogをDBに登録
+      console.log(stringJson);
       const createLogData = {
         UID: pdData.UID,
         PDID: Number(pdid),
         StrokeData: stringJson,
-        url: imageUrl,
+        url: `${imageDataList[imageDataList.length-1].url}`,
         pressureList: String(pressureArray.concat()),
       }
       await logs.createLog(createLogData);
+      stringJson = Paper.project.exportJSON({ asString: true });
     },500);
   }
 
