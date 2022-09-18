@@ -540,6 +540,7 @@ const Note: NextPage = () => {
     }
     await paperDetails.updatePaperDetail(pdid, updateData);
     await strokes.updateStroke(pdid);
+    await logs.updateLogs(pdid);
     alert('保存が完了しました');
     console.log('保存しました');
   }
@@ -611,6 +612,8 @@ const Note: NextPage = () => {
       }
       // 未保存のストロークの削除
       strokes.deleteNotSaveStrokes(pdid);
+      // 未保存のストロークの削除
+      logs.deleteNotSaveLogs(pdid);
     }
   }, [isGetData])
 
