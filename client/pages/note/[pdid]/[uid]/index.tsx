@@ -476,8 +476,9 @@ const Note: NextPage = () => {
         UID: pdData.UID,
         PDID: Number(pdid),
         StrokeData: stringJson,
-        url: `${imageDataList[imageDataList.length-1].url}`,
-        pressureList: String(pressureArray.concat()),
+        Url: `${imageDataList[imageDataList.length-1].url}`,
+        PressureList: String(pressureArray.concat()),
+        Save: 0,
       }
       await logs.createLog(createLogData);
       stringJson = Paper.project.exportJSON({ asString: true });
@@ -539,6 +540,7 @@ const Note: NextPage = () => {
     }
     await paperDetails.updatePaperDetail(pdid, updateData);
     await strokes.updateStroke(pdid);
+    await logs.updateLogs(pdid);
     alert('保存が完了しました');
     console.log('保存しました');
   }
@@ -610,6 +612,8 @@ const Note: NextPage = () => {
       }
       // 未保存のストロークの削除
       strokes.deleteNotSaveStrokes(pdid);
+      // 未保存のストロークの削除
+      logs.deleteNotSaveLogs(pdid);
     }
   }, [isGetData])
 
