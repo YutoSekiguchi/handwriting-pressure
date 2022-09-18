@@ -10,7 +10,8 @@ type LogObj = {
   PDID: number,
   StrokeData: string,
   Url: string,
-  PressureList: string
+  PressureList: string,
+  Save: number,
 }
 
 export const LogsProvider = (props: any) => {
