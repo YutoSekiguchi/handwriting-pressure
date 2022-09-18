@@ -23,9 +23,26 @@ func (ctrl Controller) HandlePostLog(c echo.Context) error {
 	return Res(c, p, err)
 }
 
+// PUT
+// logの保存情報の変更
+func (ctrl Controller) HandleUpdateLogs(c echo.Context) error {
+	var s service.LogService
+	p, err := s.UpdateLogs(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
 // DELETE
 // logの削除
 func (ctrl Controller) HandleDeleteLog(c echo.Context) error {
+	var s service.LogService
+	p, err := s.DeleteLog(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
+// 保存されてないlogの削除
+func (ctrl Controller) HandleDeleteNotSaveLogs(c echo.Context) error {
 	var s service.LogService
 	p, err := s.DeleteLog(ctrl.Db, c)
 

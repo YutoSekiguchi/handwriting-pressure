@@ -65,7 +65,9 @@ func InitRouter(db *gorm.DB) {
 	{
 		log.GET("/paper/:pdid", ctrl.HandleGetLogsByPDID)
 		log.POST("", ctrl.HandlePostLog)
+		log.PUT("/:pdid", ctrl.HandleUpdateLogs)
 		log.DELETE("/:pdid", ctrl.HandleDeleteLog)
+		log.DELETE("/unsave/:pdid", ctrl.HandleDeleteNotSaveLogs)
 	}
 
 	// Routing
