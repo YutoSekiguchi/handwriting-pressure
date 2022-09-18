@@ -472,7 +472,6 @@ const Note: NextPage = () => {
       const pdData = paperDetails.state.paperDetail;
       // const stringJson = Paper.project.exportJSON({ asString: true });
       // LogをDBに登録
-      console.log(stringJson);
       const createLogData = {
         UID: pdData.UID,
         PDID: Number(pdid),
