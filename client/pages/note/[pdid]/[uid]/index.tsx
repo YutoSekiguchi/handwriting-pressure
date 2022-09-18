@@ -307,8 +307,10 @@ const Note: NextPage = () => {
 
   // シンプルなundo
   const normalUndo = () => {
-    if (undoable) {
+    if (undoable && historyList.length > 1) {
+      console.log("his", historyList)
       const undoStrokes = historyList[historyList.length-2]; // undo後のストローク状態
+      console.log(undoStrokes);
       Paper.project.clear()
       Paper.project.importJSON(undoStrokes)
 
@@ -558,6 +560,12 @@ const Note: NextPage = () => {
       draw();
     }
   }, [color, penWidth, eraseWidth, mode])
+
+  useEffect(() => {
+    if(historyList.length < 2) {
+      setUndoable(false);
+    }
+  }, [historyList])
 
   useEffect(() => {
     if(isGetData) {
