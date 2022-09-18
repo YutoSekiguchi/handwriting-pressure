@@ -476,8 +476,9 @@ const Note: NextPage = () => {
         UID: pdData.UID,
         PDID: Number(pdid),
         StrokeData: stringJson,
-        url: `${imageDataList[imageDataList.length-1].url}`,
-        pressureList: String(pressureArray.concat()),
+        Url: `${imageDataList[imageDataList.length-1].url}`,
+        PressureList: String(pressureArray.concat()),
+        Save: 0,
       }
       await logs.createLog(createLogData);
       stringJson = Paper.project.exportJSON({ asString: true });
