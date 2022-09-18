@@ -9,5 +9,6 @@ type Log struct {
 	StrokeData string `gorm:"not null;column:stroke_data"`
 	Url string `gorm:"not null;column:url"`
 	PressureList string `gorm:"not null;column:pressure_list"`
+	Save int `gorm:"not null;column:save"`
 	CreatedAt time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
 }
