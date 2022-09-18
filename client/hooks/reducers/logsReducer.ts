@@ -51,6 +51,46 @@ export const logsReducer = (state: any, actions: any) => {
         error: actions.payload,
       }
     
+    case logsActions.UPDATE_LOGS:
+      return {
+        ...state,
+        fetching: true,
+      }
+
+    case logsActions.UPDATE_LOGS_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
+        ok: true
+      }
+
+    case logsActions.UPDATE_LOGS_ERROR:
+      return {
+        ...state,
+        fetching: false,
+        error: actions.payload
+      }
+
+    case logsActions.DELETE_LOGS:
+      return {
+        ...state,
+        fetching: true,
+      }
+
+    case logsActions.DELETE_LOGS_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
+        ok: true
+      }
+
+    case logsActions.DELETE_LOGS_ERROR:
+      return {
+        ...state,
+        fetching: false,
+        error: actions.payload
+      }
+    
     default:
       return state
   }

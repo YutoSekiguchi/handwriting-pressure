@@ -46,11 +46,41 @@ export const LogsProvider = (props: any) => {
     }
   }
 
+  // logのsave column編集
+  const updateLogs = async(pdid: number) => {
+    try {
+      dispatch({ type: logsActions.UPDATE_LOGS });
+      const res = await axios.put(`${url}/logs/${pdid}`);
+      if (res.status == 200) {
+        dispatch({ type: logsActions.UPDATE_LOGS_SUCCESS });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: logsActions.UPDATE_LOGS_ERROR, payload: error });
+    }
+  }
+
+  // 保存されてないlogの削除
+  const deleteNotSaveLogs = async(pdid: number) => {
+    try {
+      dispatch({ type: logsActions.DELETE_LOGS });
+      const res = await axios.delete(`${url}/logs/unsave/${pdid}`);
+      if (res.status == 200) {
+        dispatch({ type: logsActions.DELETE_LOGS_SUCCESS });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: logsActions.DELETE_LOGS_ERROR, payload: error });
+    }
+  }
+
   const value = useMemo(() => {
     return {
       state,
       getLogsByPDID,
-      createLog
+      createLog,
+      updateLogs,
+      deleteNotSaveLogs,
     }
   }, [state]);
 
