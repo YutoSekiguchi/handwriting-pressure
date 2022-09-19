@@ -1,13 +1,12 @@
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router';
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import AuthBtn from '../../components/auth/AuthBtn';
+import CancelBtn from '../../components/auth/CancelBtn';
 import TextForm from '../../components/auth/TextForm';
 import AppHeader from '../../components/common/AppHeader';
 import { useUsers } from '../../hooks/contexts/usersContext';
 
 const LogIn: NextPage = () => {
-  const router = useRouter();
   const users: any = useUsers();
   
   const [name, setName] = useState<string>('');
@@ -22,10 +21,6 @@ const LogIn: NextPage = () => {
   const handleChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
     const value: string = e.target.value;
     setPassword(value);
-  }
-
-  const moveHome = () => {
-    router.push('/');
   }
 
   const logIn = async() => {
@@ -80,9 +75,7 @@ const LogIn: NextPage = () => {
 
 
             <div className='flex justify-around mb-6 mt-12'>
-              <button className='px-3 py-1 text-white bg-gray-800 rounded-lg' onClick={moveHome}>
-                <p className='font-bold'>Cancel</p>
-              </button>
+              <CancelBtn />
               <AuthBtn
                 text="Login"
                 authFunc={logIn}
