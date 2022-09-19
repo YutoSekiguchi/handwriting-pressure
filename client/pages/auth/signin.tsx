@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router';
 import React, { ChangeEvent, useState, useEffect } from 'react'
 import AuthBtn from '../../components/auth/AuthBtn';
+import CancelBtn from '../../components/auth/CancelBtn';
 import CheckBox from '../../components/auth/CheckBox';
 import TextForm from '../../components/auth/TextForm';
 import AppHeader from '../../components/common/AppHeader';
@@ -15,7 +15,6 @@ type UserDataObject = {
 }
 
 const SignIn: NextPage = () => {
-  const router = useRouter();
   const users: any = useUsers();
   
   const [name, setName] = useState<string>('');
@@ -46,10 +45,6 @@ const SignIn: NextPage = () => {
   const handleChangeAge = (e: ChangeEvent<HTMLInputElement>) => {
     const value: number = Number(e.target.value);
     setAge(value);
-  }
-
-  const moveHome = () => {
-    router.push('/');
   }
 
   const signIn = async() => {
@@ -138,9 +133,7 @@ const SignIn: NextPage = () => {
             <input type="number" id="age" name="age" min="0" className='w-20 pl-3 mt-1 mb-6 text-center rounded-3xl' onChange={handleChangeAge} />
 
             <div className='flex justify-around mb-6'>
-              <button className='px-3 py-1 text-white bg-gray-800 rounded-lg' onClick={moveHome}>
-                <p className='font-bold'>Cancel</p>
-              </button>
+              <CancelBtn />
               <AuthBtn
                 text="Sign in"
                 authFunc={signIn}
