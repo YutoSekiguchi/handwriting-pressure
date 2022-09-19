@@ -12,6 +12,7 @@ type LogObj = {
   Url: string,
   PressureList: string,
   Save: number,
+  BoundaryPressure: number,
 }
 
 export const LogsProvider = (props: any) => {
