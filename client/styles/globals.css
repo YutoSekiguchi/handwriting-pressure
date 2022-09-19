@@ -77,7 +77,11 @@ a {
 }
 
 .authDialog {
-  background: linear-gradient(to bottom right, blue, fuchsia);
+  /* background: linear-gradient(to bottom right, blue, fuchsia); */
+  /* background: linear-gradient(to bottom right, gray, black); */
+  /* background: rgb(17, 24, 39); */
+  background: rgba(17, 24, 39, 0.5);
+  border: 2px solid white;
 }
 
 .stroke-image {

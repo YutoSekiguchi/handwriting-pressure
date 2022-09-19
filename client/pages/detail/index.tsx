@@ -10,10 +10,10 @@ const Detail: NextPage = () => {
   
 	return (
     <>
-      <div className='fixed w-full h-full bg-gray-900'>
+      <div className='fixed w-full h-full bg-gray-500'>
         <AppHeader />
         <div className="flex flex-col items-center justify-center w-full h-full">
-          <div className='flex items-center justify-between w-1/2 overflow-y-auto border-2 border-gray-400 h-1/2 bg-gray-50 rounded-3xl img-box'>
+          <div className='flex items-center justify-between w-1/2 overflow-y-auto border-2 border-gray-400 h-1/2 bg-gray-800 rounded-3xl img-box'>
             <Explain
               index={index}
               setIndex={setIndex}
