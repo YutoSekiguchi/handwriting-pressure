@@ -61,7 +61,7 @@ const LogIn: NextPage = () => {
 
   return (
     <>
-      <div className='fixed w-full h-full bg-gray-900'>
+      <div className='fixed w-full h-full bg-gray-500'>
         <AppHeader />
         <div className='flex items-center justify-center w-full h-4/5'>
           <div className='flex flex-col w-1/2 max-w-md px-16 pt-16 authDialog rounded-3xl'>

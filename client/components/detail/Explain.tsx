@@ -48,7 +48,7 @@ const Explain: NextPage<Props> = (props) => {
       }
 
       <div className='flex-col'>
-        <h3 className='mb-6 font-bold text-center'>実験説明（{index+1}）</h3>
+        <h3 className='mb-6 font-bold text-center text-white'>実験説明（{index+1}）</h3>
         <div className="flex flex-col items-center justify-center w-full h-1/2">
           {setIndex?
             <Image src={imageList[index]} width={366} height={206} objectFit={'contain'} />
@@ -59,16 +59,16 @@ const Explain: NextPage<Props> = (props) => {
         
         <div className='w-full mx-auto mt-6 text-left decideButton h-1/2'>
           {index===0&&
-            <p className='font-bold'>1.&nbsp;ノート画面ではスタイラスペンを使って文字を書くことができます</p>
+            <p className='font-bold text-white'>1.&nbsp;ノート画面ではスタイラスペンを使って文字を書くことができます</p>
           }
           {index===1&&
-            <p className='font-bold'>2.&nbsp;<span className='text-lg text-orange-400'>文字の太さ</span>や<span className='text-lg text-orange-400'>色の変更</span>，<span className='text-lg text-orange-400'>消しゴム</span>を扱うことも可能です</p>
+            <p className='font-bold text-white'>2.&nbsp;<span className='text-lg text-orange-400'>文字の太さ</span>や<span className='text-lg text-orange-400'>色の変更</span>，<span className='text-lg text-orange-400'>消しゴム</span>を扱うことも可能です</p>
           }
           {index===2&&
-            <p className='font-bold'>3.&nbsp;画面右上のボタンを押すことで<span className='text-lg text-orange-400'>一つ前の状態に戻る</span>ことができます</p>
+            <p className='font-bold text-white'>3.&nbsp;画面右上のボタンを押すことで<span className='text-lg text-orange-400'>一つ前の状態に戻る</span>ことができます</p>
           }
           {index===3&&
-            <p className='font-bold'>4.&nbsp;文字を書くと画面右中央に円グラフが表示されます。<br />
+            <p className='font-bold text-white'>4.&nbsp;文字を書くと画面右中央に円グラフが表示されます。<br />
             &nbsp;左側の<span className='text-lg text-teal-400'>水色</span>の円グラフには<span className='text-lg text-teal-400'>直前に書いた線の筆圧</span>を0〜1の値で表示しています。<br />
             &nbsp;右側の<span className='text-lg text-fuchsia-400'>紫色</span>の円グラフは<span className='text-lg text-fuchsia-400'>今まで書いた線の筆圧の平均</span>を0〜1の値で表示しています。</p>
           }
