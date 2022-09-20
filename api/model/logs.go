@@ -11,5 +11,6 @@ type Log struct {
 	PressureList string `gorm:"not null;column:pressure_list"`
 	Save int `gorm:"not null;column:save"`
 	BoundaryPressure float64 `gorm:"not null;column:boundary_pressure"`
+	BoundaryPressureBeforeUndo float64 `gorm:"not null;column:boundary_pressure_before_undo"`
 	CreatedAt time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
 }

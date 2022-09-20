@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS logs (
   pressure_list TEXT NOT NULL,
   save INT NOT NULL,
   boundary_pressure FLOAT NOT NULL,
+  boundary_pressure_before_undo FLOAT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
