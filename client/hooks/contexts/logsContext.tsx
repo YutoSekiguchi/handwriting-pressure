@@ -13,6 +13,7 @@ type LogObj = {
   PressureList: string,
   Save: number,
   BoundaryPressure: number,
+  BoundaryPressureBeforeUndo: number,
 }
 
 export const LogsProvider = (props: any) => {
