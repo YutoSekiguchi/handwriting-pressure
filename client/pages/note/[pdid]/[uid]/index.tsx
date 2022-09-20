@@ -14,6 +14,7 @@ import { usePaperDetails } from '../../../../hooks/contexts/paperDetailsContext'
 import { useLogs } from '../../../../hooks/contexts/logsContext';
 import { useStrokes } from '../../../../hooks/contexts/strokesContext';
 import ExplainDialog from '../../../../components/note/ExplainDialog';
+import LoadingScreen from '../../../../components/common/LoadingScreen';
 
 const pressureRangeNum = 20;
 
@@ -669,12 +670,7 @@ const Note: NextPage = () => {
       }
 
       {!isLoaded&&
-        <div className='w-full h-full fixed flex items-center justify-center' style={{"zIndex": 1, "backgroundColor": "rgba(0,0,0,0.7)"}}>
-          <div>
-            <img src="/loading.svg" alt="" />
-            <h3 className='text-white text-center mt-6'>Loading</h3>
-          </div>
-        </div>
+        <LoadingScreen />
       }
       
       <PaperHeader 
