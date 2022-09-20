@@ -29,6 +29,13 @@ type ImageDataObject = {
   pressureArray: number[],
 }
 
+type ShowImageDataObject = {
+  url: string,
+  strokeData: (string|object)[][],
+  pressureArray: number[],
+  boundaryPressure: number,
+}
+
 type RedoHistoryObject = {
   pressure: number,
   stroke: any,
@@ -60,7 +67,8 @@ const Note: NextPage = () => {
   const [doughnutNowPressureGraphData, setDoughnutNowPressureGraphData] = useState<ChartData<"doughnut", number[], unknown>|null>(null); // 現在の筆圧データ
   const [doughnutAvgPressureGraphData, setDoughnutAvgPressureGraphData] = useState<ChartData<"doughnut", number[], unknown>|null>(null); // 平均筆圧データ
   const [imageDataList, setImageDataList] = useState<ImageDataObject[]>([]); // ストロークごとに画像保存しているリスト
-  const [showImageDataList, setShowImageDataList] = useState<ImageDataObject[]>([]); // ログで表示するための画像のリスト
+  const [showImageDataList, setShowImageDataList] = useState<ShowImageDataObject[]>([]); // ログで表示するための画像のリスト
+  const [logBoundaryValue, setLogBoundaryValue] = useState<number|null>(null); // 押したログのboundaryValueを保持
   const [canvasDialog, setCanvasDialog] = useState<boolean>(false); // ログのダイアログの表示・非表示
   const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0); // ログの何枚目かを示す数値
   const [isGetData, setIsGetData] = useState<boolean>(false); // data取得したか否か
@@ -301,7 +309,7 @@ const Note: NextPage = () => {
         {
           url: imageUrl,
           strokeData: json,
-          pressureArray: pressureArray.concat()
+          pressureArray: pressureArray.concat(),
         },
       ]
     ));
@@ -433,6 +441,7 @@ const Note: NextPage = () => {
   }
 
   const rewriteStroke = () => {
+    console.log("boundaryValue", boundaryValue);
     let pressureDiff: number = 0;
     json =  Paper.project.exportJSON({ asString: false })
     for (let i=0; i<pressureArray.length; i++) {
@@ -446,12 +455,13 @@ const Note: NextPage = () => {
       }
     }
     Paper.project.clear()
-    Paper.project.importJSON(json)
+    Paper.project.importJSON(json);
+    const boundaryPressureValueBeforeUndo = boundaryPressureValue;
     setBoundaryPressureValue(boundaryValue);
     setShowImageDataList((prevShowImageDataList) => (
       [
         ...prevShowImageDataList,
-        imageDataList[imageDataList.length-1],
+        {...imageDataList[imageDataList.length-1], ...{boundaryPressure: 1-boundaryPressureValueBeforeUndo}}
       ]
     ));
     setTimeout(async function(){
@@ -479,6 +489,8 @@ const Note: NextPage = () => {
         Url: `${imageDataList[imageDataList.length-1].url}`,
         PressureList: String(pressureArray.concat()),
         Save: 0,
+        BoundaryPressure: 1-boundaryValue,
+        BoundaryPressureBeforeUndo: 1-boundaryPressureValueBeforeUndo
       }
       await logs.createLog(createLogData);
       stringJson = Paper.project.exportJSON({ asString: true });
@@ -503,7 +515,8 @@ const Note: NextPage = () => {
     }
   }
 
-  const changeShowStroke = (data: any, pressureData: number[]) => {
+  const changeShowStroke = (data: any, pressureData: number[], boundaryPressureBeforeUndo: number) => {
+    setLogBoundaryValue(boundaryPressureBeforeUndo);
     console.log(pressureArray)
     console.log(pressureData)
     Paper.project.clear();
@@ -511,6 +524,7 @@ const Note: NextPage = () => {
     pressureArray = pressureData.concat();
     fixChartData();
     setCanvasDialog(false);
+    setDefaultBoundaryPressure(null);
   }
 
   const getData = async() => {
@@ -576,6 +590,15 @@ const Note: NextPage = () => {
   }, [historyList])
 
   useEffect(() => {
+    if(defaultBoundaryPressure==null&&logBoundaryValue!=null) {
+      const tmp = 10000-logBoundaryValue*10000;
+      setDefaultBoundaryPressure(tmp);
+      console.log(logBoundaryValue);
+      console.log("↑logの筆圧バーの値")
+    }
+  }, [defaultBoundaryPressure])
+
+  useEffect(() => {
     if(isGetData) {
       if((paperDetails.state.paperDetail.PaperWidth!=null&&paperDetails.state.paperDetail.PaperWidth!=0)&&(paperDetails.state.paperDetail.PaperHeight!=null&&paperDetails.state.paperDetail.PaperHeight!=0)) {
         setCanvasWidth(paperDetails.state.paperDetail.PaperWidth);
@@ -604,16 +627,17 @@ const Note: NextPage = () => {
           const el = {
             url: logDataList[i].Url,
             strokeData: logDataList[i].StrokeData,
-            pressureArray: (logDataList[i].PressureList.split(',')).map(Number)
+            pressureArray: (logDataList[i].PressureList.split(',')).map(Number),
+            boundaryPressure: logDataList[i].BoundaryPressureBeforeUndo,
           }
           tmp.push(el);
         }
         setShowImageDataList(tmp);
       }
       // 未保存のストロークの削除
-      strokes.deleteNotSaveStrokes(pdid);
-      // 未保存のストロークの削除
-      logs.deleteNotSaveLogs(pdid);
+      // strokes.deleteNotSaveStrokes(pdid);
+      // 未保存のログの削除
+      // logs.deleteNotSaveLogs(pdid);
     }
   }, [isGetData])
 
