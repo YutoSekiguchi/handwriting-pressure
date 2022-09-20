@@ -48,6 +48,7 @@ const Note: NextPage = () => {
   const strokes: any = useStrokes();
   const isReady = router.isReady;
   const { pdid, uid } = router.query;
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [pressure, setPressure] = useState<number[] | null | undefined>(null); // 筆圧
   const [nowConfirmPressure, setNowConfirmPressure] = useState<number|null>(null); // 1ストロークあたりの筆圧
   const [avgConfirmPressure, setAvgConfirmPressure] = useState<number|null>(null); //筆圧の平均
@@ -638,6 +639,9 @@ const Note: NextPage = () => {
       // strokes.deleteNotSaveStrokes(pdid);
       // 未保存のログの削除
       // logs.deleteNotSaveLogs(pdid);
+      setTimeout(async function(){
+        setIsLoaded(true);
+      }, 1000);
     }
   }, [isGetData])
 
@@ -662,6 +666,15 @@ const Note: NextPage = () => {
           setShowExplainDialog={setShowExplainDialog}
           showExplainDialog={showExplainDialog}
         />
+      }
+
+      {!isLoaded&&
+        <div className='w-full h-full fixed flex items-center justify-center' style={{"zIndex": 1, "backgroundColor": "rgba(0,0,0,0.7)"}}>
+          <div>
+            <img src="/loading.svg" alt="" />
+            <h3 className='text-white text-center mt-6'>Loading</h3>
+          </div>
+        </div>
       }
       
       <PaperHeader 
