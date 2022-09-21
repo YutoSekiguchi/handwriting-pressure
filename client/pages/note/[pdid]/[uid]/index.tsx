@@ -76,9 +76,9 @@ const Note: NextPage = () => {
   const [isGetData, setIsGetData] = useState<boolean>(false); // data取得したか否か
   const [defaultBoundaryPressure, setDefaultBoundaryPressure] = useState<number|null>(null); // バーの初期値
   const [showExplainDialog, setShowExplainDialog] = useState<number|null>(null); // 実験説明ダイアログ
+  const [canvasBackgroundImageUrl, setCanvasBackgroundImageUrl] = useState<string>("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"); // canvasの背景画像
   const canvasRef = useRef(null);
   const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum)); // グラフ表示用のラベル
-  const canvasBackgroundImageUrl: string = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"; // canvasの背景画像
 
 
 	let path: paper.Path;
@@ -603,9 +603,13 @@ const Note: NextPage = () => {
   useEffect(() => {
     if(isGetData) {
       if((paperDetails.state.paperDetail.PaperWidth!=null&&paperDetails.state.paperDetail.PaperWidth!=0)&&(paperDetails.state.paperDetail.PaperHeight!=null&&paperDetails.state.paperDetail.PaperHeight!=0)) {
+        console.log(paperDetails)
         setCanvasWidth(paperDetails.state.paperDetail.PaperWidth);
         setCanvasHeight(paperDetails.state.paperDetail.PaperHeight);
+        setCanvasBackgroundImageUrl(paperDetails.state.paperDetail.BackgroundImage);
       } else {
+        console.log("no");
+        console.log(paperDetails)
         setCanvasWidth(1000);
         setCanvasHeight(1000);
       }
@@ -700,11 +704,11 @@ const Note: NextPage = () => {
 
         <canvas 
           ref={canvasRef}
-          style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none", display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`}}
+          style={{backgroundImage: `url("${canvasBackgroundImageUrl}")`, touchAction: "none", display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`, backgroundSize: "contain"}}
           id="drawingCanvas2"
           width={`${canvasWidth}px`}
           height={`${canvasHeight}px`}
-          className="w-8/12 max-w-full max-h-full canvas_background_note" 
+          className="w-8/12 max-w-full max-h-full canvas_background_note mt-12" 
           onPointerDownCapture={pointerDown}
           onPointerMoveCapture={pointerMove}
           onPointerUpCapture={pointerUp}
