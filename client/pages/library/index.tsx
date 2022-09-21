@@ -56,6 +56,7 @@ const Library: NextPage = () => {
   const [noteName, setNoteName] = useState<string>('');
   const [width, setWidth] = useState<number>(210);
   const [height, setHeight] = useState<number>(297);
+  const [backgroundImage, setBackgroundImage] = useState<string>("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685");
   const [userName, setUserName] = useState<string>('');
   const [deletePaperDetailDialogID, setDeletePaperDetailDialogID] = useState<number|null>(null); // ノート削除確認ダイアログ
   const [deletePaperDialogID, setDeletePaperDialogID] = useState<number|null>(null); // フォルダ削除確認ダイアログ
@@ -117,7 +118,8 @@ const Library: NextPage = () => {
       PressureList: '',
       BoundaryPressure: 0,
       AvgPressure: 0,
-      BackgroundImage: 'https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685',
+      BackgroundImage: backgroundImage,
+      // BackgroundImage: 'https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685',
     }
     await paperDetails.createPaperDetail(data);
     setNoteName('');
@@ -173,6 +175,7 @@ const Library: NextPage = () => {
           <NewNoteDialog
             setWidth={setWidth}
             setHeight={setHeight}
+            setBackgroundImage={setBackgroundImage}
             setNoteName={setNoteName}
             closeNewNoteDialog={closeDialog}
             setNewNoteDialog={setNewNoteDialog}

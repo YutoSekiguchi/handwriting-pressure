@@ -5,6 +5,7 @@ import NewNoteDialogNoteSizeChoices from './NewNoteDialogNoteSizeChoices';
 type Props = {
   setWidth: (value: React.SetStateAction<number>) => void,
   setHeight: (value: React.SetStateAction<number>) => void,
+  setBackgroundImage: (value: React.SetStateAction<string>) => void,
   setNoteName: (value: React.SetStateAction<string>) => void,
   closeNewNoteDialog:  (state: (value: React.SetStateAction<any>) => void, val: false|null, e: any) => void,
   setNewNoteDialog: (value: React.SetStateAction<boolean>) => void,
@@ -12,7 +13,7 @@ type Props = {
 }
 
 const NewNoteDialog: NextPage<Props> = (props) => {
-  const { setWidth, setHeight, setNoteName, closeNewNoteDialog, setNewNoteDialog, onSubmitNote } = props;
+  const { setWidth, setHeight, setBackgroundImage, setNoteName, closeNewNoteDialog, setNewNoteDialog, onSubmitNote } = props;
   // ノートの名前入力
   const changeNoteName = (e: ChangeEvent<HTMLInputElement>) => {
     setNoteName(e.target.value);
@@ -36,6 +37,7 @@ const NewNoteDialog: NextPage<Props> = (props) => {
             <NewNoteDialogNoteSizeChoices 
               setWidth={setWidth}
               setHeight={setHeight}
+              setBackgroundImage={setBackgroundImage}
             />
           </div>
           <button className='absolute px-3 py-1 text-white bg-gray-800 rounded-lg bottom-3' onClick={onSubmitNote}>
