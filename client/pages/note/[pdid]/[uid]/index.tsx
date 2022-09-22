@@ -720,7 +720,7 @@ const Note: NextPage = () => {
             <h3 className='pt-3 font-bold text-white'>Undo/Redo</h3>
             <div className='mx-5 mt-3 rangebar'>
               {defaultBoundaryPressure&&
-              <input id="large-range" type="range" defaultValue={defaultBoundaryPressure} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
+              <input id="large-range" type="range" defaultValue={defaultBoundaryPressure} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUpCapture={rewriteStroke} />
               }
             </div>
             <div className='mx-5 chart-bar h-2/3'>
