@@ -18,7 +18,7 @@ const ExplainDialog: NextPage<Props> = (props) => {
   }
   return (
     <div className="overlay" onClick={closeDialog}>
-      <div className="overlay-content">
+      <div className="overlay-content bg-gray-700">
         <div className="flex items-center justify-center w-full h-full">
           {/* 画像表示 */}
           <Explain 
