@@ -49,8 +49,8 @@ const NoteList: NextPage<Props> = (props) => {
               <div className='flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36' onClick={() => moveNotePage(note.ID, note.UID)}>
                 {note.PaperImage!=''
                   ? <div className="relative w-full h-full">
-                      <img src={note.BackgroundImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
-                      <img src={note.PaperImage} className="stroke-image" style={{height: `${note.PaperHeight/2}px`, maxHeight: '100%', width: `${note.PaperWidth/2}px`, maxWidth: '100%'}} />
+                      <img src={note.BackgroundImage} className="stroke-image" />
+                      <img src={note.PaperImage} className="stroke-image" />
                     </div>
                   : <img src={note.BackgroundImage} />
                 }
