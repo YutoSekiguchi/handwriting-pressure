@@ -21,7 +21,7 @@ const NewNoteDialog: NextPage<Props> = (props) => {
   
   return (
     <div className="overlay" onClick={(event) => closeNewNoteDialog(setNewNoteDialog, false, event)}>
-      <div className="overlay-content">
+      <div className="bg-gray-50 overlay-content">
         <div className="relative flex items-center justify-center w-full h-full">
           <div className='flex-col text-center'>
             <h4 className='mb-1 font-bold text-center'>ノートのタイトルを入力</h4>
