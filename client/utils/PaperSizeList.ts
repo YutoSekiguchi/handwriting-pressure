@@ -18,7 +18,9 @@ const paperSizeList: paperSizeListType[] = [
   {size: "B4side", width: 364, height: 257, imageUrl: normalImage},
   {size: "謎解き1", width: 1922, height: 1082, imageUrl: "/question/1.png"},
   {size: "数独1", width: 2038, height: 1748, imageUrl: "/question/6.png"},
-  {size: "ナンバーリンク1", width: 1005, height: 1005, imageUrl: "/question/7.png"}
+  {size: "ナンバーリンク1", width: 1005, height: 1005, imageUrl: "/question/number-link/1.png"},
+  {size: "ナンバーリンク2", width: 1005, height: 1005, imageUrl: "/question/number-link/2.png"},
+  {size: "ナンバーリンク3", width: 1005, height: 1005, imageUrl: "/question/number-link/3.png"},
 ];
 
 export default paperSizeList;
