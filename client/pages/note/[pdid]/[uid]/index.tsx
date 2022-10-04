@@ -320,15 +320,15 @@ const Note: NextPage = () => {
 
   // シンプルなundo
   const normalUndo = () => {
-    if (undoable && historyList.length > 1) {
+    if (undoable) {
       console.log("his", historyList)
-      const undoStrokes = historyList[historyList.length-2]; // undo後のストローク状態
+      const undoStrokes = historyList.length > 1? historyList[historyList.length-2]: null; // undo後のストローク状態
       console.log(undoStrokes);
       Paper.project.clear()
       Paper.project.importJSON(undoStrokes)
 
       // 履歴が最後の1つだったらundo不可能状態に
-      if(historyList.length <= 1) {
+      if(historyList.length < 1) {
         setUndoable(false);
       }
       // undo前の状態をredo用のListに追加
@@ -586,7 +586,7 @@ const Note: NextPage = () => {
   }, [color, penWidth, eraseWidth, mode])
 
   useEffect(() => {
-    if(historyList.length < 2) {
+    if(historyList.length < 1) {
       setUndoable(false);
     }
   }, [historyList])
