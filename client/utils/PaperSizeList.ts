@@ -5,10 +5,10 @@ type paperSizeListType = {
   imageUrl: string,
 }
 
-const numberLinkWidth = 2174;
-const numberLinkHeight = 1786;
-const sudokuWidth = 1526;
-const sudokuHeight = 1294;
+const numberLinkWidth = 2800;
+const numberLinkHeight = 1762;
+const sudokuWidth = 2960;
+const sudokuHeight = 1822;
 
 const normalImage = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685";
 
