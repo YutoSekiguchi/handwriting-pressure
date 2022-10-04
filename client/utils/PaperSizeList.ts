@@ -5,6 +5,9 @@ type paperSizeListType = {
   imageUrl: string,
 }
 
+const numberLinkWidth = 2174;
+const numberLinkHeight = 1786;
+
 const normalImage = "https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685";
 
 const paperSizeList: paperSizeListType[] = [
@@ -19,9 +22,9 @@ const paperSizeList: paperSizeListType[] = [
   {size: "謎解き1", width: 1922, height: 1082, imageUrl: "/question/1.png"},
   {size: "数独1", width: 2038, height: 1748, imageUrl: "/question/sudoku/1.png"},
   {size: "数独2", width: 490, height: 488, imageUrl: "/question/sudoku/2.png"},
-  {size: "ナンバーリンク1", width: 1005, height: 1005, imageUrl: "/question/number-link/1.png"},
-  {size: "ナンバーリンク2", width: 1005, height: 1005, imageUrl: "/question/number-link/2.png"},
-  {size: "ナンバーリンク3", width: 1005, height: 1005, imageUrl: "/question/number-link/3.png"},
+  {size: "ナンバーリンク1", width: numberLinkWidth, height: numberLinkHeight, imageUrl: "/question/number-link/1.png"},
+  {size: "ナンバーリンク2", width: numberLinkWidth, height: numberLinkHeight, imageUrl: "/question/number-link/2.png"},
+  {size: "ナンバーリンク3", width: numberLinkWidth, height: numberLinkHeight, imageUrl: "/question/number-link/3.png"},
 ];
 
 export default paperSizeList;
