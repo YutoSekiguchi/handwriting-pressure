@@ -13,7 +13,9 @@ const Explain: NextPage<Props> = (props) => {
     '/ex_1.gif',
     '/ex_2.gif',
     '/ex_3.png',
-    '/ex_4.png'
+    '/ex_4.png',
+    '/ex_5.gif',
+    '/ex_6.gif'
   ];
   const handleChangeDetail = (mode: 'forward'|'ago') => {
     if (setIndex) {
@@ -53,7 +55,7 @@ const Explain: NextPage<Props> = (props) => {
           {setIndex?
             <Image src={imageList[index]} width={366} height={206} objectFit={'contain'} />
             :
-            <img src={imageList[index]} className="object-contain"></img>
+            <img src={imageList[index]} className="object-contain" width={366}></img>
           }
         </div>
         
@@ -71,6 +73,15 @@ const Explain: NextPage<Props> = (props) => {
             <p className='font-bold text-white'>4.&nbsp;文字を書くと画面右中央に円グラフが表示されます。<br />
             &nbsp;左側の<span className='text-lg text-teal-400'>水色</span>の円グラフには<span className='text-lg text-teal-400'>直前に書いた線の筆圧</span>を0〜1の値で表示しています。<br />
             &nbsp;右側の<span className='text-lg text-fuchsia-400'>紫色</span>の円グラフは<span className='text-lg text-fuchsia-400'>今まで書いた線の筆圧の平均</span>を0〜1の値で表示しています。</p>
+          }
+          {index===4&&
+            <p className='font-bold text-white'>5.&nbsp;画面右上のスライダーを動かすことで<span className='text-lg text-fuchsia-400'>筆圧の弱いストロークを削除</span>することができます<br />
+            スライダーの下のグラフは<span className='text-lg text-teal-400'>横軸が筆圧（強→弱），縦軸が線の本数</span>となってるグラフです
+            </p>
+          }
+          {index===5&&
+            <p className='font-bold text-white'>6.&nbsp;表示されているログをクリックすることで，<span className='text-lg text-fuchsia-400'>ログに表示されている画面の操作まで一気に戻る</span>ことができます
+            </p>
           }
         </div>
       </div>
