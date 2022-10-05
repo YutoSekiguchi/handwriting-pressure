@@ -15,6 +15,7 @@ import { useLogs } from '../../../../hooks/contexts/logsContext';
 import { useStrokes } from '../../../../hooks/contexts/strokesContext';
 import ExplainDialog from '../../../../components/note/ExplainDialog';
 import LoadingScreen from '../../../../components/common/LoadingScreen';
+import { useUsePressureUndo } from '../../../../hooks/contexts/usePressureUndo';
 
 const pressureRangeNum = 20;
 
@@ -47,6 +48,7 @@ const Note: NextPage = () => {
   const paperDetails: any = usePaperDetails();
   const logs: any = useLogs();
   const strokes: any = useStrokes();
+  const usePressureUndo: any = useUsePressureUndo();
   const isReady = router.isReady;
   const { pdid, uid } = router.query;
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -494,7 +496,14 @@ const Note: NextPage = () => {
         BoundaryPressure: 1-boundaryValue,
         BoundaryPressureBeforeUndo: 1-boundaryPressureValueBeforeUndo
       }
+      const createUsePressureUndoData = {
+        UID: pdData.UID,
+        PDID: Number(pdid),
+        Pressure: 1-boundaryValue,
+        Count: 0
+      }
       await logs.createLog(createLogData);
+      await usePressureUndo.createUsePressureUndo(createUsePressureUndoData);
       stringJson = Paper.project.exportJSON({ asString: true });
     },500);
   }
