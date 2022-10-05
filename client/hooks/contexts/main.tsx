@@ -4,6 +4,7 @@ import { PaperDetailsProvider } from './paperDetailsContext';
 import { PapersProvider } from './papersContext';
 import { StrokesProvider } from './strokesContext';
 import { UsersProvider } from './usersContext'
+import { UsePressureUndoProvider } from './usePressureUndo';
 
 const AppProvider = (props: { children: ReactNode }) => {
   return (
@@ -12,7 +13,9 @@ const AppProvider = (props: { children: ReactNode }) => {
         <PapersProvider>
           <PaperDetailsProvider>
             <StrokesProvider>
-              {props.children}
+              <UsePressureUndoProvider>
+                {props.children}
+              </UsePressureUndoProvider>
             </StrokesProvider>
           </PaperDetailsProvider>
         </PapersProvider>
