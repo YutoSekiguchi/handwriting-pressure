@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import React from "react";
 import Image from "next/image";
+import ExplainImageList from "../../utils/ExplainImageList";
 
 type Props = {
   index: number,
@@ -9,14 +10,7 @@ type Props = {
 
 const Explain: NextPage<Props> = (props) => {
   const { index, setIndex } = props;
-  const imageList = [
-    '/ex_1.gif',
-    '/ex_2.gif',
-    '/ex_3.png',
-    '/ex_4.png',
-    '/ex_5.gif',
-    '/ex_6.gif'
-  ];
+  const imageList = ExplainImageList;
   const handleChangeDetail = (mode: 'forward'|'ago') => {
     if (setIndex) {
       switch(mode) {
