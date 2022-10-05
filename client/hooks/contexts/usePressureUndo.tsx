@@ -40,7 +40,7 @@ export const UsePressureUndoProvider = (props: any) => {
   return <UsePressureUndoContext.Provider value={value} {...props} />
 }
 
-export const usePapers = () => {
+export const useUsePressureUndo = () => {
   const context = useContext(UsePressureUndoContext);
   if (!context) {
     throw Error('usePressureUndo is out Provider');
