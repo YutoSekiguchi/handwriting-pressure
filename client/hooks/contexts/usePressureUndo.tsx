@@ -17,7 +17,7 @@ export const UsePressureUndoProvider = (props: any) => {
   const [state, dispatch] = useReducer(usePressureUndoReducer, initialState);
 
   // 登録
-  const createusePressureUndo = async(data: UsePressureUndoObj) => {
+  const createUsePressureUndo = async(data: UsePressureUndoObj) => {
     try {
       dispatch({ type: usePressureUndoActions.CREATE_USE_PRESSURE_UNDO });
       const res = await axios.post(`${url}/use-pressure-undo`, data);
@@ -33,14 +33,14 @@ export const UsePressureUndoProvider = (props: any) => {
   const value = useMemo(() => {
     return {
       state,
-      createusePressureUndo
+      createUsePressureUndo
     }
   }, [state]);
 
   return <UsePressureUndoContext.Provider value={value} {...props} />
 }
 
-export const usePapers = () => {
+export const useUsePressureUndo = () => {
   const context = useContext(UsePressureUndoContext);
   if (!context) {
     throw Error('usePressureUndo is out Provider');
