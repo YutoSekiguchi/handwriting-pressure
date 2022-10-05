@@ -16,6 +16,7 @@ import { useStrokes } from '../../../../hooks/contexts/strokesContext';
 import ExplainDialog from '../../../../components/note/ExplainDialog';
 import LoadingScreen from '../../../../components/common/LoadingScreen';
 import { useUsePressureUndo } from '../../../../hooks/contexts/usePressureUndo';
+import QuestionMarkButton from '../../../../components/common/QuestionMarkButton';
 
 const pressureRangeNum = 20;
 
@@ -726,7 +727,7 @@ const Note: NextPage = () => {
         {/* 操作UI */}
         <div className='fixed right-0 w-4/12 h-full bg-gray-900 top-12'>
           <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 h-1/3 rounded-3xl'>
-            <h3 className='pt-3 font-bold text-white'>Undo/Redo</h3>
+            <h3 className='pt-3 font-bold text-white'>Undo/Redo&nbsp;<span onClick={() => setShowExplainDialog(4)}><QuestionMarkButton /></span></h3>
             <div className='mx-5 mt-3 rangebar'>
               {defaultBoundaryPressure&&
               <input id="large-range" type="range" defaultValue={defaultBoundaryPressure} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUpCapture={rewriteStroke} />
@@ -756,7 +757,7 @@ const Note: NextPage = () => {
             />
           </div>
           <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 img-box-wrapper h-1/3 rounded-3xl'>
-            <h3 className='my-3 font-bold text-white'>Log</h3>
+            <h3 className='my-3 font-bold text-white'>Log&nbsp;<span onClick={() => setShowExplainDialog(5)}><QuestionMarkButton /></span></h3>
             <div className='flex flex-wrap justify-start w-full overflow-y-auto img-box h-5/6'>
               {showImageDataList.map((image, i) => (
                 <div key={i} className="relative w-1/3 mt-2 cursor-pointer h-1/3" onClick={() => showDialog(i)}>
