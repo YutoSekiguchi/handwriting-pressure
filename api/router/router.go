@@ -70,6 +70,12 @@ func InitRouter(db *gorm.DB) {
 		log.DELETE("/unsave/:pdid", ctrl.HandleDeleteNotSaveLogs)
 	}
 
+	// UsePressureUndo
+	use_pressure_undo := e.Group("/use-pressure-undo")
+	{
+		use_pressure_undo.POST("", ctrl.HandlePostUsePressureUndo)
+	}
+
 	// Routing
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, Echo!!")
