@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router';
+import Image from "next/image";
 
 const AppHeader: NextPage = () => {
   const router = useRouter();
@@ -14,7 +15,9 @@ const AppHeader: NextPage = () => {
 	return (
 		<div className="fixed flex w-full h-12 mb-5 AppHeader bg-sky-900">
       <div className='flex justify-center ml-3 cursor-pointer LeftSide' onClick={moveHome}>
-        <h2 className='text-white'>メディ男の卒論</h2>
+        <Image className='' src={'/hidoadologo.png'} width={50} height={40} />
+        {/* <Image className='' src={'/title.png'} width={160} height={40} /> */}
+        <h2 className='text-white'></h2>
       </div>
       <div className='mx-auto my-auto CenterSide'>
 
