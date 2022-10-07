@@ -70,7 +70,8 @@ const Explain: NextPage<Props> = (props) => {
           }
           {index===4&&
             <p className='font-bold text-white'>5.&nbsp;画面右上のスライダーを動かすことで<span className='text-lg text-fuchsia-400'>筆圧の弱いストロークを削除</span>することができます<br />
-            スライダーの下のグラフは<span className='text-lg text-teal-400'>横軸が筆圧（強→弱），縦軸が線の本数</span>となってるグラフです
+            スライダーの下のグラフは<span className='text-lg text-teal-400'>横軸が筆圧（強→弱），縦軸が線の本数</span>となってるグラフです<br /><br />
+            ※消しゴムの筆圧は1.0になります
             </p>
           }
           {index===5&&

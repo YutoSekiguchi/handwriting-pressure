@@ -75,7 +75,8 @@ const Note: NextPage = () => {
   const [showImageDataList, setShowImageDataList] = useState<ShowImageDataObject[]>([]); // ログで表示するための画像のリスト
   const [logBoundaryValue, setLogBoundaryValue] = useState<number|null>(null); // 押したログのboundaryValueを保持
   const [canvasDialog, setCanvasDialog] = useState<boolean>(false); // ログのダイアログの表示・非表示
-  const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(0); // ログの何枚目かを示す数値
+  const [canvasDialogImageIndex, setCanvasDialogImageIndex] = useState<number>(-1); // ログの何枚目かを示す数値
+  const [decidedLogIndex, setDecidedLogIndex] = useState<number>(-1); // どのログをundoしたか保持
   const [isGetData, setIsGetData] = useState<boolean>(false); // data取得したか否か
   const [defaultBoundaryPressure, setDefaultBoundaryPressure] = useState<number|null>(null); // バーの初期値
   const [showExplainDialog, setShowExplainDialog] = useState<number|null>(null); // 実験説明ダイアログ
@@ -212,7 +213,10 @@ const Note: NextPage = () => {
       let sumPressure = pressure.reduce((a, b) => {
         return a + b;
       });
-      avgPressure = sumPressure/pressure.length;
+      avgPressure = 1;
+      if (mode == "pen") {
+        avgPressure = sumPressure/pressure.length;
+      }
       console.log('sumPressure', sumPressure)
       console.log('avgPressure', avgPressure)
       const aboutAvgPressure = Math.floor((1-avgPressure)*pressureRangeNum)/pressureRangeNum;
@@ -319,6 +323,7 @@ const Note: NextPage = () => {
       ]
     ));
     console.log(imageDataList);
+    console.log("今のモードは", mode)
   }
 
   // シンプルなundo
@@ -428,7 +433,7 @@ const Note: NextPage = () => {
       if ((json[0][1]["children"][i][1].strokeColor.length === 4 && pressureDiff > 0.1)) {
         json[0][1]["children"][i][1].strokeColor[3] = 1;
       }
-      if (pressureDiff < 0.1 && pressureDiff > 0) {
+      if (pressureDiff < 0.1 && pressureDiff >= 0) {
         if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
           json[0][1]["children"][i][1].strokeColor.push(1-((1-pressureDiff))+0.1)
         } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
@@ -451,7 +456,7 @@ const Note: NextPage = () => {
     json =  Paper.project.exportJSON({ asString: false })
     for (let i=0; i<pressureArray.length; i++) {
       pressureDiff = pressureArray[i] - (1-boundaryValue);
-      if (pressureDiff < 0.1 && pressureDiff > 0) {
+      if (pressureDiff < 0.1 && pressureDiff >= 0) {
         if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
           json[0][1]["children"][i][1].strokeColor.push(1)
         } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
@@ -527,7 +532,7 @@ const Note: NextPage = () => {
     }
   }
 
-  const changeShowStroke = (data: any, pressureData: number[], boundaryPressureBeforeUndo: number) => {
+  const changeShowStroke = (data: any, pressureData: number[], boundaryPressureBeforeUndo: number, index: number) => {
     setLogBoundaryValue(boundaryPressureBeforeUndo);
     console.log(pressureArray)
     console.log(pressureData)
@@ -537,6 +542,7 @@ const Note: NextPage = () => {
     fixChartData();
     setCanvasDialog(false);
     setDefaultBoundaryPressure(null);
+    setDecidedLogIndex(index);
   }
 
   const getData = async() => {
@@ -760,8 +766,8 @@ const Note: NextPage = () => {
             <h3 className='my-3 font-bold text-white'>Log&nbsp;<span onClick={() => setShowExplainDialog(5)}><QuestionMarkButton /></span></h3>
             <div className='flex flex-wrap justify-start w-full overflow-y-auto img-box h-5/6'>
               {showImageDataList.map((image, i) => (
-                <div key={i} className="relative w-1/3 mt-2 cursor-pointer h-1/3" onClick={() => showDialog(i)}>
-                  <img src={canvasBackgroundImageUrl} className="absolute top-0 left-0 object-contain w-full h-full" />
+                <div key={i} className={`relative w-1/3 mt-2 mb-2 cursor-pointer h-1/3 ${decidedLogIndex==i? 'bg-purple-300 bg-opacity-20 border-2 border-gray-500': ''}`} onClick={() => showDialog(i)}>
+                  <img src={canvasBackgroundImageUrl} className={`absolute top-0 h-full left-0 object-contain w-full`} />
                   <img src={image.url} className="absolute top-0 left-0 object-contain w-full h-full" />
                 </div>
               ))}

@@ -27,6 +27,7 @@ const PaperHeader: NextPage<Props> = (props) => {
 
   let mode: 'pen'|'erase' = 'pen';
   const [nowMode, setNowMode] = useState<'pen'|'erase'>('pen');
+  const [isShowDropDown, setIsShowDropDown] = useState<boolean>(false);
 
   const colorList: string[] = ['#000000', '#808080', '#D9D9D9', '#1C8CFF', '#FF1A40', '#2BD965', '#FFDD33'];
 
@@ -73,10 +74,10 @@ const PaperHeader: NextPage<Props> = (props) => {
       <div className='mx-auto my-auto CenterSide'>
         <div className="flex ColorChoiceButtons">
           <div className='mr-2 PenButtons' onClick={eraseMode}>
-            <EraserButton setEraseWidth={setEraseWidth} mode={nowMode} />
+            <EraserButton isShowDropOpen={isShowDropDown} setIsShowDropDown={setIsShowDropDown} setEraseWidth={setEraseWidth} mode={nowMode} />
           </div>
           <div className='mr-2 PenButtons' onClick={penMode}>
-            <PenButton setPenWidth={setPenWidth} mode={nowMode} />
+            <PenButton isShowDropOpen={isShowDropDown} setIsShowDropDown={setIsShowDropDown} setPenWidth={setPenWidth} mode={nowMode} />
           </div>
           {colorList.map((label, index) => (
             <div onClick={() => buttonClick(label, index)} key={index} className='my-auto'>
