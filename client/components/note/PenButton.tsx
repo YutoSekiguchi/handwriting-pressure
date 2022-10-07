@@ -4,12 +4,14 @@ import { Dispatch, SetStateAction, useState, useEffect, useCallback } from 'reac
 import PenWidthButton from './PenWidthButton';
 
 type Props = {
+  isShowDropOpen: boolean,
+  setIsShowDropDown: Dispatch<SetStateAction<boolean>>,
   setPenWidth: Dispatch<SetStateAction<number>>,
   mode: 'pen'|'erase',
 }
 
 const PenButton: NextPage<Props> = (props) => {
-  const {setPenWidth, mode} = props;
+  const {isShowDropOpen, setIsShowDropDown, setPenWidth, mode} = props;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const widthButtonSizeList: number[] = [5, 10, 15, 20, 25];
   const  [clickList, setClickList] = useState<number[] | any>([0, 1].concat([...Array(widthButtonSizeList.length -2)].map(x => 0)));
@@ -31,11 +33,14 @@ const PenButton: NextPage<Props> = (props) => {
 
   const closeDropDown = useCallback(() => {
     setDropdownOpen(false);
+    setIsShowDropDown(false);
     document.removeEventListener('click', closeDropDown)
   }, []);
 
   const openDropDown = (e: any) => {
+    if(isShowDropOpen) { return; } // すでに他のDropDown開かれてたら実行しない
     setDropdownOpen(true);
+    setIsShowDropDown(true);
     document.addEventListener('click', closeDropDown)
     e.stopPropagation()
   }
