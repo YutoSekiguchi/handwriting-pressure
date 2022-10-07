@@ -14,7 +14,7 @@ type Props = {
   canvasDialogImageIndex: number,
   canvasBackgroundImageUrl: string,
   showImageDataList: ImageDataObject[],
-  changeShowStroke: (data: any, pressureData: number[], boundaryPressure: number)=>void,
+  changeShowStroke: (data: any, pressureData: number[], boundaryPressure: number, index: number)=>void,
 }
 
 const CanvasDialog: NextPage<Props> = (props) => {
@@ -41,7 +41,14 @@ const CanvasDialog: NextPage<Props> = (props) => {
             </div>
             {/* 反映ボタン */}
             <div className='w-full mt-6 text-center decideButton h-1/5'>
-              <button className='px-3 py-1 text-white bg-gray-800 rounded-lg' onClick={() => changeShowStroke(showImageDataList[canvasDialogImageIndex].strokeData, showImageDataList[canvasDialogImageIndex].pressureArray, showImageDataList[canvasDialogImageIndex].boundaryPressure)}>
+              <button
+                className='px-3 py-1 text-white bg-gray-800 rounded-lg'
+                onClick={() => changeShowStroke(
+                  showImageDataList[canvasDialogImageIndex].strokeData, 
+                  showImageDataList[canvasDialogImageIndex].pressureArray, 
+                  showImageDataList[canvasDialogImageIndex].boundaryPressure, canvasDialogImageIndex
+                )}
+              >
                 change note
               </button>
             </div>
