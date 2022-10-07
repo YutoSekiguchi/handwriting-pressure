@@ -428,7 +428,7 @@ const Note: NextPage = () => {
       if ((json[0][1]["children"][i][1].strokeColor.length === 4 && pressureDiff > 0.1)) {
         json[0][1]["children"][i][1].strokeColor[3] = 1;
       }
-      if (pressureDiff < 0.1 && pressureDiff > 0) {
+      if (pressureDiff < 0.1 && pressureDiff >= 0) {
         if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
           json[0][1]["children"][i][1].strokeColor.push(1-((1-pressureDiff))+0.1)
         } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
@@ -451,7 +451,7 @@ const Note: NextPage = () => {
     json =  Paper.project.exportJSON({ asString: false })
     for (let i=0; i<pressureArray.length; i++) {
       pressureDiff = pressureArray[i] - (1-boundaryValue);
-      if (pressureDiff < 0.1 && pressureDiff > 0) {
+      if (pressureDiff < 0.1 && pressureDiff >= 0) {
         if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
           json[0][1]["children"][i][1].strokeColor.push(1)
         } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
