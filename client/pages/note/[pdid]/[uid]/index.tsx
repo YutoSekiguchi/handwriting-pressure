@@ -225,7 +225,7 @@ const Note: NextPage = () => {
         switch (e.pointerType) {
           // PCのマウスなら（マウスはPCで試しやすくするためにランダムに）
           case "mouse":
-            const rand = Math.random();
+            const rand = mode=="pen"? Math.random(): 1;
             pressureArray.push(rand);
             aboutPressureCountArray[((Math.floor((1-rand) * pressureRangeNum) / pressureRangeNum))*pressureRangeNum] += 1;
             break;
