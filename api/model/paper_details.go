@@ -12,6 +12,7 @@ type PaperDetail struct {
 	PaperImage       string    `gorm:"not null;column:paper_image"`
 	PaperJson        string    `gorm:"not null;column:paper_json"`
 	PressureList     string    `gorm:"not null;column:pressure_list"`
+	IsShowStrokeList string `gorm:"not null;column:is_show_stroke_list"`
 	BoundaryPressure float64   `gorm:"not null;column:boundary_pressure"`
 	AvgPressure      float64   `gorm:"not null;column:avg_pressure"`
 	BackgroundImage  string    `gorm:"not null;column:background_image"`
