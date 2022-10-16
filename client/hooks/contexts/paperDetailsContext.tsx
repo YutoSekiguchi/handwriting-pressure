@@ -14,6 +14,7 @@ type PaperDetailObj = {
   PaperImage: string,
   PaperJson: string,
   PressureList: string,
+  IsShowStrokeList: string,
   BoundaryPressure: number,
   AvgPressure: number,
   BackgroundImage: string,
