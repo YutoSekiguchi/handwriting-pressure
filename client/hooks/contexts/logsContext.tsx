@@ -11,6 +11,7 @@ type LogObj = {
   StrokeData: string,
   Url: string,
   PressureList: string,
+  IsShowStrokeList: string,
   Save: number,
   BoundaryPressure: number,
   BoundaryPressureBeforeUndo: number,
