@@ -21,6 +21,7 @@ import QuestionMarkButton from '../../../../components/common/QuestionMarkButton
 const pressureRangeNum = 20;
 
 let pressureArray: number[] = [];
+let isShowStrokeList: number[] = []; // ストローク表示するか否かの値をlistで格納(表示:1，非表示:0)
 let aboutPressureCountArray: number[] = [...Array(pressureRangeNum+1)].map(x=>0);
 let startTime: number;
 let endTime: number;
@@ -30,6 +31,7 @@ type ImageDataObject = {
   url: string,
   strokeData: (string|object)[][],
   pressureArray: number[],
+  isShowStrokeList: number[],
 }
 
 type ShowImageDataObject = {
@@ -37,11 +39,13 @@ type ShowImageDataObject = {
   strokeData: (string|object)[][],
   pressureArray: number[],
   boundaryPressure: number,
+  isShowStrokeList: number[],
 }
 
 type RedoHistoryObject = {
   pressure: number,
   stroke: any,
+  isShowStroke: number,
 }
 
 const Note: NextPage = () => {
@@ -186,7 +190,6 @@ const Note: NextPage = () => {
 
   const pointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!isDrag) { return }
-    console.log(e.pressure)
     if (e.pressure != 0) {
       if (pressure === null || pressure === undefined) {
         setPressure([e.pressure])
@@ -246,15 +249,13 @@ const Note: NextPage = () => {
       }
     }
     
+    isShowStrokeList.push(1); // 配列に表示情報を挿入
+
     json =  Paper.project.exportJSON({ asString: false })
-    console.log(json[0][1]['children']);
     if (json[0][1]["children"].length != pressureArray.length) {
       pressureArray.push(0);
       aboutPressureCountArray[0] += 1;
     }
-    console.log('pressureArray', pressureArray)
-    console.log(aboutPressureCountArray);
-
 
     // ストロークのデータ登録
     const strongJson = Paper.project.exportJSON({ asString: true });
@@ -311,7 +312,6 @@ const Note: NextPage = () => {
     const imageUrl: string = canvas.toDataURL("image/png");
     json =  Paper.project.exportJSON({ asString: false })
     stringJson = Paper.project.exportJSON({ asString: true })
-    console.log("stringJson", stringJson);
     setImageDataList((prevImageDataList) => (
       [
         ...prevImageDataList, 
@@ -319,33 +319,57 @@ const Note: NextPage = () => {
           url: imageUrl,
           strokeData: json,
           pressureArray: pressureArray.concat(),
+          isShowStrokeList: isShowStrokeList.concat(),
         },
       ]
     ));
-    console.log(imageDataList);
     console.log("今のモードは", mode)
   }
 
   // シンプルなundo
-  const normalUndo = () => {
+  const normalUndo = async() => {
     if (undoable) {
       console.log("his", historyList)
-      const undoStrokes = historyList.length > 1? historyList[historyList.length-2]: null; // undo後のストローク状態
-      console.log(undoStrokes);
-      Paper.project.clear()
-      Paper.project.importJSON(undoStrokes)
+      console.log("before undo is show stroke rist", isShowStrokeList);
 
-      // 履歴が最後の1つだったらundo不可能状態に
-      if(historyList.length < 1) {
+      if(historyList.length <= 2) {
         setUndoable(false);
       }
+      
+      const undoStrokes = historyList.length > 1? 
+        historyList[historyList.length-2]: 
+        null; // undo後のストローク状態
+      const stIsShowStroke = isShowStrokeList[isShowStrokeList.length-1]
+      Paper.project.clear()
+      if(historyList.length > 1) {
+        for (let i=0; i<undoStrokes[0][1]["children"].length; i++) {
+          if (isShowStrokeList[i] == 0) {
+            if (undoStrokes[0][1]["children"][i][1].strokeColor.length <= 3) {
+              undoStrokes[0][1]["children"][i][1].strokeColor.push(0);
+            } else {
+              undoStrokes[0][1]["children"][i][1].strokeColor[3] = 0;
+            }
+          }
+        }
+      }
+      Paper.project.importJSON(undoStrokes)
+      
+
+      // 履歴が最後の1つだったらundo不可能状態に
+      // if(historyList.length <= 1) {
+      //   setUndoable(false);
+      // }
       // undo前の状態をredo用のListに追加
       const lastPressure = pressureArray[pressureArray.length-1];
       setRedoHistoryList(
         (prevRedoHistoryList) => (
           [
             ...prevRedoHistoryList, 
-            {'stroke': historyList[historyList.length-1], 'pressure': lastPressure}
+            {
+              'stroke': historyList[historyList.length-1],
+              'pressure': lastPressure, 
+              'isShowStroke': stIsShowStroke
+            }
           ]
         )
       );
@@ -355,6 +379,8 @@ const Note: NextPage = () => {
       );
       // undo前の状態の筆圧を削除
       pressureArray.pop();
+      // undo前の状態の表示の有無の削除
+      isShowStrokeList.pop();
       // redo可能状態に
       setRedoable(true);
       fixChartData();
@@ -367,6 +393,18 @@ const Note: NextPage = () => {
     if(redoable) {
       const redoStrokes = redoHistoryList[redoHistoryList.length-1]['stroke'];
 
+      console.log("redoStrokes", redoStrokes);
+      for (let i=0; i<redoStrokes[0][1]["children"].length; i++) {
+        console.log(i)
+        if (isShowStrokeList[i] == 0) {
+          if (redoStrokes[0][1]["children"][i][1].strokeColor.length <= 3) {
+            redoStrokes[0][1]["children"][i][1].strokeColor.push(0);
+          } else {
+            redoStrokes[0][1]["children"][i][1].strokeColor[3] = 0;
+          }
+        }
+      }
+
       // redoできるものが最後の一つだった場合redo不可能状態に
       if (redoHistoryList.length === 1) {
         setRedoable(false);
@@ -378,6 +416,7 @@ const Note: NextPage = () => {
       );
       // redo後筆圧を復活
       pressureArray.push(redoHistoryList[redoHistoryList.length-1]['pressure']);
+      isShowStrokeList.push(redoHistoryList[redoHistoryList.length-1]['isShowStroke']);
       // redo前の状態をredo用のListから削除
       setRedoHistoryList(
         (prevRedoHistoryList) => prevRedoHistoryList.filter((_, index) => index < prevRedoHistoryList.length-1)
@@ -387,6 +426,7 @@ const Note: NextPage = () => {
       setUndoable(true);
       fixChartData();
       stringJson = Paper.project.exportJSON({ asString: true });
+      console.log(isShowStrokeList)
     }
   }
 
@@ -421,14 +461,18 @@ const Note: NextPage = () => {
 
   // 筆圧によった削除方法
   const handleDeleteRowPressureStroke = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if(historyList.length == 0) {
-      alert('用紙に何も書かれていません');
+    if(imageDataList.length == 0) {
+      alert('エラーが発生しました（001）\n用紙にストロークを記述することでこのエラーは解消します.');
       return;
     }
     boundaryValue = Number(e.target.value) / 10000;
     json =  Paper.project.exportJSON({ asString: false })
     let pressureDiff: number = 0;
     for (let i=0; i<pressureArray.length; i++) {
+      if (isShowStrokeList[i] == 0) {
+        json[0][1]["children"][i][1].strokeColor[3]=0;
+        continue 
+      }
       pressureDiff = pressureArray[i] - (1-boundaryValue);
       if ((json[0][1]["children"][i][1].strokeColor.length === 4 && pressureDiff > 0.1)) {
         json[0][1]["children"][i][1].strokeColor[3] = 1;
@@ -452,11 +496,15 @@ const Note: NextPage = () => {
 
   const rewriteStroke = () => {
     console.log("boundaryValue", boundaryValue);
+    console.log("boundaryPressureValue", boundaryPressureValue)
     let pressureDiff: number = 0;
     json =  Paper.project.exportJSON({ asString: false })
     for (let i=0; i<pressureArray.length; i++) {
       pressureDiff = pressureArray[i] - (1-boundaryValue);
-      if (pressureDiff < 0.1 && pressureDiff >= 0) {
+      if(json[0][1]["children"][i][1].strokeColor[3] == 0) {
+        isShowStrokeList[i] = 0;
+      }
+      if (json[0][1]["children"][i][1].strokeColor[3] !== 0 && pressureDiff < 0.1 && pressureDiff >= 0) {
         if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
           json[0][1]["children"][i][1].strokeColor.push(1)
         } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
@@ -467,7 +515,6 @@ const Note: NextPage = () => {
     Paper.project.clear()
     Paper.project.importJSON(json);
     const boundaryPressureValueBeforeUndo = boundaryPressureValue;
-    setBoundaryPressureValue(boundaryValue);
     setShowImageDataList((prevShowImageDataList) => (
       [
         ...prevShowImageDataList,
@@ -484,11 +531,12 @@ const Note: NextPage = () => {
           {
             url: imageUrl,
             strokeData: json,
-            pressureArray: pressureArray.concat()
+            pressureArray: pressureArray.concat(),
+            isShowStrokeList: isShowStrokeList.concat(),
           },
         ]
       ));
-      
+
       const pdData = paperDetails.state.paperDetail;
       // const stringJson = Paper.project.exportJSON({ asString: true });
       // LogをDBに登録
@@ -498,9 +546,10 @@ const Note: NextPage = () => {
         StrokeData: stringJson,
         Url: `${imageDataList[imageDataList.length-1].url}`,
         PressureList: String(pressureArray.concat()),
+        IsShowStrokeList: String(isShowStrokeList.concat()),
         Save: 0,
         BoundaryPressure: 1-boundaryValue,
-        BoundaryPressureBeforeUndo: 1-boundaryPressureValueBeforeUndo
+        BoundaryPressureBeforeUndo: 1-boundaryPressureValueBeforeUndo,
       }
       const createUsePressureUndoData = {
         UID: pdData.UID,
@@ -509,6 +558,7 @@ const Note: NextPage = () => {
         Count: 0
       }
       await logs.createLog(createLogData);
+      setBoundaryPressureValue(boundaryValue);
       await usePressureUndo.createUsePressureUndo(createUsePressureUndoData);
       stringJson = Paper.project.exportJSON({ asString: true });
     },500);
@@ -532,17 +582,21 @@ const Note: NextPage = () => {
     }
   }
 
-  const changeShowStroke = (data: any, pressureData: number[], boundaryPressureBeforeUndo: number, index: number) => {
+  const changeShowStroke = (data: any, pressureData: number[], boundaryPressureBeforeUndo: number, _isShowStrokeList: number[], index: number) => {
     setLogBoundaryValue(boundaryPressureBeforeUndo);
-    console.log(pressureArray)
-    console.log(pressureData)
     Paper.project.clear();
     Paper.project.importJSON(data);
     pressureArray = pressureData.concat();
+    isShowStrokeList = _isShowStrokeList.concat();
     fixChartData();
     setCanvasDialog(false);
     setDefaultBoundaryPressure(null);
     setDecidedLogIndex(index);
+    setBoundaryPressureValue(1-boundaryPressureBeforeUndo);
+    setUndoable(false);
+    setHistoryList([data]);
+    setRedoable(false);
+    setRedoHistoryList([]);
   }
 
   const getData = async() => {
@@ -566,6 +620,7 @@ const Note: NextPage = () => {
       PaperImage: imageUrl,
       PaperJson: paperJson,
       PressureList: `${pressureArray}`,
+      IsShowStrokeList: `${isShowStrokeList}`,
       BoundaryPressure: boundaryPressureValue,
       AvgPressure: avgConfirmPressure,
       BackgroundImage: pdData.BackgroundImage
@@ -613,19 +668,19 @@ const Note: NextPage = () => {
       setDefaultBoundaryPressure(tmp);
       console.log(logBoundaryValue);
       console.log("↑logの筆圧バーの値")
+      console.log(tmp)
+    } else {
+      setDefaultBoundaryPressure(10000);
     }
   }, [defaultBoundaryPressure])
 
   useEffect(() => {
     if(isGetData) {
       if((paperDetails.state.paperDetail.PaperWidth!=null&&paperDetails.state.paperDetail.PaperWidth!=0)&&(paperDetails.state.paperDetail.PaperHeight!=null&&paperDetails.state.paperDetail.PaperHeight!=0)) {
-        console.log(paperDetails)
         setCanvasWidth(paperDetails.state.paperDetail.PaperWidth);
         setCanvasHeight(paperDetails.state.paperDetail.PaperHeight);
         setCanvasBackgroundImageUrl(paperDetails.state.paperDetail.BackgroundImage);
       } else {
-        console.log("no");
-        console.log(paperDetails)
         setCanvasWidth(1000);
         setCanvasHeight(1000);
       }
@@ -641,6 +696,10 @@ const Note: NextPage = () => {
           setDefaultBoundaryPressure(10000);
         }
       }
+      if (paperDetails.state.paperDetail.IsShowStrokeList!=null&&paperDetails.state.paperDetail.IsShowStrokeList!='') {
+        isShowStrokeList = paperDetails.state.paperDetail.IsShowStrokeList.split(',');
+        isShowStrokeList = isShowStrokeList.map(Number);
+      }
       console.log(logs.state.logsList);
       if(logs.state.logsList!=null&&logs.state.logsList.length>0) {
         const logDataList = logs.state.logsList;
@@ -651,6 +710,7 @@ const Note: NextPage = () => {
             strokeData: logDataList[i].StrokeData,
             pressureArray: (logDataList[i].PressureList.split(',')).map(Number),
             boundaryPressure: logDataList[i].BoundaryPressureBeforeUndo,
+            isShowStrokeList: (logDataList[i].IsShowStrokeList.split(',')).map(Number)
           }
           tmp.push(el);
         }
@@ -736,7 +796,16 @@ const Note: NextPage = () => {
             <h3 className='pt-3 font-bold text-white'>Undo/Redo&nbsp;<span onClick={() => setShowExplainDialog(4)}><QuestionMarkButton /></span></h3>
             <div className='mx-5 mt-3 rangebar'>
               {defaultBoundaryPressure&&
-              <input id="large-range" type="range" defaultValue={defaultBoundaryPressure} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUpCapture={rewriteStroke} />
+              <input 
+                id="large-range" 
+                type="range" 
+                defaultValue={defaultBoundaryPressure} 
+                min="0" 
+                max="10000" 
+                // onChange={handleDeleteRowPressureStroke} 
+                onInput={handleDeleteRowPressureStroke} 
+                onPointerUpCapture={rewriteStroke}
+              />
               }
             </div>
             <div className='mx-5 chart-bar h-2/3'>

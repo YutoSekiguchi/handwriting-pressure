@@ -116,6 +116,7 @@ const Library: NextPage = () => {
       PaperImage: '',
       PaperJson: '',
       PressureList: '',
+      IsShowStrokeList: '',
       BoundaryPressure: 0,
       AvgPressure: 0,
       BackgroundImage: backgroundImage,

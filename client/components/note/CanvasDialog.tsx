@@ -5,7 +5,8 @@ type ImageDataObject = {
   url: string,
   strokeData: (string|object)[][],
   pressureArray: number[],
-  boundaryPressure: number
+  boundaryPressure: number,
+  isShowStrokeList: number[],
 }
 
 type Props = {
@@ -14,7 +15,7 @@ type Props = {
   canvasDialogImageIndex: number,
   canvasBackgroundImageUrl: string,
   showImageDataList: ImageDataObject[],
-  changeShowStroke: (data: any, pressureData: number[], boundaryPressure: number, index: number)=>void,
+  changeShowStroke: (data: any, pressureData: number[], boundaryPressure: number, isShowStrokeList :number[], index: number)=>void,
 }
 
 const CanvasDialog: NextPage<Props> = (props) => {
@@ -46,7 +47,9 @@ const CanvasDialog: NextPage<Props> = (props) => {
                 onClick={() => changeShowStroke(
                   showImageDataList[canvasDialogImageIndex].strokeData, 
                   showImageDataList[canvasDialogImageIndex].pressureArray, 
-                  showImageDataList[canvasDialogImageIndex].boundaryPressure, canvasDialogImageIndex
+                  showImageDataList[canvasDialogImageIndex].boundaryPressure,
+                  showImageDataList[canvasDialogImageIndex].isShowStrokeList,
+                  canvasDialogImageIndex
                 )}
               >
                 change note
