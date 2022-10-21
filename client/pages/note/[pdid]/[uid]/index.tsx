@@ -791,6 +791,7 @@ const Note: NextPage = () => {
         />
         
         {/* 操作UI */}
+        {(paperDetails.state.paperDetail.Title&&paperDetails.state.paperDetail.Title.slice(0, 2) != "no")?
         <div className='fixed right-0 w-4/12 h-full bg-gray-900 top-12'>
           <div className='w-11/12 mx-auto mt-2 text-center bg-gray-800 h-1/3 rounded-3xl'>
             <h3 className='pt-3 font-bold text-white'>Undo/Redo&nbsp;<span onClick={() => setShowExplainDialog(4)}><QuestionMarkButton /></span></h3>
@@ -845,9 +846,11 @@ const Note: NextPage = () => {
 
         {/* 書いてる時の筆圧のゲージ */}
         {/* <div className='fixed w-full rangebar bottom-2'>
-          <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
-        </div> */}
+        <input id="large-range" type="range" defaultValue={10000} min="0" max="10000" onChange={handleDeleteRowPressureStroke} onInput={handleDeleteRowPressureStroke} onPointerUp={rewriteStroke} />
+      </div> */}
         </div>
+        :<div className='fixed right-0 w-4/12 h-full bg-gray-900 top-12'></div>
+        }
       </div>
   </>
 	);
