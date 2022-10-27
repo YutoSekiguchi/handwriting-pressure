@@ -5,6 +5,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// 筆圧undo使用したpaperを全て取得
+func (ctrl Controller) HandleGetPaperDetailsWithPressureUndo(c echo.Context) error {
+	var s service.PaperDetailService
+	p, err := s.GetPaperDetailsWithPressureUndo(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
 // idを指定してpaperの取得
 func (ctrl Controller) HandleGetPaperDetailByID(c echo.Context) error {
 	var s service.PaperDetailService
