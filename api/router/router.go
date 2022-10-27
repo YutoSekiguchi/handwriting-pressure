@@ -43,6 +43,8 @@ func InitRouter(db *gorm.DB) {
 	// PaperDetail
 	paper_detail := e.Group("/paper-details")
 	{
+		paper_detail.GET("/pressureundo", ctrl.HandleGetPaperDetailsWithPressureUndo)
+		paper_detail.GET("/notpressureundo", ctrl.HandleGetPaperDetailsWithNotPressureUndo)
 		paper_detail.GET("/:id", ctrl.HandleGetPaperDetailByID)
 		paper_detail.GET("/list/:pid/folder", ctrl.HandleGetPaperDetailsByPID)
 		paper_detail.POST("", ctrl.HandlePostPaperDetail)
