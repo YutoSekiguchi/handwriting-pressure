@@ -19,8 +19,8 @@ func (s PaperDetailService) GetPaperDetailsWithPressureUndo(db *gorm.DB, c echo.
 }
 
 // 筆圧Undo使用してないPaperを全て取得
-func (s PaperDetailService) GetPaperDetailsWithNotPressureUndo(db *gorm.DB, c echo.Context) (*PaperDetail, error) {
-	pd := new(PaperDetail)
+func (s PaperDetailService) GetPaperDetailsWithNotPressureUndo(db *gorm.DB, c echo.Context) ([]PaperDetail, error) {
+	var pd []PaperDetail
 
 	if err := db.Raw("SELECT * FROM `paper_details` WHERE title LIKE '%_no'").Scan(&pd).Error; err != nil {
 		return nil, err
@@ -30,8 +30,8 @@ func (s PaperDetailService) GetPaperDetailsWithNotPressureUndo(db *gorm.DB, c ec
 
 
 // idを指定してpaperを取得
-func (s PaperDetailService) GetPaperDetailByID(db *gorm.DB, c echo.Context) (*PaperDetail, error) {
-	pd := new(PaperDetail)
+func (s PaperDetailService) GetPaperDetailByID(db *gorm.DB, c echo.Context) ([]PaperDetail, error) {
+	var pd []PaperDetail
 	id := c.Param("id")
 
 	if err := db.Raw("SELECT * FROM `paper_details` WHERE id = ?", id).Scan(&pd).Error; err != nil {
