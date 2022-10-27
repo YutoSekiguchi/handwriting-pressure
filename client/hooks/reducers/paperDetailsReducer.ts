@@ -3,6 +3,8 @@ import { papersDetailActions } from "../actions/paperDetailsActions"
 export const initialState = {
   fetching: false,
   paperDetailsList: [],
+  paperDetailsWithPressureUndoList: [],
+  paperDetailsWithNotPressureUndoList: [],
   paperDetail: {},
   error: null,
 }
@@ -66,6 +68,48 @@ export const papersDetailReducer = (state: any, actions: any) => {
       }
     
     case papersDetailActions.GET_PAPER_DETAILS_ERROR:
+      return {
+        ...state,
+        fetching: false,
+        error: actions.payload
+      }
+
+    case papersDetailActions.GET_PAPER_DETAILS_WITH_PRESSURE_UNDO:
+      return {
+        ...state,
+        fetching: true,
+      }
+
+    case papersDetailActions.GET_PAPER_DETAILS_WITH_PRESSURE_UNDO_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
+        paperDetailsWithPressureUndoList: actions.payload,
+        ok: true,
+      }
+    
+    case papersDetailActions.GET_PAPER_DETAILS_WITH_PRESSURE_UNDO_ERROR:
+      return {
+        ...state,
+        fetching: false,
+        error: actions.payload
+      }
+
+    case papersDetailActions.GET_PAPER_DETAILS_WITH_NOT_PRESSURE_UNDO:
+      return {
+        ...state,
+        fetching: true,
+      }
+
+    case papersDetailActions.GET_PAPER_DETAILS_WITH_NOT_PRESSURE_UNDO_SUCCESS:
+      return {
+        ...state,
+        fetching: false,
+        paperDetailsWithNotPressureUndoList: actions.payload,
+        ok: true,
+      }
+    
+    case papersDetailActions.GET_PAPER_DETAILS_WITH_NOT_PRESSURE_UNDO_ERROR:
       return {
         ...state,
         fetching: false,
