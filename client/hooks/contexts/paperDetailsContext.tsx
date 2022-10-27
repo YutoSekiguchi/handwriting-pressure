@@ -24,6 +24,34 @@ export const PaperDetailsProvider = (props: any) => {
   const url = process.env.API_URL;
   const [state, dispatch] = useReducer(papersDetailReducer, initialState);
 
+  // 筆圧undoを使用したpaperを全て取得
+  const getPaperDetailsWithPressureUndo = async() => {
+    try {
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS });
+      const res = await axios.get(`${url}/paper-details/pressureundo`);
+      if (res.status===200) {
+        dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_SUCCESS, payload: res.data });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_ERROR, payload: error });
+    }
+  }
+
+  // 筆圧undoを使用してないpaperを全て取得
+  const getPaperDetailsWithNotPressureUndo = async() => {
+    try {
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS });
+      const res = await axios.get(`${url}/paper-details/notpressureundo`);
+      if (res.status===200) {
+        dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_SUCCESS, payload: res.data });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_ERROR, payload: error });
+    }
+  }
+
   // idを指定してpaper_detailの取得
   const getPaperDetailByID = async(id: number) => {
     try {
@@ -97,6 +125,8 @@ export const PaperDetailsProvider = (props: any) => {
   const value = useMemo(() => {
     return {
       state,
+      getPaperDetailsWithPressureUndo,
+      getPaperDetailsWithNotPressureUndo,
       getPaperDetailByID,
       getPaperDetailsByPID,
       createPaperDetail,
