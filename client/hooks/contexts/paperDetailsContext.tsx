@@ -27,28 +27,28 @@ export const PaperDetailsProvider = (props: any) => {
   // 筆圧undoを使用したpaperを全て取得
   const getPaperDetailsWithPressureUndo = async() => {
     try {
-      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS });
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_WITH_PRESSURE_UNDO });
       const res = await axios.get(`${url}/paper-details/pressureundo`);
       if (res.status===200) {
-        dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_SUCCESS, payload: res.data });
+        dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_WITH_PRESSURE_UNDO_SUCCESS, payload: res.data });
       }
     } catch (error) {
       console.log(error);
-      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_ERROR, payload: error });
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_WITH_PRESSURE_UNDO_ERROR, payload: error });
     }
   }
 
   // 筆圧undoを使用してないpaperを全て取得
   const getPaperDetailsWithNotPressureUndo = async() => {
     try {
-      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS });
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_WITH_NOT_PRESSURE_UNDO });
       const res = await axios.get(`${url}/paper-details/notpressureundo`);
       if (res.status===200) {
-        dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_SUCCESS, payload: res.data });
+        dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_WITH_NOT_PRESSURE_UNDO_SUCCESS, payload: res.data });
       }
     } catch (error) {
       console.log(error);
-      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_ERROR, payload: error });
+      dispatch({ type: papersDetailActions.GET_PAPER_DETAILS_WITH_NOT_PRESSURE_UNDO_ERROR, payload: error });
     }
   }
 
