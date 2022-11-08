@@ -70,14 +70,14 @@ const ManagementPage: NextPage = () => {
           {titleList.map((title, j) => (
             <div key={j} className="w-full flex flex-wrap">
               <div className="w-1/2 mx-auto bg-gray-800 h-3/4 rounded-xl pt-6 mt-12">
-                <h2 className="text-white">{title}</h2>
+                <h2 className="text-white text-center">{title}</h2>
                 <div className="flex flex-wrap justify-center">
                   {noteListWithPressureUndo?.length > 0 &&
                     noteListWithPressureUndo.map((note, i) => (
                       <div key={i}>
                         {String(note["Title"]).indexOf(title) !== -1 && (
                           <div className="mb-3 mr-4">
-                            <div className="flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36">
+                            <div className="flex items-center justify-center h-96 border border-gray-300 cursor-pointer w-64">
                               {note["PaperImage"] != "" ? (
                                 <div className="relative w-full h-full">
                                   <img
@@ -108,14 +108,14 @@ const ManagementPage: NextPage = () => {
                 </div>
               </div>
               <div className="w-1/2 mx-auto bg-gray-800 h-3/4 rounded-xl pt-6 mt-12">
-                <h2 className="text-white">{title}_no</h2>
+                <h2 className="text-white text-center">{title}_no</h2>
                 <div className="flex flex-wrap justify-center">
                   {noteListWithNotPressureUndo?.length > 0 &&
                     noteListWithNotPressureUndo.map((note, i) => (
                       <div key={i}>
                         {String(note["Title"]).indexOf(title) !== -1 && (
                           <div className="mb-3 mr-4">
-                            <div className="flex items-center justify-center h-48 border border-gray-300 cursor-pointer w-36">
+                            <div className="flex items-center justify-center h-96 border border-gray-300 cursor-pointer w-64">
                               {note["PaperImage"] != "" ? (
                                 <div className="relative w-full h-full">
                                   <img
