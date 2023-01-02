@@ -86,7 +86,7 @@ const Note: NextPage = () => {
   const [showExplainDialog, setShowExplainDialog] = useState<number|null>(null); // 実験説明ダイアログ
   const [canvasBackgroundImageUrl, setCanvasBackgroundImageUrl] = useState<string>("https://celclipmaterialprod.s3-ap-northeast-1.amazonaws.com/91/01/1880191/thumbnail?1637291685"); // canvasの背景画像
   const canvasRef = useRef(null);
-  const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => ((pressureRangeNum-i)/pressureRangeNum)); // グラフ表示用のラベル
+  const labels: number[] = [...Array(pressureRangeNum+1)].map((_, i) => (Math.round((1-(pressureRangeNum-i)/pressureRangeNum)*100)/100)); // グラフ表示用のラベル
 
 
 	let path: paper.Path;
@@ -222,7 +222,7 @@ const Note: NextPage = () => {
       }
       console.log('sumPressure', sumPressure)
       console.log('avgPressure', avgPressure)
-      const aboutAvgPressure = Math.floor((1-avgPressure)*pressureRangeNum)/pressureRangeNum;
+      const aboutAvgPressure = Math.floor((avgPressure)*pressureRangeNum)/pressureRangeNum;
       const pressureArrayLength = pressureArray.length;
       while (pressureArray.length==pressureArrayLength) {
         switch (e.pointerType) {
@@ -230,7 +230,7 @@ const Note: NextPage = () => {
           case "mouse":
             const rand = mode=="pen"? Math.random(): 1;
             pressureArray.push(rand);
-            aboutPressureCountArray[((Math.floor((1-rand) * pressureRangeNum) / pressureRangeNum))*pressureRangeNum] += 1;
+            aboutPressureCountArray[((Math.floor((rand) * pressureRangeNum) / pressureRangeNum))*pressureRangeNum] += 1;
             break;
           // タッチ操作なら
           case "touch":
@@ -434,7 +434,7 @@ const Note: NextPage = () => {
   const fixChartData = () => {
     let tmp: number[] = [...Array(pressureRangeNum+1)].map(x=>0);
       for(let i=0;i<pressureArray.length;i++) {
-        const aboutAvgPressure = Math.floor((1-pressureArray[i])*pressureRangeNum)/pressureRangeNum;
+        const aboutAvgPressure = Math.floor((pressureArray[i])*pressureRangeNum)/pressureRangeNum;
         tmp[aboutAvgPressure*pressureRangeNum] += 1;
       }
     aboutPressureCountArray = tmp;
@@ -473,20 +473,20 @@ const Note: NextPage = () => {
         json[0][1]["children"][i][1].strokeColor[3]=0;
         continue 
       }
-      pressureDiff = pressureArray[i] - (1-boundaryValue);
+      pressureDiff = pressureArray[i] - (boundaryValue);
       if ((json[0][1]["children"][i][1].strokeColor.length === 4 && pressureDiff > 0.1)) {
         json[0][1]["children"][i][1].strokeColor[3] = 1;
       }
       if (pressureDiff < 0.1 && pressureDiff >= 0) {
         if (json[0][1]["children"][i][1].strokeColor.length <= 3) {
-          json[0][1]["children"][i][1].strokeColor.push(1-((1-pressureDiff))+0.1)
+          json[0][1]["children"][i][1].strokeColor.push((1-(1-pressureDiff))+0.1)
         } else if (json[0][1]["children"][i][1].strokeColor.length === 4) {
-          json[0][1]["children"][i][1].strokeColor[3] = (1-((1-pressureDiff))+0.1)
+          json[0][1]["children"][i][1].strokeColor[3] = ((1-(1-pressureDiff))+0.1)
         }
       }
-      if (pressureArray[i] <= 1 - boundaryValue && json[0][1]["children"][i][1].strokeColor.length <= 3) {
+      if (pressureArray[i] <= boundaryValue && json[0][1]["children"][i][1].strokeColor.length <= 3) {
         json[0][1]["children"][i][1].strokeColor.push(0)
-      } else if (pressureArray[i] <= 1 - boundaryValue && json[0][1]["children"][i][1].strokeColor.length == 4 && json[0][1]["children"][i][1].strokeColor[3] !== 0) {
+      } else if (pressureArray[i] <= boundaryValue && json[0][1]["children"][i][1].strokeColor.length == 4 && json[0][1]["children"][i][1].strokeColor[3] !== 0) {
         json[0][1]["children"][i][1].strokeColor[3]=0;
       }
     }
@@ -500,7 +500,7 @@ const Note: NextPage = () => {
     let pressureDiff: number = 0;
     json =  Paper.project.exportJSON({ asString: false })
     for (let i=0; i<pressureArray.length; i++) {
-      pressureDiff = pressureArray[i] - (1-boundaryValue);
+      pressureDiff = pressureArray[i] - (boundaryValue);
       if(json[0][1]["children"][i][1].strokeColor[3] == 0) {
         isShowStrokeList[i] = 0;
       }
@@ -518,7 +518,7 @@ const Note: NextPage = () => {
     setShowImageDataList((prevShowImageDataList) => (
       [
         ...prevShowImageDataList,
-        {...imageDataList[imageDataList.length-1], ...{boundaryPressure: 1-boundaryPressureValueBeforeUndo}}
+        {...imageDataList[imageDataList.length-1], ...{boundaryPressure: boundaryPressureValueBeforeUndo}}
       ]
     ));
     setTimeout(async function(){
@@ -664,13 +664,13 @@ const Note: NextPage = () => {
 
   useEffect(() => {
     if(defaultBoundaryPressure==null&&logBoundaryValue!=null) {
-      const tmp = 10000-logBoundaryValue*10000;
+      const tmp = logBoundaryValue*10000;
       setDefaultBoundaryPressure(tmp);
       console.log(logBoundaryValue);
       console.log("↑logの筆圧バーの値")
       console.log(tmp)
     } else {
-      setDefaultBoundaryPressure(10000);
+      setDefaultBoundaryPressure(1);
     }
   }, [defaultBoundaryPressure])
 
@@ -693,7 +693,7 @@ const Note: NextPage = () => {
         if (paperDetails.state.paperDetail.BoundaryPressure!=0) {
           setDefaultBoundaryPressure(paperDetails.state.paperDetail.BoundaryPressure*10000);
         } else {
-          setDefaultBoundaryPressure(10000);
+          setDefaultBoundaryPressure(1);
         }
       }
       if (paperDetails.state.paperDetail.IsShowStrokeList!=null&&paperDetails.state.paperDetail.IsShowStrokeList!='') {
